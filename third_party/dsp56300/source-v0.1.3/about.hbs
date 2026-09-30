@@ -1,0 +1,14 @@
+Third-Party Licenses
+====================
+
+This file lists the licenses of third-party libraries used by this software.
+
+{{#each licenses}}
+-------------------------------------------------------------------------------
+{{name}}
+{{#each used_by}}
+  - {{{crate.name}}} {{{crate.version}}}{{#if crate.repository}} ({{{crate.repository}}}){{/if}}
+{{/each}}
+
+{{{text}}}
+{{/each}}

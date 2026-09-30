@@ -1,0 +1,89 @@
+name: Update Rust toolchain
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Monday 9:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update toolchain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Get current pinned version
+        id: current
+        run: |
+          version=$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)
+          if [ -z "$version" ] || ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: Could not parse current version from rust-toolchain.toml (got: '$version')" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest stable version
+        id: latest
+        run: |
+          version=$(curl -fsSL https://static.rust-lang.org/dist/channel-rust-stable.toml \
+            | sed -n '/^\[pkg\.rust\]$/,/^\[/{s/^version = "\([0-9.]*\).*/\1/p;}' | head -1)
+          if [ -z "$version" ] || ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: Could not parse latest stable version from channel manifest (got: '$version')" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check if update needed
+        id: check
+        run: |
+          if [ "${{ steps.current.outputs.version }}" = "${{ steps.latest.outputs.version }}" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update rust-toolchain.toml and Cargo.toml
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          sed -i 's/^channel = .*/channel = "${{ steps.latest.outputs.version }}"/' rust-toolchain.toml
+          msrv=$(echo "${{ steps.latest.outputs.version }}" | sed 's/\.[0-9]*$//')
+          sed -i "s/^rust-version = .*/rust-version = \"$msrv\"/" Cargo.toml
+
+      - name: Install Rust
+        if: steps.check.outputs.skip == 'false'
+        uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1
+
+      - name: Apply formatting and lint fixes
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          cargo clippy --workspace --all-targets --fix --allow-dirty
+          cargo fmt --all
+
+      - name: Create pull request
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="ci/rust-toolchain-${{ steps.latest.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add -A
+          git commit -m "ci: Update Rust toolchain to ${{ steps.latest.outputs.version }}"
+          git push -u origin "$branch" --force
+          if ! gh pr list --head "$branch" --json number --jq '.[0].number' | grep -q .; then
+            gh pr create \
+              --title "ci: Update Rust toolchain to ${{ steps.latest.outputs.version }}" \
+              --body "$(cat <<EOF
+          Updates Rust toolchain from ${{ steps.current.outputs.version }} to ${{ steps.latest.outputs.version }}.
+
+          \`cargo fmt\` and \`cargo clippy --fix\` have been applied automatically.
+          EOF
+          )"
+          else
+            echo "PR already exists for $branch"
+          fi

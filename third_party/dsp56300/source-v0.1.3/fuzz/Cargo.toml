@@ -1,0 +1,41 @@
+[package]
+name = "dsp56300-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.dsp56300-core]
+path = "../crates/core"
+
+[dependencies.dsp56300-asm]
+path = "../crates/asm"
+
+[dependencies.dsp56300-disasm]
+path = "../crates/disasm"
+
+[dependencies.dsp56300-emu]
+path = "../crates/emu"
+
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "asm"
+path = "fuzz_targets/asm.rs"
+doc = false
+
+[[bin]]
+name = "disasm"
+path = "fuzz_targets/disasm.rs"
+doc = false
+
+[[bin]]
+name = "emu"
+path = "fuzz_targets/emu.rs"
+doc = false

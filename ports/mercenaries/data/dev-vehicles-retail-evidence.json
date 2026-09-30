@@ -1,0 +1,921 @@
+{
+  "schema": 1,
+  "policy": "retail-info-union-v1",
+  "inputs": {
+    "assets.dsk": "8b8ee254a245490ea4cda54ccea05b7a7a51afc41125aaf3cf5fd8ec512d1610",
+    "english.dsk": "c77d3925b55ce518f46512b4a3eac56833db9587b5ed4d9493ed93f9f99bd62a",
+    "locked.dsk": "fc86b5c03069282981944b005649a0ebc4b367853840f2534d2bd05174b7fc50",
+    "streamed.dsk": "50dadc67701fe6176798bfdebda8fa82e8bf2750e80ced8f69a32c192f9e956c"
+  },
+  "records": [
+    {
+      "template": "template_civ_unaidtruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 131,
+      "model_info_sha256": "d4a236c1b50f610c83058110d7f0a5cde443981d8fb7051bf9f7bd6c89bca07f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_unaidtruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 131,
+      "model_info_sha256": "d4a236c1b50f610c83058110d7f0a5cde443981d8fb7051bf9f7bd6c89bca07f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_baggagecar_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 98,
+      "model_info_sha256": "d95977004e7570c65c887b243baac6735284479466e124d5c299170c54e1ffab",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_baggagetruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 98,
+      "model_info_sha256": "d95977004e7570c65c887b243baac6735284479466e124d5c299170c54e1ffab",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_jeep",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 39,
+      "model_info_sha256": "b0accc4261fe3b1879566c44005f43b6c8fc65a96cc0b5b2b923cb7351730a77",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_jeep_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 39,
+      "model_info_sha256": "b0accc4261fe3b1879566c44005f43b6c8fc65a96cc0b5b2b923cb7351730a77",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_bmp-1apc",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 465,
+      "model_info_sha256": "fd27827e06eb9ea19ac296c526618aa04a27bc3ae3610d7af9c28c68c8596abe",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_bmp_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 465,
+      "model_info_sha256": "fd27827e06eb9ea19ac296c526618aa04a27bc3ae3610d7af9c28c68c8596abe",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_brdm",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 467,
+      "model_info_sha256": "0d6de0459a218d001111ac83526cc4e21542ab2e13d238bc515f5c3c4bef1d47",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_brdm_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 467,
+      "model_info_sha256": "0d6de0459a218d001111ac83526cc4e21542ab2e13d238bc515f5c3c4bef1d47",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_btr60",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 470,
+      "model_info_sha256": "703655f8bd667b4c7085654a557fcf36b57b672b7b1f8d8ff7dcd782fb17b1a1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_btr60_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 470,
+      "model_info_sha256": "703655f8bd667b4c7085654a557fcf36b57b672b7b1f8d8ff7dcd782fb17b1a1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_cargotruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 18,
+      "model_info_sha256": "69d910a9b2d7296fdbf8dfa32454bff7551757b64cd7d3af48590e55e251dc7e",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_cargotruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 473,
+      "model_info_sha256": "1051cd106f9cc2a11f1011be3556dfa4dbbfa929e1e38bf2989a146161dcf2a6",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_cargotruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 473,
+      "model_info_sha256": "1051cd106f9cc2a11f1011be3556dfa4dbbfa929e1e38bf2989a146161dcf2a6",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_cargotruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 605,
+      "model_info_sha256": "ce664463001d9289ee1f3668b118686bc2e8f5b18a2bd56a629ffb63afd16257",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_chinook",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 21,
+      "model_info_sha256": "2fe9cc333acd7861aeb2023856af63b9c16d09b269bd7a914af89a46adb89b5b",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_controltruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 476,
+      "model_info_sha256": "1686f6da5b836ca07470d0b50475b76e9618e187c0d5625ecf814461922039f4",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_forklift",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 110,
+      "model_info_sha256": "05146f82805d5e16889ab06f903ea02c6bb0bcd1a7b24956bbaeabfa70266aac",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_frog7",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 482,
+      "model_info_sha256": "93aa8231f7317f9195720d41b017d18cd1e5f82ab8d36ccf2dc9e1f1304e51f4",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_fueltruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 45,
+      "model_info_sha256": "a2954fa77dc7f1451e90c2633c24b38c34f7da8aa55efd8dccfd528027485d67",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_technicalgl_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 458,
+      "model_info_sha256": "b17f2eedfddaf969f721dd0dc5a896aafc7fba55f93715badb5dfba32690e2f4",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_global_stackcar",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 370,
+      "model_info_sha256": "c016bcd0b2105bc5b22c701778d23d1935aab40236b8c2aab0811b085bc627e6",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_presstruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 122,
+      "model_info_sha256": "2013a37a6b206c3c671b5bb662d99c6ac924a32dc75edc6269b94d899ad0d3eb",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_presstruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 122,
+      "model_info_sha256": "2013a37a6b206c3c671b5bb662d99c6ac924a32dc75edc6269b94d899ad0d3eb",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_h3_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "streamed.dsk",
+      "model_record": 2225,
+      "model_info_sha256": "30d4149b7da13483e1b7a35bc89a588ac8bbfb858832b47fa14ab6d74f79d9f5",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_80civic",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 83,
+      "model_info_sha256": "d01fb0eb22346c0450752f1f48afaf2041746885616c201ca638e344aa0799a9",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_80civic_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 83,
+      "model_info_sha256": "d01fb0eb22346c0450752f1f48afaf2041746885616c201ca638e344aa0799a9",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_pavelow",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 626,
+      "model_info_sha256": "64d27896797f2ab3e2975a7eaf1461c0af887f81bacec600243ee2bfaf7befb3",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_blackhawk",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 629,
+      "model_info_sha256": "53e05a14c304ca212e3a220fc51e4ddb8aa455e740f56e378f1dae03d862d3f3",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_humveemg",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 619,
+      "model_info_sha256": "e6f2b3529866d242c9746774b6c4c155da9b8e920b654258e06f355775436427",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_humveemg_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 619,
+      "model_info_sha256": "e6f2b3529866d242c9746774b6c4c155da9b8e920b654258e06f355775436427",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_kafv",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 622,
+      "model_info_sha256": "0217bdfc51f49dcdf2a6507d9ea52c42bd86aa44164d02f484cc87c47900337f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_kafv_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 622,
+      "model_info_sha256": "0217bdfc51f49dcdf2a6507d9ea52c42bd86aa44164d02f484cc87c47900337f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_humveeat",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 616,
+      "model_info_sha256": "8e0fb510ac73ac097c5c3663a92d6caee628b906a1f96cb3c33bb1abcd38da85",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_humveeat_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 616,
+      "model_info_sha256": "8e0fb510ac73ac097c5c3663a92d6caee628b906a1f96cb3c33bb1abcd38da85",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_ka50",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 437,
+      "model_info_sha256": "6517141b2a552411b74715c1bdc3848c7def0c2f6a976feac3531db7874d8965",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_ka50_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 437,
+      "model_info_sha256": "6517141b2a552411b74715c1bdc3848c7def0c2f6a976feac3531db7874d8965",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_lada124",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 116,
+      "model_info_sha256": "9e8354353e3305246bd9a69bed61ca913a8539172083a677dbdc91c32d275e13",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_lada124_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 116,
+      "model_info_sha256": "9e8354353e3305246bd9a69bed61ca913a8539172083a677dbdc91c32d275e13",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_sk_comanche",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 608,
+      "model_info_sha256": "d4c490ec8294a7408d2574603d8bb40a211e827f0a584c3bf34ac981b30abfc7",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_abrams",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 32,
+      "model_info_sha256": "4902079d255a9935cd47a31da9add5e853e2f47b4c9584402562ac541b7b535d",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_humvee",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 25,
+      "model_info_sha256": "e6f2b3529866d242c9746774b6c4c155da9b8e920b654258e06f355775436427",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_humvee_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 25,
+      "model_info_sha256": "e6f2b3529866d242c9746774b6c4c155da9b8e920b654258e06f355775436427",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_avenger",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 11,
+      "model_info_sha256": "88284f8856ba46a81eec4ffafe99ef4a2a83721ddf03e826ad2f6f0b0b6fb7b0",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_avenger_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 11,
+      "model_info_sha256": "88284f8856ba46a81eec4ffafe99ef4a2a83721ddf03e826ad2f6f0b0b6fb7b0",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_lavstryker",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 29,
+      "model_info_sha256": "c12a1ed2867b0bea560c55164f6cefada6af42e438c67754394405f8f29aec8d",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_stryker_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 29,
+      "model_info_sha256": "c12a1ed2867b0bea560c55164f6cefada6af42e438c67754394405f8f29aec8d",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_type89",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 532,
+      "model_info_sha256": "6608e7329956512a80272663f038fcef13eac60afc7177b840e1b10fb448004a",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_bradley",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 34,
+      "model_info_sha256": "c47809916574973c37c3af52a18ea5ce8e4e997a19318d5aec23f363dbdf39ed",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_bradley_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 34,
+      "model_info_sha256": "c47809916574973c37c3af52a18ea5ce8e4e997a19318d5aec23f363dbdf39ed",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_NKLittleBird",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 500,
+      "model_info_sha256": "df206c6fa0747695fd56e5e84643640d1076ec1f7b566443efdfea5806a7088f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_oh6littlebird",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 500,
+      "model_info_sha256": "df206c6fa0747695fd56e5e84643640d1076ec1f7b566443efdfea5806a7088f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_littlebird",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 441,
+      "model_info_sha256": "13a0aa0db583568ad3ec2d984cd939e443e497878226ed6bee498b0c00e1dfe1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_littlebird_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 441,
+      "model_info_sha256": "13a0aa0db583568ad3ec2d984cd939e443e497878226ed6bee498b0c00e1dfe1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_bus",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 101,
+      "model_info_sha256": "a508cd3b530c75f95ecd16c91da77ca584862916dd76c0aabdcb19d9f03de88e",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_bus_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 101,
+      "model_info_sha256": "a508cd3b530c75f95ecd16c91da77ca584862916dd76c0aabdcb19d9f03de88e",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_technicalmg",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 461,
+      "model_info_sha256": "74a5c3c7638229a84c276c39f2faebca3d017339f395dbaad28ddc2412c47da8",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_technicalmg_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 461,
+      "model_info_sha256": "74a5c3c7638229a84c276c39f2faebca3d017339f395dbaad28ddc2412c47da8",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_mi17",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 48,
+      "model_info_sha256": "c30cea425d88d563a879a474d6cda946c9c01a77e384e7259805ce6de61b7f27",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_mi17",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 490,
+      "model_info_sha256": "7d35f5bda5c20f5ac26422e9d39a0483528b9991ab199d60b24465ffa627b044",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_mi2hoplite",
+      "world_record": 5374,
+      "layer": "template_vehicles_ch2",
+      "model_archive": "locked.dsk",
+      "model_record": 493,
+      "model_info_sha256": "876768f4a3c474fbc87f4279fa2c6b3698b40ebf9e14a5e53a27deeea64566b9",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_cargocopter",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 447,
+      "model_info_sha256": "3ba854eee9d32d2583fdc38dec180cf295df321c0561751a9ac6efc77a952e66",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_mi35hind",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 496,
+      "model_info_sha256": "f1b5bb88d61a2468d3450b426b7d7b01e12ed88d7fda93272e24d284aac4e797",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_daewoo_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 107,
+      "model_info_sha256": "f867679fffa9f11aa3f2f9ba76c076636ee0d172014980e24fdde0c2c71a9590",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_s70blackhawk",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 51,
+      "model_info_sha256": "3fba100212d3f437b03452fb4a71721e5abbba3b00611d4c66224c938c8e0613",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_sa8sam",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 507,
+      "model_info_sha256": "2b676d518483aec4194ff8837b7ee6465edfaa9aeaa6d7555ede9ff28dd8a7f1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_cargotruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 104,
+      "model_info_sha256": "83066763e9e816deb9fe08db7fed0465e0fa9dd4e41c7ef499dfdc08e1213779",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_cargotruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 104,
+      "model_info_sha256": "83066763e9e816deb9fe08db7fed0465e0fa9dd4e41c7ef499dfdc08e1213779",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_cargotruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 104,
+      "model_info_sha256": "83066763e9e816deb9fe08db7fed0465e0fa9dd4e41c7ef499dfdc08e1213779",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_markettruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 119,
+      "model_info_sha256": "67831267c4ead202ffb1ac422415c2724b656ac6c9d782f6895dee315a5c620f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_markettruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 119,
+      "model_info_sha256": "67831267c4ead202ffb1ac422415c2724b656ac6c9d782f6895dee315a5c620f",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_generictruck",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 113,
+      "model_info_sha256": "69450ab248d0d86e9463dccbbadff251344aa2c6067803be720a2106f898af8b",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_generictruck_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 113,
+      "model_info_sha256": "69450ab248d0d86e9463dccbbadff251344aa2c6067803be720a2106f898af8b",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_sportscar_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 125,
+      "model_info_sha256": "47ba43bd8b50eb6542ca1211926773bd7831adde32e9f1cf7f12588be1d58519",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_jeep_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 485,
+      "model_info_sha256": "dd45233dcac197268260ce45a89863c627aa8cf8887491adb08b15f7682dccf1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_jeepmgun",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 485,
+      "model_info_sha256": "dd45233dcac197268260ce45a89863c627aa8cf8887491adb08b15f7682dccf1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_jeepmgun_gunneronly",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 485,
+      "model_info_sha256": "dd45233dcac197268260ce45a89863c627aa8cf8887491adb08b15f7682dccf1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_h2",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 434,
+      "model_info_sha256": "a59f88e5b4136fc5a1eadeed2163f9dd929c0613044120390f4f05f99939ab3a",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_h2_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 434,
+      "model_info_sha256": "a59f88e5b4136fc5a1eadeed2163f9dd929c0613044120390f4f05f99939ab3a",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_type54",
+      "world_record": 5374,
+      "layer": "template_vehicles_ch2",
+      "model_archive": "locked.dsk",
+      "model_record": 525,
+      "model_info_sha256": "0cd0e4575d1aad099f32fbcf91365deb5bb10c0e90008506e06009858da49f16",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_type62tank",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 527,
+      "model_info_sha256": "34d8d308401f7d6cf19b5fd9143b940617500bbe895633350ec6c099835cdbe8",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_suv_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 128,
+      "model_info_sha256": "fcfe7eef33409038c9f69ee38d6c901307ea06f7710080aea2d14da885221f7a",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_technicalat",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 455,
+      "model_info_sha256": "68120c51e67e0a400ef4cb20a16dd6d1eee4f3db96086b3fe5f7837dd2aeeb26",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_technicalat_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 455,
+      "model_info_sha256": "68120c51e67e0a400ef4cb20a16dd6d1eee4f3db96086b3fe5f7837dd2aeeb26",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_transport",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 523,
+      "model_info_sha256": "c656b8b451306f55b70d6316caa524b90a66006de88f54874174ad049d313c99",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_transport_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 523,
+      "model_info_sha256": "c656b8b451306f55b70d6316caa524b90a66006de88f54874174ad049d313c99",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_type80",
+      "world_record": 5374,
+      "layer": "template_vehicles_ch2",
+      "model_archive": "locked.dsk",
+      "model_record": 59,
+      "model_info_sha256": "4aee7e1f7ab361390a92aa1278628ea08e8e7cfee1f57ed784be6998d26502f9",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_apc",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 61,
+      "model_info_sha256": "8632b7c3d53db8229952ccf4ca2566d0ba26e2b46052d5be8d180f28a10ac3d1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_apc_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 61,
+      "model_info_sha256": "8632b7c3d53db8229952ccf4ca2566d0ba26e2b46052d5be8d180f28a10ac3d1",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_tunguska",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 55,
+      "model_info_sha256": "7e1afcbdd0d0492b9566f547baa9ab5306b34b33e67f05822f7e33fe4a5bd6c2",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_tunguska_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 55,
+      "model_info_sha256": "7e1afcbdd0d0492b9566f547baa9ab5306b34b33e67f05822f7e33fe4a5bd6c2",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_type96",
+      "world_record": 5376,
+      "layer": "template_vehicles_ch4",
+      "model_archive": "locked.dsk",
+      "model_record": 63,
+      "model_info_sha256": "a9a15ac96e0f1688558d826084308e8e8c76b6fe94248c63da37245c7f2290fa",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_blackhawk",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 15,
+      "model_info_sha256": "1f58b4faf784bc08da59416f680803476fbe95fa6fda48be04d9818321fe7125",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_blackhawkextr",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 15,
+      "model_info_sha256": "1f58b4faf784bc08da59416f680803476fbe95fa6fda48be04d9818321fe7125",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_mafia_blackhawk",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 15,
+      "model_info_sha256": "1f58b4faf784bc08da59416f680803476fbe95fa6fda48be04d9818321fe7125",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_civ_50skgbcar",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 80,
+      "model_info_sha256": "7f3f86af6adbd49dfce57f4123fae0bb81f378531adcbf11068ea4562de1c4e7",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_china_wz9",
+      "world_record": 5374,
+      "layer": "template_vehicles_ch2",
+      "model_archive": "locked.dsk",
+      "model_record": 65,
+      "model_info_sha256": "9902380fa2fa461fe33d48df6f9f1a96253212edf3ec6e76e51520483649f411",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_allies_apache",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 7,
+      "model_info_sha256": "06521507607723a6faadff1d911c98165ab1fa4ac8e1f52c8b69ccc9f96c9ee4",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_zsu-57aa",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 535,
+      "model_info_sha256": "86296d3f2caf5316f0ce406549dbd323ad0db7025ae5e264fdb534a48a4e0f69",
+      "geometry_scale": 1.0
+    },
+    {
+      "template": "template_nk_zsu_empty",
+      "world_record": 5372,
+      "layer": "template_vehicles",
+      "model_archive": "locked.dsk",
+      "model_record": 535,
+      "model_info_sha256": "86296d3f2caf5316f0ce406549dbd323ad0db7025ae5e264fdb534a48a4e0f69",
+      "geometry_scale": 1.0
+    }
+  ]
+}

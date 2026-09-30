@@ -1,0 +1,41 @@
+{
+  "format": "ENMEM001",
+  "capture_date": "2026-09-29",
+  "provenance": {
+    "method": "Executed original retail x86 instructions under the public Unicorn emulator. No previous expected-result fixture was read.",
+    "generator": "tools/recomp/capture_enemy_memory_retail.py",
+    "generator_sha256": "d06954306c05e81160634846d3aa35a3e7be23a4e22e92bb6ca232a9d9d1bce1",
+    "unicorn_version": "2.1.4",
+    "function_addresses": {
+      "1": "0x641b0",
+      "2": "0x641d0",
+      "3": "0x642e0",
+      "4": "0x64360",
+      "5": "0x64320"
+    },
+    "layout_evidence": "0x641B0 initializes base time and IDs at +4,+12,+20,+28; 0x642E0 walks four entries at 8-byte stride and reads timeout at +8; retail ret/ret4/ret8 establish call ABI.",
+    "unused_slots": "Empty-slot timeout words canonicalized to zero; original regression comparison ignores them."
+  },
+  "retail_xbe_sha256": "aa08ea21d952ac35f49c02c7e2ed08aa25ad7535fbbbccc95636775f37be99d7",
+  "compressed_sha256": "f4b8c68f1203eb1488436ce0f66f98af5c5e66112428e9580fc9baecd240fac1",
+  "uncompressed_sha256": "b5876a4629f9094269b642382e8f6a2d5805295f5e08d54ddc54b0b25a641333",
+  "uncompressed_bytes": 20772212,
+  "record_counts": {
+    "1": 19877,
+    "2": 26450,
+    "3": 1278150,
+    "4": 40098,
+    "5": 20104,
+    "6": 106512
+  },
+  "coverage": {
+    "random_operations": 100000,
+    "seed": "0x13572468",
+    "expiry_fps": [
+      30,
+      60,
+      120
+    ],
+    "relation_values": 2049
+  }
+}

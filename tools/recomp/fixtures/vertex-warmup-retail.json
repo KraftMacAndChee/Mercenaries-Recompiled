@@ -1,0 +1,347 @@
+{
+  "basis": "Exact bytes from user-owned retail shader files and supported XBE; no claim about pixel-state or declaration capture provenance.",
+  "programs": {
+    "1EBBCD92": [
+      {
+        "path": "shaders/xboxBr3D.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "4c8bd858f01a6e974c8b114f0759a3ee8c7ec34e9e8b55eccbfdb8eb1d73bfde",
+        "microcode_sha256": "84884124c25d5fc2f056172ee3230c5784cf9515a192606cadc4761a919020ae"
+      }
+    ],
+    "365F44D9": [
+      {
+        "path": "shaders/xboxTerrDetail.xvu",
+        "offset": 4,
+        "bytes": 208,
+        "file_sha256": "250960225a5962478fcc6d037dc397febaaf81fedfdf544114f0b0315dbef1c4",
+        "microcode_sha256": "60b3424726b511d96bc897a624bee00b117625f56ae0ff188ac0b4d156daec58"
+      }
+    ],
+    "3A61A1A4": [
+      {
+        "path": "shaders/xboxTerrClouds.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "746160ba62be2184418a3931824dd50dd9eb29ff5e864618fa59c4ec57a4b588",
+        "microcode_sha256": "b0f8df0a2ae7cd8f623e97bab376ee69d9c7cf46da29b8a441c3bf657e4b02ae"
+      }
+    ],
+    "56B30122": [
+      {
+        "path": "shaders/xboxSky.xvu",
+        "offset": 4,
+        "bytes": 320,
+        "file_sha256": "c2c6aee11748105c00993d72f67dabd823803970f5933d7d485dc3650cbba359",
+        "microcode_sha256": "366335ebf734b96b5b425fbaee1b3245af708c5fb7f5ef2beaccaa926d2c4fbb"
+      }
+    ],
+    "6655EABA": [
+      {
+        "path": "shaders/xboxNSknL.xvu",
+        "offset": 4,
+        "bytes": 336,
+        "file_sha256": "407c0f12d3fcb2ee4f1cdf599be95b6bffb1e2ae9c7895671b28b0de94401cab",
+        "microcode_sha256": "b0ffcc7763a95395adf0f60869580d537cf3b42fdfe8c0ba3729c86d727e1338"
+      }
+    ],
+    "6A6DBCCE": [
+      {
+        "path": "shaders/xboxSknL.xvu",
+        "offset": 4,
+        "bytes": 480,
+        "file_sha256": "d526a116f56cea0ca7364bad8bf2d25c80b144041039993b23547097e326cf76",
+        "microcode_sha256": "e076ed07e14303e3355bb49962c237daa482d75fdb3c05c98fe037311bac65af"
+      }
+    ],
+    "77F3A7EB": [
+      {
+        "path": "default.xbe",
+        "offset": 2656816,
+        "bytes": 32,
+        "file_sha256": "aa08ea21d952ac35f49c02c7e2ed08aa25ad7535fbbbccc95636775f37be99d7",
+        "microcode_sha256": "b0d8a4c79dd4f1a45c07dac74db79ab94daa1a1c477f9a10c6f85357bb83fe81"
+      }
+    ],
+    "85E9915D": [
+      {
+        "path": "shaders/xboxNSknNL.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "dc20e0bf3485708db95b91e8f5ede6093401b9f3a2adf675bec694b9d05165ae",
+        "microcode_sha256": "6b9409aedb84e6a9e11a86972ff9b15e66b22809682785792d9161991cffb0d3"
+      }
+    ],
+    "8E6C95F4": [
+      {
+        "path": "shaders/xboxBNSknL.xvu",
+        "offset": 4,
+        "bytes": 688,
+        "file_sha256": "2e7aacde31cd0c7b4da2f3f598b81456f7aa50ee1d08f97d755fb7e2914d745f",
+        "microcode_sha256": "d7b0ab00697b8f604ac493432176f08e8f9d0a99dd9cabc88ba45af1ece5093a"
+      }
+    ],
+    "90B15D33": [
+      {
+        "path": "shaders/xboxBr2D.xvu",
+        "offset": 4,
+        "bytes": 96,
+        "file_sha256": "e61d72c5835de913040d0462e8c0d186cfc4010894f25f0a3053c8412ea656d2",
+        "microcode_sha256": "95004091200ff86672aae36569aa37bdad1e7d7c1b67cc52ff1af715b3e197f4"
+      }
+    ],
+    "998FF7CC": [
+      {
+        "path": "shaders/xboxNSknNLTGnw.xvu",
+        "offset": 4,
+        "bytes": 368,
+        "file_sha256": "c0eb0f771e05d4b8e5d4874108869f76319575d0ee6210e8733144473b767c98",
+        "microcode_sha256": "dc6db87f335c9bcc9b27b69b02817f47c77883b2631394e5006c49d886dc72c5"
+      }
+    ],
+    "9BB93FA7": [
+      {
+        "path": "shaders/xboxTerr4Tex.xvu",
+        "offset": 4,
+        "bytes": 272,
+        "file_sha256": "cd05bdb9191c4f8e18dc764e793f3440568b739092c0ca93cde213b87e7d8588",
+        "microcode_sha256": "795def930b12e31f4f5572e1292b8ba656cf4439c5694690cb2924a3e92fea81"
+      }
+    ],
+    "A056B838": [
+      {
+        "path": "shaders/xboxBr3D.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "4c8bd858f01a6e974c8b114f0759a3ee8c7ec34e9e8b55eccbfdb8eb1d73bfde",
+        "microcode_sha256": "84884124c25d5fc2f056172ee3230c5784cf9515a192606cadc4761a919020ae"
+      }
+    ],
+    "B902D344": [
+      {
+        "path": "shaders/xboxPart.xvu",
+        "offset": 4,
+        "bytes": 496,
+        "file_sha256": "029bc9af748b04072f4e57ed25d1069f0ee680a627cda6ca0ebcaad27cd6c0fe",
+        "microcode_sha256": "5b178a09b45016f387e0ecf88827a5def9a9c6e4d247e37a875af98e205b50d9"
+      }
+    ],
+    "BBBF509F": [
+      {
+        "path": "shaders/xboxBr2D.xvu",
+        "offset": 4,
+        "bytes": 96,
+        "file_sha256": "e61d72c5835de913040d0462e8c0d186cfc4010894f25f0a3053c8412ea656d2",
+        "microcode_sha256": "95004091200ff86672aae36569aa37bdad1e7d7c1b67cc52ff1af715b3e197f4"
+      }
+    ],
+    "BCB135FB": [
+      {
+        "path": "shaders/xboxGlowFilter.xvu",
+        "offset": 4,
+        "bytes": 64,
+        "file_sha256": "8c64bdcdaed595f2a5a1bc06475716c6c25812e0d5872ce5f54cbe645df441c8",
+        "microcode_sha256": "9654028924886d6ce808ce72f620113ecdaa820f260c3754b87ecd53d3522eba"
+      }
+    ],
+    "EE4DA844": [
+      {
+        "path": "shaders/xboxNSknNL.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "dc20e0bf3485708db95b91e8f5ede6093401b9f3a2adf675bec694b9d05165ae",
+        "microcode_sha256": "6b9409aedb84e6a9e11a86972ff9b15e66b22809682785792d9161991cffb0d3"
+      }
+    ],
+    "FE0789D1": [
+      {
+        "path": "shaders/xboxBr3D.xvu",
+        "offset": 4,
+        "bytes": 192,
+        "file_sha256": "4c8bd858f01a6e974c8b114f0759a3ee8c7ec34e9e8b55eccbfdb8eb1d73bfde",
+        "microcode_sha256": "84884124c25d5fc2f056172ee3230c5784cf9515a192606cadc4761a919020ae"
+      }
+    ],
+    "A9756971": [
+      {
+        "path": "shaders/xboxNSknL2O.xvu",
+        "offset": 4,
+        "bytes": 832,
+        "file_sha256": "b4137f51949c5f6b55e9410d4c64329731e5a29541afd93ffac13a266b903b0c",
+        "microcode_sha256": "833480fce14adce93cc2132a779327cc2eca9fc89e82e80c5eb402e20c1ae0f7"
+      }
+    ],
+    "C508D67D": [
+      {
+        "path": "shaders/xboxSknL2O.xvu",
+        "offset": 4,
+        "bytes": 976,
+        "file_sha256": "434b058fdecc52f124f4679898340cc5a1f99786a584f3ffb944cafb29caa0b1",
+        "microcode_sha256": "90f45de5b22e3aacddce504dd76be5aef0f7aa496244667c5da5d82e8dd4f224"
+      }
+    ],
+    "2DE1D054": [
+      {
+        "path": "shaders/xboxNSknL1O.xvu",
+        "offset": 4,
+        "bytes": 608,
+        "file_sha256": "0aff7b511536f9d85a100e7d7fd22a9f96cde75d228efb64f5753f1280b41cf5",
+        "microcode_sha256": "0e5db138b89dc4079f8a83402c1432b94f949023720dd613f9cab0b1b656475a"
+      }
+    ],
+    "C60A5A58": [
+      {
+        "path": "shaders/xboxBNSknL2O.xvu",
+        "offset": 4,
+        "bytes": 1200,
+        "file_sha256": "df19982dc627789d7714ac5f195dceffbc7d0ce1f703ba90169d59d38e122fad",
+        "microcode_sha256": "47ec841f970082293e25c31becbbebcc6f2737aebc5795a51de49ca7cde2af9a"
+      }
+    ],
+    "6A816EF1": [
+      {
+        "path": "shaders/xboxFlare.xvu",
+        "offset": 4,
+        "bytes": 32,
+        "file_sha256": "ee75160bcc0ff37538cbe888dd0930dd47a7ce05dc17b002f4fd57ce4b33c3e7",
+        "microcode_sha256": "01022622960002ee4bfb5eefc231fa1c59e23023f4582191f4a06e52e2f30f9a"
+      }
+    ],
+    "F9BBF536": [
+      {
+        "path": "shaders/xboxNSknL4O.xvu",
+        "offset": 4,
+        "bytes": 1280,
+        "file_sha256": "4cdd29b7109f175fbc8efdce27d8809da0bdd99f52b4b9aaf8ec24123c0e2456",
+        "microcode_sha256": "9f21f955ffb7b3a5df5ed46ea33edf86ced4c579fc7209d2375b7fbb6895bd10"
+      }
+    ],
+    "27F6BF4F": [
+      {
+        "path": "shaders/xboxSknL4O.xvu",
+        "offset": 4,
+        "bytes": 1424,
+        "file_sha256": "50c9a2700afda26e88f9a020ad3ac0883c7fc04b798fbe666bbf5fcaed78bd21",
+        "microcode_sha256": "9dfc99585e601652ed54f98b95a6d7f09b29c622ad8743f5403fb9d3cdf3f955"
+      }
+    ],
+    "BA9B035C": [
+      {
+        "path": "shaders/xboxBNSknL4O.xvu",
+        "offset": 4,
+        "bytes": 1648,
+        "file_sha256": "c5861016cca4eb21b34f43b3c366480a940ab018ef1c08473445b1a8b25a8030",
+        "microcode_sha256": "9cb86d6fc32f49d7c12a2e320a26a7fba47c1f48f3e7a797422321387e855ef9"
+      }
+    ],
+    "2D2A8D5F": [
+      {
+        "path": "shaders/xboxStencil.xvu",
+        "offset": 4,
+        "bytes": 128,
+        "file_sha256": "91cb95a428f31a4045ba414679bb4b19988b7337a9f65e1bc748ac19f5155a83",
+        "microcode_sha256": "9b56a1a0d2dd8ed1cf54526ae0e20ea81e387037c9bea48a43239da69286c1a9"
+      }
+    ],
+    "FA7F4B9A": [
+      {
+        "path": "shaders/xboxSknL1O.xvu",
+        "offset": 4,
+        "bytes": 752,
+        "file_sha256": "35d72d1511ff974867a35dc4e7e3fb95213332619f84db32b88fe1aa025f25d0",
+        "microcode_sha256": "d996f10859d6c3ee3658b13a109ec9194255fb43ab68059d12a72f7c14718bb0"
+      }
+    ],
+    "FFE15311": [
+      {
+        "path": "shaders/xboxTerrPuddles.xvu",
+        "offset": 4,
+        "bytes": 288,
+        "file_sha256": "2222c835118f82f82fbca682b099d6f60048fd91333ca3b0e0221ee9fb6e1a93",
+        "microcode_sha256": "e0c8b0ff98ec56bb1f48d46405bb62514d633b02ed1f2c9d64913d79dda5f6b6"
+      }
+    ],
+    "29B8D2ED": [
+      {
+        "path": "shaders/xboxBNSknL1O.xvu",
+        "offset": 4,
+        "bytes": 976,
+        "file_sha256": "da15a4ceeb3c0585a73aed9112aa30d7813a19186cb7da04beb89e9242165203",
+        "microcode_sha256": "75c560eda24f3949682ef6f3966666300c0155c9e32019737c1005e568059895"
+      }
+    ],
+    "0782E5DB": [
+      {
+        "path": "default.xbe",
+        "offset": 2656096,
+        "bytes": 192,
+        "file_sha256": "aa08ea21d952ac35f49c02c7e2ed08aa25ad7535fbbbccc95636775f37be99d7",
+        "microcode_sha256": "68356e69680d014d080fc2ec5c28cf033e437fe6f45349b6c9fa201980ee2958"
+      }
+    ],
+    "05A77E07": [
+      {
+        "path": "default.xbe",
+        "offset": 2656096,
+        "bytes": 192,
+        "file_sha256": "aa08ea21d952ac35f49c02c7e2ed08aa25ad7535fbbbccc95636775f37be99d7",
+        "microcode_sha256": "68356e69680d014d080fc2ec5c28cf033e437fe6f45349b6c9fa201980ee2958"
+      }
+    ],
+    "B55E7145": [
+      {
+        "path": "shaders/xboxWater.xvu",
+        "offset": 4,
+        "bytes": 304,
+        "file_sha256": "bafcba99ed18cdae515a449e543fabf7da7c0c6641a1f9959ac9e08b282fcdf3",
+        "microcode_sha256": "c9fd9db5ecec444c410b1507d58f3303d9c84a80ecb432abee1b7900e4c11c80"
+      }
+    ],
+    "3DBD8BF4": [
+      {
+        "path": "shaders/xboxSnow.xvu",
+        "offset": 4,
+        "bytes": 224,
+        "file_sha256": "68569c7af445e58b797973a8c23adbe3096deebddcb71b25b15fdf2f15b4a651",
+        "microcode_sha256": "67b530d6442961b91b6444298e4efa703d83764cc76dc18f4d93b41610b17695"
+      }
+    ],
+    "6AF1798E": [
+      {
+        "path": "shaders/xboxNSknLTGt.xvu",
+        "offset": 4,
+        "bytes": 384,
+        "file_sha256": "d88c436585dfaffce2b272b2ec4235c95b349580e26b743f9256bf57a6326f59",
+        "microcode_sha256": "eae3b3b0e51e0f082b4c88383e1274b6e5aa098141bc816f32de1e6c2f1e4aa5"
+      }
+    ],
+    "D0455C73": [
+      {
+        "path": "shaders/xboxBNSknLTGt.xvu",
+        "offset": 4,
+        "bytes": 736,
+        "file_sha256": "55375e43cdc0582d02f0a76678e65c83274bae20cc29bcb1c846b7118b57861c",
+        "microcode_sha256": "f04db08856d6e607ef136ab7ac97d43bac743c283d49163db99ca66fada4c8cf"
+      }
+    ],
+    "684C962D": [
+      {
+        "path": "shaders/xboxDistortion.xvu",
+        "offset": 4,
+        "bytes": 208,
+        "file_sha256": "042305db4ed94d9e945bfb9c4fadb9ad4c4afcf636c573d3116764828fbe1da7",
+        "microcode_sha256": "89f6892e11219bc32c9b37b49346cfd1fd50b1a865360d8b69f64cdcad24543a"
+      }
+    ],
+    "E0A04D58": [
+      {
+        "path": "shaders/xboxWaterTGplr.xvu",
+        "offset": 4,
+        "bytes": 304,
+        "file_sha256": "c4b002d1ccdf8c7b1533ad4c2807a80ee311d6eb83304a77678adde64bf1e647",
+        "microcode_sha256": "7938cc462f93296c1a2a7165cc4d1df60ea8ed82d4c69fa6a5c1ac4fd0f45ba3"
+      }
+    ]
+  }
+}

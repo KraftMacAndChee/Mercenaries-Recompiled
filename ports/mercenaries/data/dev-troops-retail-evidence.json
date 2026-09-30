@@ -1,0 +1,144 @@
+{
+  "archive_sha256": "8b8ee254a245490ea4cda54ccea05b7a7a51afc41125aaf3cf5fd8ec512d1610",
+  "records": [
+    {
+      "menu": "North Korean Heavy",
+      "layer": "template_humans",
+      "object": "template_nk_heavy",
+      "record_index": 5368
+    },
+    {
+      "menu": "Allied Nations Heavy",
+      "layer": "template_humans",
+      "object": "template_allies_heavy",
+      "record_index": 5368
+    },
+    {
+      "menu": "North Korean Elite",
+      "layer": "template_humans",
+      "object": "template_nk_elite",
+      "record_index": 5368
+    },
+    {
+      "menu": "Chinese Officer",
+      "layer": "template_humans",
+      "object": "template_china_officer",
+      "record_index": 5368
+    },
+    {
+      "menu": "North Korean Soldier",
+      "layer": "template_humans",
+      "object": "template_nk_soldier",
+      "record_index": 5368
+    },
+    {
+      "menu": "Chinese Heavy",
+      "layer": "template_humans",
+      "object": "template_china_heavy",
+      "record_index": 5368
+    },
+    {
+      "menu": "Chinese Soldier",
+      "layer": "template_humans",
+      "object": "template_china_soldier",
+      "record_index": 5368
+    },
+    {
+      "menu": "North Korean Officer",
+      "layer": "template_humans",
+      "object": "template_nk_officer",
+      "record_index": 5368
+    },
+    {
+      "menu": "Allied Nations Soldier",
+      "layer": "template_humans",
+      "object": "template_allies_soldier",
+      "record_index": 5368
+    },
+    {
+      "menu": "Allied Nations Officer",
+      "layer": "template_humans",
+      "object": "template_allies_officer",
+      "record_index": 5368
+    },
+    {
+      "menu": "Allied Nations Pilot",
+      "layer": "template_humans",
+      "object": "template_allies_pilot",
+      "record_index": 5368
+    },
+    {
+      "menu": "North Korean Soldier Easy",
+      "layer": "template_humans",
+      "object": "template_nk_soldier_easy",
+      "record_index": 5368
+    },
+    {
+      "menu": "Russian Mafia Soldier",
+      "layer": "template_humans",
+      "object": "template_mafia_soldier",
+      "record_index": 5368
+    },
+    {
+      "menu": "South Korean Officer",
+      "layer": "template_humans",
+      "object": "template_sk_officer",
+      "record_index": 5368
+    },
+    {
+      "menu": "South Korean Soldier",
+      "layer": "template_humans",
+      "object": "template_sk_soldier",
+      "record_index": 5368
+    },
+    {
+      "menu": "South Korean Elite",
+      "layer": "template_humans",
+      "object": "template_sk_elite",
+      "record_index": 5368
+    },
+    {
+      "menu": "Russian Mafia Heavy",
+      "layer": "nw_mafia4",
+      "object": "template_mafia4_heavy",
+      "record_index": 4711,
+      "base_template": "template_mafia_soldier"
+    },
+    {
+      "menu": "Russian Mafia Officer",
+      "layer": "nw_poi_yongbyon-mafia6",
+      "object": "template_ybd_mafia_officer01",
+      "record_index": 4906,
+      "base_template": "template_mafia_soldier"
+    },
+    {
+      "menu": "South Korean Heavy",
+      "layer": "nw_poi_sinuiju_traffic",
+      "object": "template_sdk_sk_heavy",
+      "record_index": 4853,
+      "base_template": "template_sk_soldier"
+    },
+    {
+      "menu": "North Korean Radiation Soldier",
+      "layer": "admnd_island02",
+      "object": "template_supergunner",
+      "record_index": 4561,
+      "base_template": "template_nk_elite"
+    }
+  ],
+  "variant_fields": [
+    "geometryfile",
+    "displayname",
+    "weapon_a_template",
+    "secondaryweapon_a_template",
+    "spawnondeath",
+    "factionvalue",
+    "ai_accuracy",
+    "visionfactor",
+    "base_template",
+    "base_model",
+    "hitpoints",
+    "armortype_override",
+    "animationtable_override"
+  ]
+}

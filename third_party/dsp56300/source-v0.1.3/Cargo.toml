@@ -1,0 +1,19 @@
+[workspace]
+members = [
+  "crates/asm",
+  "crates/core",
+  "crates/disasm",
+  "crates/dsp56300",
+  "crates/emu",
+  "crates/emu-ffi",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.3"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT"
+authors = ["Matt Borgerson <contact@mborgerson.com>"]
+repository = "https://github.com/mborgerson/dsp56300"
+readme = "README.md"

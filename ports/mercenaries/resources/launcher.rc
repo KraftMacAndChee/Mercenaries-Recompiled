@@ -1,0 +1,11 @@
+#include <windows.h>
+201 RCDATA "launcher/background.png"
+202 RCDATA "launcher/suits.png"
+203 RCDATA "launcher/frame-close.png"
+204 RCDATA "launcher/emblem.png"
+205 RCDATA "launcher/badge-panel.png"
+206 RCDATA "launcher/frame-title.png"
+207 RCDATA "launcher/frame-body.png"
+208 RCDATA "launcher/frame-close-disabled.png"
+209 RCDATA "launcher/AgencyFB-Regular.ttf"
+210 RCDATA "launcher/AgencyFB-COPYRIGHT.txt"

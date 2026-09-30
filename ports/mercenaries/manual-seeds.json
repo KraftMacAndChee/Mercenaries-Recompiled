@@ -1,0 +1,450 @@
+[
+  {
+    "start": "0x000330A0",
+    "reason": "Retail RsActorItemCache::IsUsableToThisActor owner; radius/type/health rejection paths share AL=false epilogue at 0x3344B and ret 4 through 0x33457."
+  },
+  {
+    "start": "0x00034AD0",
+    "reason": "Reviewed retail actor-interface thunk; adjusts ECX by 0x78 and tail-calls 0x00034AE0, and must remain an exact seed instead of being swallowed by a neighboring linear sweep"
+  },
+  {
+    "start": "0x0004C840",
+    "reason": "Retail RsAnim event-broadcast function tail-called by sub_00060B00; its full body and ret 4 cleanup are required to preserve the animation update stack"
+  },
+  {
+    "start": "0x000658B0",
+    "reason": "Reviewed retail heterogeneous comparator; its type jump table reaches cases through 0x00065AA2 that share the 0x48-byte frame, EBX/EDI/ESI saves, and common true/false epilogues"
+  },
+  {
+    "start": "0x0006B150",
+    "reason": "Retail AI update method reached through an actor AI vtable; owns the SEH frame and shared epilogue through 0x0006B595"
+  },
+  {
+    "start": "0x0007CAC0",
+    "reason": "Reviewed retail RsAiHelicopter::StateExtraction::Update vtable-only owner at table 0x002E5390 index 108; retains its opcode branches and both full shared stack epilogues through 0x0007CDFF"
+  },
+  {
+    "start": "0x00086AF8",
+    "reason": "Retail RsAiPlayer::CreateObjectiveExec default jump-table branch for ObjectiveNone; forwards the placement buffer and state to RsAi::CreateObjectiveExec instead of returning through an unresolved stub"
+  },
+  {
+    "start": "0x0008A4C0",
+    "reason": "Retail derived-actor initializer reached through the actor class interface; calls the base initializer and virtual slot 0xB0, then returns with ret 8"
+  },
+  {
+    "start": "0x0008DB70",
+    "reason": "Reviewed retail camera update vtable method; owns the mode jump table and shared no-target/cleanup continuations through 0x0008DC9C"
+  },
+  {
+    "start": "0x000AFF40",
+    "reason": "Retail BunkerBusterRays array constructor passed as an immediate callback by 0x0024A610 to CRT vector constructor 0x0023792F. Initializes brush links and vtable 0x002E7628; omission silently drops all white ray draws."
+  },
+  {
+    "start": "0x000CB120",
+    "reason": "Retail DataPod Status update; owns the 0x64-byte frame and internal display-mode jump table through the shared timer/update epilogue at 0x000CB4D9"
+  },
+  {
+    "start": "0x000DFF60",
+    "reason": "Reviewed retail front-end initialization routine; owns the shared continuation through 0x000E0096 and tail-calls 0x000E0181, so truncating it at 0x000E000A stalls startup"
+  },
+  {
+    "start": "0x00101AA0",
+    "reason": "Retail RsHudSecondaryAmmo::ResetTime tail-called by RsHud::ResetTime; initializes the authored secondary-ammo scale, flash colors, and icon flap instead of returning through an unresolved no-op stub"
+  },
+  {
+    "start": "0x001089D1",
+    "reason": "Retail renderer callback shared SEH epilogue reached from 0x00108900; restores the 0x14-byte frame so the caller preserves ESI and its intrusive render-list owner"
+  },
+  {
+    "start": "0x00108A00",
+    "reason": "Retail RsHudMainCrossHair::_UpdateDumbTarget complete aligned SEH function through 0x108E7D; mounted MG/missile calls require authored reticle mode, geometry flags and ret 4."
+  },
+  {
+    "start": "0x00110D00",
+    "reason": "Retail RsLuaEvent weapon-selection predicate: sw_mafia5 target1_WeaponsTampered previously called an unresolved no-op, losing ret 4 cleanup and corrupting the event iterator. Preserve actor-lifetime check, selected-weapon comparison and cancellation."
+  },
+  {
+    "start": "0x0011EA00",
+    "reason": "Retail RsLuaState::Audio_ProcessVoiceoverCB passed as data to RegisterStopCallback; finds the cue handle, invokes the authored Lua function, releases the callback slot, and returns cdecl"
+  },
+  {
+    "start": "0x00120ED0",
+    "reason": "Retail Lua C closure reached indirectly from luaD_precall while starting the South Korean defense contract; builds the authored table key and returns one Lua result with cdecl caller cleanup"
+  },
+  {
+    "start": "0x00126F80",
+    "reason": "Retail 12-byte container constructor passed indirectly to the MSVC vector-construction helper by 0x001274C0; initializes three fields used while launching gameplay"
+  },
+  {
+    "start": "0x00145460",
+    "reason": "Retail RsHavokRope::Update owner; all four state-table cases share the 0x54-byte frame and render/timer tails through 0x1455D2."
+  },
+  {
+    "start": "0x00145FB0",
+    "reason": "Retail transform callback registered indirectly through 0x00643318; full SEH function was hidden behind the preceding jump table and must consume the tail-call return address"
+  },
+  {
+    "start": "0x0014EBA0",
+    "reason": "Retail RsSoundEffectCar2::SetDetailLevel target at vehicle-sound vtable 0x002E1670 slot 5; assigns the high/low detail set and enables authored engine, acceleration, braking, skid, and road cues"
+  },
+  {
+    "start": "0x0014F720",
+    "reason": "Reviewed retail vehicle physics update owner; retains its internal event-mode jump table and the shared state-copy/stack epilogues through 0x0014FEDD"
+  },
+  {
+    "start": "0x0014FF00",
+    "reason": "Reviewed vehicle-controller constructor range owner required by Recompile.ps1; keeps the constructor through its three controller initializers and stack epilogue"
+  },
+  {
+    "start": "0x00162610",
+    "reason": "Retail RsRiderManager::Seat::OpenAutomaticEntrancesIfUsedByThisSeat; validates seat entrance and requests ENST_OPEN so automatic APC doors animate on boarding/exiting."
+  },
+  {
+    "start": "0x00167E40",
+    "reason": "Retail rider transition owner includes four jump-table branches and shared 0x1C-byte frame cleanup through 0x00168016; omitted tails corrupt rider return state."
+  },
+  {
+    "start": "0x0016D050",
+    "reason": "Retail vehicle Entrance::StateOpening::Enter, vtable 0x002F30DC slot 0; resets the door pose and plays the authored opening cue at entrance +0x88 through spatial PlayManaged 0x001FFB30."
+  },
+  {
+    "start": "0x0016D1B0",
+    "reason": "Retail vehicle Entrance::StateClosing::Enter, vtable 0x002F30E8 slot 0; plays the authored closing cue at entrance +0x8C through spatial PlayManaged 0x001FFB30."
+  },
+  {
+    "start": "0x0016FF5F",
+    "reason": "Retail fall-through comparison continuation omitted from sub_0016FD70; required to reach the shared pop esi / ret 8 epilogue for hashes below 0x9B081130"
+  },
+  {
+    "start": "0x0016FF7C",
+    "reason": "Retail interior comparison-dispatch continuation in sub_0016FD70; it must preserve the shared frame rather than use a minimal unresolved-return stub"
+  },
+  {
+    "start": "0x0016FF8A",
+    "reason": "Retail interior comparison-dispatch continuation in sub_0016FD70; it rejoins the shared method body instead of returning to the virtual caller"
+  },
+  {
+    "start": "0x0016FFE9",
+    "reason": "Retail shared epilogue in sub_0016FD70 containing pop esi and ret 8; required to clean the virtual-call arguments correctly"
+  },
+  {
+    "start": "0x0016FFFD",
+    "reason": "Retail alternate shared epilogue in sub_0016FD70 containing pop esi and ret 8; required to preserve the caller stack and saved ESI"
+  },
+  {
+    "start": "0x00179390",
+    "reason": "Retail RsMain AllocFun callback installed indirectly in PblStreamManager; allocates external streaming buffers"
+  },
+  {
+    "start": "0x001793E0",
+    "reason": "Retail RsMain::_SetState tail fragment reached from sub_0017A0A0; performs state Exit/Enter virtual calls"
+  },
+  {
+    "start": "0x0018B020",
+    "reason": "Retail RsLoadSaveGameFile shared state-5 completion tail reached by the 0x0018AFC1 branch"
+  },
+  {
+    "start": "0x0018B035",
+    "reason": "Retail RsLoadSaveGameFile shared state-21 continuation reached by the 0x0018AF49 branch"
+  },
+  {
+    "start": "0x0018B071",
+    "reason": "Retail RsLoadSaveGameFile common result epilogue reached by branches from the 0x0018AEE0 state machine"
+  },
+  {
+    "start": "0x0018D2D0",
+    "reason": "Retail asynchronous load/save state machine; its jump table cases share ECX/ESI/EDI/EBP frame state and common pending, error, and completion epilogues through 0x0018D45D"
+  },
+  {
+    "start": "0x0018D346",
+    "reason": "Retail RsLoadSaveGameFile::Sync shared continuation reached by operation jump-table cases; propagates the result, clears completed operations, and executes the common register/stack epilogue"
+  },
+  {
+    "start": "0x0018D348",
+    "reason": "Retail RsLoadSaveGameFile::Sync common result and four-register stack epilogue reached from 0x0018D32C; must not use a minimal unresolved return stub"
+  },
+  {
+    "start": "0x001A7DF0",
+    "reason": "Retail cdecl scene-list construction callback installed by 0x001A7E60 and invoked through 0x001C8990; must execute its real logic and plain ret instead of unresolved-ICALL stack recovery"
+  },
+  {
+    "start": "0x001B10B0",
+    "reason": "Reviewed native control-flow range owner required by Recompile.ps1; must be present in clean analysis before range coalescing"
+  },
+  {
+    "start": "0x001B1BA0",
+    "reason": "Reviewed native control-flow range owner required by Recompile.ps1; must be present in clean analysis before range coalescing"
+  },
+  {
+    "start": "0x001B9EB0",
+    "reason": "Reviewed native control-flow range owner required by Recompile.ps1; must be present in clean analysis before range coalescing"
+  },
+  {
+    "start": "0x001C53F0",
+    "reason": "Reviewed Havok constraint command-stream range owner required by Recompile.ps1; retains every jump-table case and the shared epilogue"
+  },
+  {
+    "start": "0x001DAFA0",
+    "reason": "Reviewed retail Lua string-format dispatcher owner; retains all format-case entries and their shared 0x80-byte frame epilogue through 0x001DB0C4"
+  },
+  {
+    "start": "0x001DCF00",
+    "reason": "Reviewed retail lua_topointer owner; retains the shared table/type continuations through 0x001DCF3F"
+  },
+  {
+    "start": "0x001ED840",
+    "reason": "Retail RedWorld::ReadData entry tail-called by RsWorld::ReadData at 0x0016FD50; parses world and region chunks instead of silently returning through an unresolved stub"
+  },
+  {
+    "start": "0x00208F30",
+    "reason": "Reviewed retail one-byte state accessor; returns ECX+0x14 bit zero and must remain an exact short function boundary"
+  },
+  {
+    "start": "0x00209B80",
+    "reason": "Reviewed retail object-field accessor; returns ECX+0x8C and must remain an exact short function boundary"
+  },
+  {
+    "start": "0x0020F120",
+    "reason": "Retail sibling of 0x0020F180; called from 0x000A4C97 and ends with ret 4"
+  },
+  {
+    "start": "0x00211370",
+    "reason": "Retail renderer/display callback installed indirectly by startup at 0x001806A0"
+  },
+  {
+    "start": "0x00211442",
+    "reason": "Retail renderer/display callback shared finish tail reached by its jump-table cases"
+  },
+  {
+    "start": "0x0021AB90",
+    "reason": "Retail scalar transform setter tail-called by sub_001EF850; writes the float argument to this+0xDC and returns with ret 4"
+  },
+  {
+    "start": "0x002293E3",
+    "reason": "Retail XPhysicalFree tail fragment reached from sub_001787D0; dispatches physical deallocation instead of returning as an unresolved stub"
+  },
+  {
+    "start": "0x002295D6",
+    "reason": "Title startup callback passed to the XAPI thread wrapper"
+  },
+  {
+    "start": "0x0022B43F",
+    "reason": "Start routine passed to PsCreateSystemThreadEx"
+  },
+  {
+    "start": "0x00230CF5",
+    "reason": "Retail hk geometry processor loop continuation inside sub_00230CB0; preserves the shared aligned stack frame across outer iterations"
+  },
+  {
+    "start": "0x00230D24",
+    "reason": "Retail hk geometry command dispatcher continuation inside sub_00230CB0; loops to the first jump table without returning from the shared frame"
+  },
+  {
+    "start": "0x00230D27",
+    "reason": "Retail hk geometry first jump-table redispatch entry inside sub_00230CB0"
+  },
+  {
+    "start": "0x00230F02",
+    "reason": "Retail hk geometry SIMD accumulation fall-through omitted after sub_00230E00; it must continue within the shared aligned stack frame instead of returning early"
+  },
+  {
+    "start": "0x00230F6D",
+    "reason": "Retail hk geometry x87 comparison branch continuation reached from sub_00230E00"
+  },
+  {
+    "start": "0x00230F83",
+    "reason": "Retail hk geometry alternate x87 comparison branch continuation reached from sub_00230E00"
+  },
+  {
+    "start": "0x00231021",
+    "reason": "Retail hk geometry positive SIMD accumulation continuation reached from 0x00230F6D"
+  },
+  {
+    "start": "0x002310A9",
+    "reason": "Retail hk geometry x87 discard continuation reached from 0x00230F83"
+  },
+  {
+    "start": "0x002310AB",
+    "reason": "Retail hk geometry command advance continuation shared by the omitted SIMD accumulation paths"
+  },
+  {
+    "start": "0x002311E4",
+    "reason": "Retail hk geometry dual-result SIMD accumulation fall-through after the shared x87 comparisons"
+  },
+  {
+    "start": "0x0023141E",
+    "reason": "Retail hk geometry floating-point continuation reached from the first jump-table cases"
+  },
+  {
+    "start": "0x00231434",
+    "reason": "Retail hk geometry alternate floating-point continuation reached from the first jump-table cases"
+  },
+  {
+    "start": "0x002314CA",
+    "reason": "Retail hk geometry alternate positive floating-point accumulation continuation reached from 0x0023141E"
+  },
+  {
+    "start": "0x00231555",
+    "reason": "Two-byte retail x87 shared continuation (fstp st(0)) reached by a conditional branch; it must fall through to 0x00231557 instead of using an unresolved-return stub"
+  },
+  {
+    "start": "0x00231557",
+    "reason": "Retail hk geometry first-phase command advance continuation"
+  },
+  {
+    "start": "0x002318A2",
+    "reason": "Reviewed Havok contact-response range owner required by Recompile.ps1; retains the shared tail through 0x00231B05"
+  },
+  {
+    "start": "0x00232440",
+    "reason": "Retail hk geometry post-pass mode dispatcher continuation"
+  },
+  {
+    "start": "0x0023244B",
+    "reason": "Retail hk geometry post-pass object setup continuation"
+  },
+  {
+    "start": "0x00232460",
+    "reason": "Retail hk geometry post-pass jump-table dispatcher continuation"
+  },
+  {
+    "start": "0x00232463",
+    "reason": "Retail hk geometry post-pass jump-table redispatch entry"
+  },
+  {
+    "start": "0x00232472",
+    "reason": "Retail hk geometry mode-two accumulation continuation"
+  },
+  {
+    "start": "0x00232494",
+    "reason": "Retail hk geometry alternate post-pass mode dispatcher continuation"
+  },
+  {
+    "start": "0x00232861",
+    "reason": "Retail hk geometry second-phase setup continuation inside sub_00230CB0"
+  },
+  {
+    "start": "0x00232874",
+    "reason": "Retail hk geometry second-phase command advance continuation"
+  },
+  {
+    "start": "0x00232880",
+    "reason": "Retail hk geometry second jump-table dispatcher continuation"
+  },
+  {
+    "start": "0x00237710",
+    "reason": "Retail atoi implementation tail-called by the CRT thunk at 0x00237768; required by RedComponentSet::ReadStringPairHI"
+  },
+  {
+    "start": "0x00255694",
+    "reason": "Retail XMV asynchronous refill callback passed to the decoder by 0x002557CC; issues the next overlapped movie-data read"
+  },
+  {
+    "start": "0x002830EC",
+    "reason": "Retail XACT scheduler timer DPC thunk registered indirectly through KeSetTimer; invokes the engine callback and returns with ret 16"
+  },
+  {
+    "start": "0x00283884",
+    "reason": "Retail XACT engine method reached only through an interface vtable; performs the authored lookup, virtual dispatch, and ret 12 cleanup required for sustained cue playback"
+  },
+  {
+    "start": "0x00290881",
+    "reason": "Retail D3D format-dispatch shared success tail leading to ret 8; required to preserve caller stack cleanup"
+  },
+  {
+    "start": "0x00290884",
+    "reason": "Retail D3D format-dispatch tail target containing ret 8; required to preserve caller stack cleanup"
+  },
+  {
+    "start": "0x00290887",
+    "reason": "Retail D3D format-dispatch null-resource tail target ending in ret 8; required to preserve caller stack cleanup"
+  },
+  {
+    "start": "0x002965A8",
+    "reason": "Retail D3D format helper shared body after jump-table-specific ESI selection"
+  },
+  {
+    "start": "0x002965F0",
+    "reason": "Retail D3D state compiler parent; its indexed switch cases share the 0xB8-byte entry frame and ret 8 epilogue through 0x00296B47"
+  },
+  {
+    "start": "0x0029D9F6",
+    "reason": "Retail DirectSound stream method tail-called by the XMO vtable thunk at 0x0029E660; submits or flushes an audio packet and must not return through an unresolved stub"
+  },
+  {
+    "start": "0x0029E103",
+    "reason": "Retail DirectSound mix-bin method tail-called by the vtable thunk at 0x0029E60B; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E155",
+    "reason": "Retail DirectSound mix-bin method tail-called by the vtable thunk at 0x0029E610; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E1A7",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E615; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E1F9",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E64C; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E24B",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E651; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E29D",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E656; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E2EF",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E65B; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E341",
+    "reason": "Retail DirectSound voice-control method tail-called by the vtable thunk at 0x0029E67D; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E393",
+    "reason": "Retail DirectSound voice-control method tail-called by its XDK interface thunk; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029E3E5",
+    "reason": "Retail DirectSound voice-control method tail-called by its XDK interface thunk; forwards to the real stream voice rather than an unresolved stub"
+  },
+  {
+    "start": "0x0029EC9D",
+    "reason": "Retail DirectSound scalar-deleting destructor reached through the 0x00302E88 vtable via the 0x0022FB1F this-adjustment thunk; its destructor body and ret 4 cleanup are required to preserve object pointers and the guest stack"
+  },
+  {
+    "start": "0x0029ED54",
+    "reason": "Retail DirectSound interface tail reached by a translated wrapper; preserves the real method result and stack cleanup"
+  },
+  {
+    "start": "0x0029EDA6",
+    "reason": "Retail DirectSound interface tail reached by a translated wrapper; preserves the real method result and stack cleanup"
+  },
+  {
+    "start": "0x0029F427",
+    "reason": "Retail DirectSound interface tail reached by a translated wrapper; preserves the real method result and stack cleanup"
+  },
+  {
+    "start": "0x0029FFF0",
+    "reason": "Retail four-argument DirectSound format initializer tail-called from 0x0029CEDF; its ret 16 cleanup is required to preserve ESI and stream-list integrity"
+  },
+  {
+    "start": "0x002A003A",
+    "reason": "Retail DirectSound allocation tail reached from 0x0029CEE4 during XMV audio initialization; must execute instead of an unresolved no-op stub"
+  },
+  {
+    "start": "0x002A1810",
+    "reason": "Retail MCPX APU DPC thunk queued indirectly by the IRQ 5 handler; drains completed DirectSound notifications and returns with ret 16"
+  },
+  {
+    "start": "0x002A19F0",
+    "reason": "Retail MCPX APU ISR thunk registered indirectly through KeInitializeInterrupt; dispatches IRQ 5 notification completion into the DirectSound driver and returns with ret 8"
+  },
+  {
+    "start": "0x002A7A8C",
+    "reason": "Retail AC97 ISR thunk registered indirectly through KeInitializeInterrupt for IRQ 6; calls the device handler and returns with ret 8"
+  }
+]

@@ -1,0 +1,2496 @@
+{
+  "schema": 1,
+  "basis": "Independent retail transforms/compiled bounds establish the surrounding geometry. These 46 rounded detours are project diagnostic steering choices",
+  "retail_assets_sha256": "8b8ee254a245490ea4cda54ccea05b7a7a51afc41125aaf3cf5fd8ec512d1610",
+  "project_detours": [
+    {
+      "array": "targets",
+      "index": 1,
+      "position": [
+        1548.554,
+        1758.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "south-gate-approach",
+      "retail_obstacles": [
+        {
+          "world": "swn_allies0_enc_roadblock",
+          "instance": 49,
+          "model": "global_roadblock01",
+          "bounds": [
+            1597.0654331445694,
+            -0.7343986756168306,
+            1540.9063724279404,
+            1599.4410367012024,
+            1.3282443284988403,
+            1543.7722843885422
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "sw",
+          "instance": 1619,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0307539503985,
+            -0.2923987037502229,
+            1226.7969756754424,
+            1451.747639883167,
+            1.770244300365448,
+            1230.4115041962198
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 385,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0133111142252,
+            -0.29939870348804043,
+            1226.7830059125565,
+            1451.731073154679,
+            1.763244177684527,
+            1230.4014784624944
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 2,
+      "position": [
+        1555.0,
+        1740.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "south-gate-approach",
+      "retail_obstacles": [
+        {
+          "world": "swn_allies0_enc_roadblock",
+          "instance": 49,
+          "model": "global_roadblock01",
+          "bounds": [
+            1597.0654331445694,
+            -0.7343986756168306,
+            1540.9063724279404,
+            1599.4410367012024,
+            1.3282443284988403,
+            1543.7722843885422
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "sw",
+          "instance": 1619,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0307539503985,
+            -0.2923987037502229,
+            1226.7969756754424,
+            1451.747639883167,
+            1.770244300365448,
+            1230.4115041962198
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 385,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0133111142252,
+            -0.29939870348804043,
+            1226.7830059125565,
+            1451.731073154679,
+            1.763244177684527,
+            1230.4014784624944
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 14,
+      "position": [
+        1630.0,
+        1560.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "encounter-east-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn_allies0_enc_roadblock",
+          "instance": 49,
+          "model": "global_roadblock01",
+          "bounds": [
+            1597.0654331445694,
+            -0.7343986756168306,
+            1540.9063724279404,
+            1599.4410367012024,
+            1.3282443284988403,
+            1543.7722843885422
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "sw",
+          "instance": 1619,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0307539503985,
+            -0.2923987037502229,
+            1226.7969756754424,
+            1451.747639883167,
+            1.770244300365448,
+            1230.4115041962198
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 385,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0133111142252,
+            -0.29939870348804043,
+            1226.7830059125565,
+            1451.731073154679,
+            1.763244177684527,
+            1230.4014784624944
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 15,
+      "position": [
+        1630.0,
+        1510.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "encounter-east-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn_allies0_enc_roadblock",
+          "instance": 49,
+          "model": "global_roadblock01",
+          "bounds": [
+            1597.0654331445694,
+            -0.7343986756168306,
+            1540.9063724279404,
+            1599.4410367012024,
+            1.3282443284988403,
+            1543.7722843885422
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "sw",
+          "instance": 1619,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0307539503985,
+            -0.2923987037502229,
+            1226.7969756754424,
+            1451.747639883167,
+            1.770244300365448,
+            1230.4115041962198
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 385,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0133111142252,
+            -0.29939870348804043,
+            1226.7830059125565,
+            1451.731073154679,
+            1.763244177684527,
+            1230.4014784624944
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 16,
+      "position": [
+        1630.0,
+        1463.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "encounter-east-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn_allies0_enc_roadblock",
+          "instance": 49,
+          "model": "global_roadblock01",
+          "bounds": [
+            1597.0654331445694,
+            -0.7343986756168306,
+            1540.9063724279404,
+            1599.4410367012024,
+            1.3282443284988403,
+            1543.7722843885422
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "sw",
+          "instance": 1619,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0307539503985,
+            -0.2923987037502229,
+            1226.7969756754424,
+            1451.747639883167,
+            1.770244300365448,
+            1230.4115041962198
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 385,
+          "model": "global_roadblock01",
+          "bounds": [
+            1448.0133111142252,
+            -0.29939870348804043,
+            1226.7830059125565,
+            1451.731073154679,
+            1.763244177684527,
+            1230.4014784624944
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 35,
+      "position": [
+        1490.0,
+        1138.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-corner-and-fence",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 36,
+      "position": [
+        1485.0,
+        1128.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-corner-and-fence",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 579,
+          "model": "dmz_fence",
+          "bounds": [
+            1426.3695857222942,
+            19.003334570827384,
+            1106.3079055487106,
+            1430.8990871947592,
+            22.9666806748545,
+            1116.607536745567
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 39,
+      "position": [
+        1438.0,
+        1122.39
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-corner-and-fence",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 40,
+      "position": [
+        1438.0,
+        1135.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-corner-and-fence",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 944,
+          "model": "dmz_fence",
+          "bounds": [
+            1419.1653918809063,
+            18.81338940828076,
+            1125.4157657728138,
+            1425.541759835328,
+            23.108302356897042,
+            1135.4642576189742
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 41,
+      "position": [
+        1415.0,
+        1135.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-corner-and-fence",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 944,
+          "model": "dmz_fence",
+          "bounds": [
+            1419.1653918809063,
+            18.81338940828076,
+            1125.4157657728138,
+            1425.541759835328,
+            23.108302356897042,
+            1135.4642576189742
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 63,
+      "position": [
+        1365.0,
+        865.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 1309,
+          "model": "global_guardrail",
+          "bounds": [
+            1360.6841161013165,
+            25.75200080871582,
+            858.9775299111333,
+            1363.5279267697379,
+            27.25441610813141,
+            868.3979072401149
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 25,
+          "model": "global_guardrail",
+          "bounds": [
+            1360.4890658612876,
+            25.871999740600586,
+            861.8900364082458,
+            1363.359026686251,
+            27.374415040016174,
+            871.3031755652256
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 881,
+          "model": "global_guardrail",
+          "bounds": [
+            1363.17708795819,
+            25.868999481201172,
+            852.3352361861032,
+            1363.4016470321085,
+            27.37141478061676,
+            862.1001100446439
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 64,
+      "position": [
+        1345.0,
+        855.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 510,
+          "model": "global_guardrail",
+          "bounds": [
+            1331.3688023871032,
+            25.792999267578125,
+            845.2186732106616,
+            1338.9410920633984,
+            27.295414387891853,
+            851.6015838832064
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 881,
+          "model": "global_guardrail",
+          "bounds": [
+            1363.17708795819,
+            25.868999481201172,
+            852.3352361861032,
+            1363.4016470321085,
+            27.37141478061676,
+            862.1001100446439
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 1309,
+          "model": "global_guardrail",
+          "bounds": [
+            1360.6841161013165,
+            25.75200080871582,
+            858.9775299111333,
+            1363.5279267697379,
+            27.25441610813141,
+            868.3979072401149
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 65,
+      "position": [
+        1345.0,
+        842.766
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 324,
+          "model": "global_guardrail",
+          "bounds": [
+            1340.9939145195838,
+            25.829999923706055,
+            831.9798078139345,
+            1350.7582009653372,
+            27.332415223121643,
+            832.1410386761132
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 510,
+          "model": "global_guardrail",
+          "bounds": [
+            1331.3688023871032,
+            25.792999267578125,
+            845.2186732106616,
+            1338.9410920633984,
+            27.295414387891853,
+            851.6015838832064
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 971,
+          "model": "global_guardrail",
+          "bounds": [
+            1332.3820707744235,
+            25.792999267578125,
+            831.9892811061914,
+            1341.0963623347168,
+            27.295414746095574,
+            836.6468211847605
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 66,
+      "position": [
+        1365.0,
+        842.766
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 640,
+          "model": "global_guardrail",
+          "bounds": [
+            1364.6795394909875,
+            25.781999588012695,
+            832.2031912001914,
+            1374.4443165663406,
+            27.284414887428284,
+            832.5596425439303
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 2720,
+          "model": "global_guardrail",
+          "bounds": [
+            1364.711883447646,
+            25.73699951171875,
+            831.6108906287313,
+            1374.4546808842017,
+            27.239414721583408,
+            832.5522208986961
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 1056,
+          "model": "global_guardrail",
+          "bounds": [
+            1355.0289811877033,
+            25.802000045776367,
+            831.8057118555081,
+            1364.7903448397267,
+            27.304415345191956,
+            832.3571982268468
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 67,
+      "position": [
+        1380.0,
+        842.766
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 310,
+          "model": "global_guardrail",
+          "bounds": [
+            1374.3370366957267,
+            25.739999771118164,
+            829.1385743721484,
+            1383.5774961032225,
+            27.242414980982822,
+            832.5629497937301
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 201,
+          "model": "global_guardrail",
+          "bounds": [
+            1374.3170408921565,
+            25.732999801635742,
+            829.1356019933854,
+            1383.5637070856578,
+            27.23541510105133,
+            832.5419425993313
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 929,
+          "model": "dmz_fence",
+          "bounds": [
+            1392.3018570871025,
+            25.923999786376953,
+            839.3212436985243,
+            1395.075347375393,
+            29.676662951390313,
+            849.5249008077895
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "targets",
+      "index": 69,
+      "position": [
+        1434.0,
+        840.5
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-roadblock-turn",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 991,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.091124355793,
+            25.97095137485303,
+            837.8011413216591,
+            1437.078797519207,
+            27.721962928771973,
+            839.7849182486534
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 3940,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.108214199543,
+            25.97795134433545,
+            837.8131042122841,
+            1437.095887362957,
+            27.728962898254395,
+            839.7968811392784
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 38,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1436.6237110977659,
+            25.857952412450686,
+            838.4179763495922,
+            1446.856269373789,
+            27.3579523563385,
+            839.3569167852402
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 0,
+      "position": [
+        1452.0,
+        865.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "parking-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 256,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3485347225383,
+            26.22795134433545,
+            868.97962955676,
+            1456.3794926212117,
+            27.978962898254395,
+            871.0143889979275
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 1577,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3176075010147,
+            26.234951313817874,
+            869.0827271516155,
+            1456.3403514833603,
+            27.985962867736816,
+            871.109289449947
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 237,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.3746000752963,
+            26.18095236667432,
+            869.7192837312449,
+            1466.6110476008566,
+            27.680952310562134,
+            870.7016045712419
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 1,
+      "position": [
+        1428.0,
+        865.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "parking-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 3940,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.108214199543,
+            25.97795134433545,
+            837.8131042122841,
+            1437.095887362957,
+            27.728962898254395,
+            839.7968811392784
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 991,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.091124355793,
+            25.97095137485303,
+            837.8011413216591,
+            1437.078797519207,
+            27.721962928771973,
+            839.7849182486534
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 1577,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3176075010147,
+            26.234951313817874,
+            869.0827271516155,
+            1456.3403514833603,
+            27.985962867736816,
+            871.109289449947
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        }
+      ]
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 2,
+      "position": [
+        1428.0,
+        848.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "parking-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 991,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.091124355793,
+            25.97095137485303,
+            837.8011413216591,
+            1437.078797519207,
+            27.721962928771973,
+            839.7849182486534
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 3940,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.108214199543,
+            25.97795134433545,
+            837.8131042122841,
+            1437.095887362957,
+            27.728962898254395,
+            839.7968811392784
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 38,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1436.6237110977659,
+            25.857952412450686,
+            838.4179763495922,
+            1446.856269373789,
+            27.3579523563385,
+            839.3569167852402
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 3,
+      "position": [
+        1472.0,
+        848.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "parking-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 202,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.539485156536,
+            26.22095137485303,
+            839.5440063476562,
+            1478.289485156536,
+            26.86637055873871,
+            849.5440063476562
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "sw",
+          "instance": 4509,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.5564529299736,
+            26.22795134433545,
+            839.5560302734375,
+            1478.3064529299736,
+            26.87337052822113,
+            849.5560302734375
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "swn",
+          "instance": 157,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.5454666018486,
+            26.22095137485303,
+            849.5150146484375,
+            1478.2954666018486,
+            26.86637055873871,
+            859.5150146484375
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 0,
+      "position": [
+        1490.0,
+        1142.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 1,
+      "position": [
+        1470.0,
+        1142.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 2,
+      "position": [
+        1455.0,
+        1142.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 944,
+          "model": "dmz_fence",
+          "bounds": [
+            1419.1653918809063,
+            18.81338940828076,
+            1125.4157657728138,
+            1425.541759835328,
+            23.108302356897042,
+            1135.4642576189742
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 3,
+      "position": [
+        1455.0,
+        1113.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 780,
+          "model": "global_roadblock01",
+          "bounds": [
+            1438.5091828610973,
+            17.99183657429515,
+            1129.5276779122328,
+            1442.0226358375508,
+            20.680507445453497,
+            1132.4598411494069
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 579,
+          "model": "dmz_fence",
+          "bounds": [
+            1426.3695857222942,
+            19.003334570827384,
+            1106.3079055487106,
+            1430.8990871947592,
+            22.9666806748545,
+            1116.607536745567
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 4,
+      "position": [
+        1436.0,
+        1100.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 579,
+          "model": "dmz_fence",
+          "bounds": [
+            1426.3695857222942,
+            19.003334570827384,
+            1106.3079055487106,
+            1430.8990871947592,
+            22.9666806748545,
+            1116.607536745567
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 259,
+          "model": "global_roadblock01",
+          "bounds": [
+            1440.8977353118566,
+            17.797192644832084,
+            1120.806794640401,
+            1444.6923637862167,
+            20.48186873438701,
+            1123.962988141256
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 5,
+      "position": [
+        1420.0,
+        1098.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 579,
+          "model": "dmz_fence",
+          "bounds": [
+            1426.3695857222942,
+            19.003334570827384,
+            1106.3079055487106,
+            1430.8990871947592,
+            22.9666806748545,
+            1116.607536745567
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 944,
+          "model": "dmz_fence",
+          "bounds": [
+            1419.1653918809063,
+            18.81338940828076,
+            1125.4157657728138,
+            1425.541759835328,
+            23.108302356897042,
+            1135.4642576189742
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 6,
+      "position": [
+        1410.0,
+        1100.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "checkpoint-fence-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 579,
+          "model": "dmz_fence",
+          "bounds": [
+            1426.3695857222942,
+            19.003334570827384,
+            1106.3079055487106,
+            1430.8990871947592,
+            22.9666806748545,
+            1116.607536745567
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 804,
+          "model": "dmz_fence",
+          "bounds": [
+            1423.6163153454854,
+            18.54412717144189,
+            1115.8592359414392,
+            1428.3888795469054,
+            22.831149662552562,
+            1126.2454833401473
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 944,
+          "model": "dmz_fence",
+          "bounds": [
+            1419.1653918809063,
+            18.81338940828076,
+            1125.4157657728138,
+            1425.541759835328,
+            23.108302356897042,
+            1135.4642576189742
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 26,
+      "position": [
+        1380.0,
+        870.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 25,
+          "model": "global_guardrail",
+          "bounds": [
+            1360.4890658612876,
+            25.871999740600586,
+            861.8900364082458,
+            1363.359026686251,
+            27.374415040016174,
+            871.3031755652256
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 1309,
+          "model": "global_guardrail",
+          "bounds": [
+            1360.6841161013165,
+            25.75200080871582,
+            858.9775299111333,
+            1363.5279267697379,
+            27.25441610813141,
+            868.3979072401149
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 1030,
+          "model": "dmz_fence",
+          "bounds": [
+            1392.3821719988498,
+            25.93400001525879,
+            849.4245970970956,
+            1394.3260887573388,
+            29.68666362762451,
+            859.5993962582544
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 27,
+      "position": [
+        1386.0,
+        846.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 929,
+          "model": "dmz_fence",
+          "bounds": [
+            1392.3018570871025,
+            25.923999786376953,
+            839.3212436985243,
+            1395.075347375393,
+            29.676662951390313,
+            849.5249008077895
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 1030,
+          "model": "dmz_fence",
+          "bounds": [
+            1392.3821719988498,
+            25.93400001525879,
+            849.4245970970956,
+            1394.3260887573388,
+            29.68666362762451,
+            859.5993962582544
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 371,
+          "model": "global_roadblock01",
+          "bounds": [
+            1397.621141554978,
+            26.05360083469517,
+            849.0017558658008,
+            1400.9210544662653,
+            28.11624371586774,
+            851.9249302405674
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 28,
+      "position": [
+        1370.0,
+        833.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 640,
+          "model": "global_guardrail",
+          "bounds": [
+            1364.6795394909875,
+            25.781999588012695,
+            832.2031912001914,
+            1374.4443165663406,
+            27.284414887428284,
+            832.5596425439303
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 2720,
+          "model": "global_guardrail",
+          "bounds": [
+            1364.711883447646,
+            25.73699951171875,
+            831.6108906287313,
+            1374.4546808842017,
+            27.239414721583408,
+            832.5522208986961
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 201,
+          "model": "global_guardrail",
+          "bounds": [
+            1374.3170408921565,
+            25.732999801635742,
+            829.1356019933854,
+            1383.5637070856578,
+            27.23541510105133,
+            832.5419425993313
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 29,
+      "position": [
+        1412.0,
+        822.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 141,
+          "model": "global_roadblock01",
+          "bounds": [
+            1399.6676117904385,
+            26.266602086368948,
+            832.7155787638819,
+            1403.2782730559031,
+            28.32924509048462,
+            836.0956476562772
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 879,
+          "model": "global_roadblock01",
+          "bounds": [
+            1399.1904075770913,
+            26.073601292458843,
+            837.3823078795747,
+            1402.3709281052477,
+            28.13624417363141,
+            840.1489213326053
+          ],
+          "model_info_sha256": "28032e9d2b00aa4f0ac9802393d781c8c8007a1a2601479913ed9eab0b336017"
+        },
+        {
+          "world": "swn",
+          "instance": 768,
+          "model": "dmz_fence",
+          "bounds": [
+            1393.75388345429,
+            26.02400016784668,
+            829.4203037571181,
+            1396.5273737425805,
+            29.77666333286004,
+            839.6239608663833
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 30,
+      "position": [
+        1428.0,
+        848.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 991,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.091124355793,
+            25.97095137485303,
+            837.8011413216591,
+            1437.078797519207,
+            27.721962928771973,
+            839.7849182486534
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 3940,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1435.108214199543,
+            25.97795134433545,
+            837.8131042122841,
+            1437.095887362957,
+            27.728962898254395,
+            839.7968811392784
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 38,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1436.6237110977659,
+            25.857952412450686,
+            838.4179763495922,
+            1446.856269373789,
+            27.3579523563385,
+            839.3569167852402
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 31,
+      "position": [
+        1472.0,
+        852.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 157,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.5454666018486,
+            26.22095137485303,
+            849.5150146484375,
+            1478.2954666018486,
+            26.86637055873871,
+            859.5150146484375
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "sw",
+          "instance": 1453,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.562434375286,
+            26.22795134433545,
+            849.5269775390625,
+            1478.312434375286,
+            26.87337052822113,
+            859.5269775390625
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "swn",
+          "instance": 202,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1477.539485156536,
+            26.22095137485303,
+            839.5440063476562,
+            1478.289485156536,
+            26.86637055873871,
+            849.5440063476562
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 32,
+      "position": [
+        1450.0,
+        862.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 256,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3485347225383,
+            26.22795134433545,
+            868.97962955676,
+            1456.3794926212117,
+            27.978962898254395,
+            871.0143889979275
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 1577,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3176075010147,
+            26.234951313817874,
+            869.0827271516155,
+            1456.3403514833603,
+            27.985962867736816,
+            871.109289449947
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 237,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.3746000752963,
+            26.18095236667432,
+            869.7192837312449,
+            1466.6110476008566,
+            27.680952310562134,
+            870.7016045712419
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 33,
+      "position": [
+        1450.0,
+        879.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 1577,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3176075010147,
+            26.234951313817874,
+            869.0827271516155,
+            1456.3403514833603,
+            27.985962867736816,
+            871.109289449947
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "swn",
+          "instance": 256,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1454.3485347225383,
+            26.22795134433545,
+            868.97962955676,
+            1456.3794926212117,
+            27.978962898254395,
+            871.0143889979275
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 3926,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.3417286758909,
+            26.18795233615674,
+            869.8399734199047,
+            1466.574286951914,
+            27.687952280044556,
+            870.7789138555527
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 34,
+      "position": [
+        1488.0,
+        879.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 656,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1492.9722870325593,
+            26.245950993383303,
+            869.8394213445883,
+            1495.0758086705657,
+            27.996962547302246,
+            871.9465893975992
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 1570,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1492.9918881003641,
+            26.252950962865725,
+            869.8540726941302,
+            1495.0901431496359,
+            28.003962516784668,
+            871.9559858996198
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        },
+        {
+          "world": "sw",
+          "instance": 994,
+          "model": "dmz_lowwallcorner01",
+          "bounds": [
+            1476.7236133603897,
+            26.22295218356885,
+            869.3297364289592,
+            1478.7463573427353,
+            27.973963737487793,
+            871.3562987272908
+          ],
+          "model_info_sha256": "80c56593affe564e3ceef05b56ec0652046e84e012dc976be9ae9d0b35228169"
+        }
+      ]
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 35,
+      "position": [
+        1488.0,
+        852.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "hq-wall-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 451,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1493.7114822268486,
+            26.250952061498538,
+            850.1019897460938,
+            1494.4614822268486,
+            26.896371245384216,
+            860.1019897460938
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "sw",
+          "instance": 2700,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1493.728450000286,
+            26.25795203098096,
+            850.114013671875,
+            1494.478450000286,
+            26.903371214866638,
+            860.114013671875
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "swn",
+          "instance": 348,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1493.7034255862236,
+            26.250952061498538,
+            840.1329956054688,
+            1494.4534255862236,
+            26.896371245384216,
+            850.1329956054688
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 0,
+      "position": [
+        1489.0,
+        825.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 348,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1493.7034255862236,
+            26.250952061498538,
+            840.1329956054688,
+            1494.4534255862236,
+            26.896371245384216,
+            850.1329956054688
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "sw",
+          "instance": 906,
+          "model": "dmz_lowwall02",
+          "bounds": [
+            1493.720393359661,
+            26.25795203098096,
+            840.14501953125,
+            1494.470393359661,
+            26.903371214866638,
+            850.14501953125
+          ],
+          "model_info_sha256": "956003c570d8c170552955465fc9b2db963b20635e564371a19a932bc3c38c7e"
+        },
+        {
+          "world": "sw",
+          "instance": 802,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1466.9896778946409,
+            25.867952641332522,
+            838.6219558417797,
+            1477.222236170664,
+            27.367952585220337,
+            839.5608962774277
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 1,
+      "position": [
+        1458.0,
+        827.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 956,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.7932784293166,
+            25.8609526718501,
+            838.5084850659325,
+            1467.028451973579,
+            27.360952615737915,
+            839.4763685954832
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        },
+        {
+          "world": "sw",
+          "instance": 2162,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.8116993790159,
+            25.867952641332522,
+            838.5349807441235,
+            1467.044257655039,
+            27.367952585220337,
+            839.4739211797714
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        },
+        {
+          "world": "swn",
+          "instance": 834,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1446.8016896133909,
+            25.857952412450686,
+            838.5049514472485,
+            1457.034247889414,
+            27.3579523563385,
+            839.4438918828964
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 2,
+      "position": [
+        1458.0,
+        787.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "swn",
+          "instance": 956,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.7932784293166,
+            25.8609526718501,
+            838.5084850659325,
+            1467.028451973579,
+            27.360952615737915,
+            839.4763685954832
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        },
+        {
+          "world": "sw",
+          "instance": 2162,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1456.8116993790159,
+            25.867952641332522,
+            838.5349807441235,
+            1467.044257655039,
+            27.367952585220337,
+            839.4739211797714
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        },
+        {
+          "world": "swn",
+          "instance": 834,
+          "model": "dmz_lowwall01",
+          "bounds": [
+            1446.8016896133909,
+            25.857952412450686,
+            838.5049514472485,
+            1457.034247889414,
+            27.3579523563385,
+            839.4438918828964
+          ],
+          "model_info_sha256": "56c94d51f4a304364872eed0c19414bb4242c324cdd143590211d711240180cf"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 9,
+      "position": [
+        1523.0,
+        616.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 1640,
+          "model": "global_guardrail",
+          "bounds": [
+            1544.8748719089535,
+            54.17318386568647,
+            553.8057324410298,
+            1554.6010804506266,
+            56.67110165251836,
+            555.881040090528
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 730,
+          "model": "global_guardrail",
+          "bounds": [
+            1544.857904135516,
+            54.166183896204046,
+            553.7937085152486,
+            1554.584112677189,
+            56.66410168303594,
+            555.8690161647468
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 2942,
+          "model": "global_guardrail",
+          "bounds": [
+            1554.3600076658624,
+            55.16699981689453,
+            555.738883337872,
+            1564.0272697568366,
+            56.66941511631012,
+            557.3973392712048
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 11,
+      "position": [
+        1635.0,
+        604.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 160,
+          "model": "global_guardrail",
+          "bounds": [
+            1612.0293568447337,
+            52.8769799188211,
+            550.1661379199966,
+            1619.5791801111295,
+            55.77991906396486,
+            556.7514001473479
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 932,
+          "model": "global_guardrail",
+          "bounds": [
+            1612.014589554506,
+            52.86914887229195,
+            550.1514815707213,
+            1619.5600235235763,
+            55.77370912549789,
+            556.7418303284476
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 1132,
+          "model": "global_guardrail",
+          "bounds": [
+            1602.6227679903188,
+            54.35315111246593,
+            556.3161712518388,
+            1612.2766232285492,
+            56.28250284052595,
+            558.3926032010114
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 15,
+      "position": [
+        1657.0,
+        646.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 160,
+          "model": "global_guardrail",
+          "bounds": [
+            1612.0293568447337,
+            52.8769799188211,
+            550.1661379199966,
+            1619.5791801111295,
+            55.77991906396486,
+            556.7514001473479
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "swn",
+          "instance": 932,
+          "model": "global_guardrail",
+          "bounds": [
+            1612.014589554506,
+            52.86914887229195,
+            550.1514815707213,
+            1619.5600235235763,
+            55.77370912549789,
+            556.7418303284476
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        },
+        {
+          "world": "sw",
+          "instance": 1132,
+          "model": "global_guardrail",
+          "bounds": [
+            1602.6227679903188,
+            54.35315111246593,
+            556.3161712518388,
+            1612.2766232285492,
+            56.28250284052595,
+            558.3926032010114
+          ],
+          "model_info_sha256": "ece5697c5a6a58d07a36e612256e2cee0a67d1423fb56ce833e493e09a0e72a3"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 16,
+      "position": [
+        1657.5,
+        664.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 4485,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3981041908264,
+            66.48699951171875,
+            734.2136051058769,
+            1601.511070728302,
+            70.23966312408447,
+            735.5734219551086
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 302,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3810143470764,
+            66.5,
+            734.2015811800957,
+            1601.493980884552,
+            70.25266361236572,
+            735.5613980293274
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "sw",
+          "instance": 1006,
+          "model": "dmz_fence",
+          "bounds": [
+            1581.3180260658264,
+            66.48500061035156,
+            734.2186099886894,
+            1591.430992603302,
+            70.23766422271729,
+            735.5784268379211
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 17,
+      "position": [
+        1665.0,
+        680.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 4485,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3981041908264,
+            66.48699951171875,
+            734.2136051058769,
+            1601.511070728302,
+            70.23966312408447,
+            735.5734219551086
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 302,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3810143470764,
+            66.5,
+            734.2015811800957,
+            1601.493980884552,
+            70.25266361236572,
+            735.5613980293274
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "sw",
+          "instance": 1006,
+          "model": "dmz_fence",
+          "bounds": [
+            1581.3180260658264,
+            66.48500061035156,
+            734.2186099886894,
+            1591.430992603302,
+            70.23766422271729,
+            735.5784268379211
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 18,
+      "position": [
+        1635.0,
+        715.0
+      ],
+      "classification": "project-selected diagnostic input;",
+      "purpose": "card-walk-detour",
+      "retail_obstacles": [
+        {
+          "world": "sw",
+          "instance": 4485,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3981041908264,
+            66.48699951171875,
+            734.2136051058769,
+            1601.511070728302,
+            70.23966312408447,
+            735.5734219551086
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "swn",
+          "instance": 302,
+          "model": "dmz_fence",
+          "bounds": [
+            1591.3810143470764,
+            66.5,
+            734.2015811800957,
+            1601.493980884552,
+            70.25266361236572,
+            735.5613980293274
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        },
+        {
+          "world": "sw",
+          "instance": 1006,
+          "model": "dmz_fence",
+          "bounds": [
+            1581.3180260658264,
+            66.48500061035156,
+            734.2186099886894,
+            1591.430992603302,
+            70.23766422271729,
+            735.5784268379211
+          ],
+          "model_info_sha256": "908821e63d15655bcef3d24dc4eebb2071f6256cd0df277918912b3405685d77"
+        }
+      ]
+    }
+  ],
+  "clearance_checks": {
+    "checkpoint_fence_north_edge": 1126.2454833401473,
+    "checkpoint_north_detour_z": 1135.0,
+    "checkpoint_north_clearance": 8.754516659852698
+  }
+}

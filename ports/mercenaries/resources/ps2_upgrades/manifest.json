@@ -1,0 +1,42 @@
+[
+  {
+    "file": "Allies_avehicle_M1A2.bgra",
+    "sha256": "d78e9b5f188a269581f1d365fd24df430a4c07a9c065f21280a61481b32b41d6"
+  },
+  {
+    "file": "Allies_avehicle_M1A2.png",
+    "sha256": "ce5cf4a29377f4faf97431f521c66e1d25455ca7e800aebb73c480470a08068e"
+  },
+  {
+    "file": "rifle_shot1.wav",
+    "sha256": "03a9044ebca6c82593f4aed5e437ee4789269ebf14212f3478afb2460c30d1f0",
+    "channels": 1,
+    "rate": 22050,
+    "frames": 43520,
+    "sample_bytes": 2
+  },
+  {
+    "file": "wpn_cannon_20mm_fire.wav",
+    "sha256": "4865c594cd95ecea70735998c2ada5d026c26efa14d2de11b06093ec6ec0eaa6",
+    "channels": 1,
+    "rate": 20000,
+    "frames": 17270,
+    "sample_bytes": 2
+  },
+  {
+    "file": "wpn_cannon_20mm_fire_01.wav",
+    "sha256": "6fac807e0b7df7ec11d51ba8f348da0698304fbfaa0d3a0d1da4b48ba2159c0a",
+    "channels": 1,
+    "rate": 22050,
+    "frames": 9790,
+    "sample_bytes": 2
+  },
+  {
+    "file": "wpn_cannon_20mm_fire_st.wav",
+    "sha256": "8ae0d3cf72abe3083a608c5ed1262e6df5faf0e6823dee6af15f457275e30af8",
+    "channels": 1,
+    "rate": 22050,
+    "frames": 1062,
+    "sample_bytes": 2
+  }
+]

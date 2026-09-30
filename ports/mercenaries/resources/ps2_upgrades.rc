@@ -1,0 +1,6 @@
+#include <windows.h>
+201 RCDATA "ps2_upgrades/rifle_shot1.wav"
+202 RCDATA "ps2_upgrades/wpn_cannon_20mm_fire.wav"
+203 RCDATA "ps2_upgrades/wpn_cannon_20mm_fire_01.wav"
+204 RCDATA "ps2_upgrades/wpn_cannon_20mm_fire_st.wav"
+205 RCDATA "ps2_upgrades/Allies_avehicle_M1A2.bgra"

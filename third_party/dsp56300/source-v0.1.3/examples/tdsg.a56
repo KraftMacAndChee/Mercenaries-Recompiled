@@ -1,0 +1,54 @@
+;***************************************************************
+;
+;	Basic runtime for DSP56300 audio effect examples.
+;
+;	Provides I/O data areas and register save/restore routines.
+;	Each effect defines hf_init (called once) and hf_comp
+;	(called per sample).
+;
+;	Originally from the a56 project (DSP56001); hardware-specific
+;	SSI/SCI/port initialization has been removed.
+;
+;***************************************************************
+;
+; I/O and scratch data
+;
+	org	x:$0
+in_l	dc	0				;left input
+in_r	dc	0				;right input
+in_ls	dc	0				;saved left (used by reverb)
+in_rs	dc	0				;saved right
+out_l	dc	0				;left output
+out_r	dc	0				;right output
+
+savea10 dc	0				;register save area
+savea2	dc	0				;N.B. uses YMEM also!
+saveb10	dc	0
+saveb2	dc	0
+savex	dc	0
+savey	dc	0
+
+	org	p:$40
+
+dot					;effects resume P-space here
+
+saveregs
+	move		a2,x:<savea2
+	move		a1,x:<savea10
+	move		a0,y:<savea10
+	move		x,l:<savex
+	move		b2,l:<saveb2
+	move		b1,x:<saveb10
+	move		b0,y:<saveb10
+	move		y,l:<savey
+	rts
+
+restregs
+	move		l:<savea10,a
+	move		x:<savea2,a2
+	move		l:<savex,x
+	move		l:<saveb10,b
+	move		x:<saveb2,b2
+	move		l:<savey,y
+	rts
+

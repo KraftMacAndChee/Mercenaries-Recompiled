@@ -1,0 +1,234 @@
+{
+  "schema": 1,
+  "upstream_repository": "https://github.com/xemu-project/xemu",
+  "comparison_revision": "fc13b78060ffb3d64d435cbcec96c51bbfbf08ef",
+  "historical_import_revision": "not recorded; do not infer it from this comparison",
+  "scope": "All maintained APU/NV2A C/H implementation inputs other than captured font/menu data; local complete adapter sources are bundled. Upstream remains a public reference, not a required build checkout.",
+  "files": [
+    {
+      "local": "src/apu/apu.h",
+      "local_sha256": "e2d38e706d0b6df12844f4ee76e491667f745b97e780c7a77211bce86020a492",
+      "comparison_file": "hw/xbox/nv2a/debug.h",
+      "comparison_sha256": "eb2e14cbee88519858c43747aeff35bcf96b645260010abc922eeaf06031b91a",
+      "matching_distinct_substantial_lines": 1,
+      "local_distinct_substantial_lines": 36,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_core.c",
+      "local_sha256": "a31c2b0761641f7f68fc119bdbd6624c5c3c6bcee7ebbac1f3ad4f6e87ec2596",
+      "comparison_file": "hw/xbox/mcpx/apu/apu.c",
+      "comparison_sha256": "5e1bf4ccbfd8c5f6faf2488112f9c422db3eaa3ed078f4e11833a2dc3eef2543",
+      "matching_distinct_substantial_lines": 82,
+      "local_distinct_substantial_lines": 558,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_debug.h",
+      "local_sha256": "f15466fe6634744d2ee1c8a772150097e366a3e2a8415825d983806ac4a2674a",
+      "comparison_file": "hw/xbox/mcpx/apu/apu_debug.h",
+      "comparison_sha256": "1a2ce5aee64193b2aabdb4a5ddf70260777faa5e83029956ab0df59a165ea9fa",
+      "matching_distinct_substantial_lines": 34,
+      "local_distinct_substantial_lines": 35,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_dsp.c",
+      "local_sha256": "0157aa1165e1a83e88196c1a418b4861684cb4333760387d78a28ef146e768e6",
+      "comparison_file": "hw/xbox/mcpx/apu/dsp/gp_ep.c",
+      "comparison_sha256": "33c2bc3a15b522fc4057134729a9365e8f21aef39956ee958ba077215e89e3d1",
+      "matching_distinct_substantial_lines": 18,
+      "local_distinct_substantial_lines": 797,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_mmio_hook.c",
+      "local_sha256": "b8fcc79f22e561c52e6e29a2943825c7626c83a3a6e05c64b45152fa79738150",
+      "comparison_file": "hw/xbox/lpc47m157.c",
+      "comparison_sha256": "c9a2817c0fc91e88b373592d86df0df2512e410b3675e49d432b37842c9e118e",
+      "matching_distinct_substantial_lines": 1,
+      "local_distinct_substantial_lines": 247,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_mmio_hook.h",
+      "local_sha256": "e076d4e5caebfb1b517825ec0cb62fa23b9bc9928263cee2571ea411fd3a99d7",
+      "comparison_file": "hw/xbox/nv2a/debug.h",
+      "comparison_sha256": "eb2e14cbee88519858c43747aeff35bcf96b645260010abc922eeaf06031b91a",
+      "matching_distinct_substantial_lines": 1,
+      "local_distinct_substantial_lines": 10,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_regs.h",
+      "local_sha256": "865cb001c02b081da3d9798024dc3d9068a0fefe791f22be4268dfc41b987097",
+      "comparison_file": "hw/xbox/mcpx/apu/apu_regs.h",
+      "comparison_sha256": "865cb001c02b081da3d9798024dc3d9068a0fefe791f22be4268dfc41b987097",
+      "matching_distinct_substantial_lines": 308,
+      "local_distinct_substantial_lines": 308,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_shim.h",
+      "local_sha256": "148b629d6e41a7aa28c0b10c83dcca031b528534dedead2502fe64722f22c681",
+      "comparison_file": "hw/xbox/mcpx/apu/apu_debug.h",
+      "comparison_sha256": "1a2ce5aee64193b2aabdb4a5ddf70260777faa5e83029956ab0df59a165ea9fa",
+      "matching_distinct_substantial_lines": 1,
+      "local_distinct_substantial_lines": 247,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_state.h",
+      "local_sha256": "9b248a0e8ed951a1d8f2eafdbcde2c4eaeff25163f5366b464d08276f180ee68",
+      "comparison_file": "hw/xbox/mcpx/apu/vp/vp.h",
+      "comparison_sha256": "b75869e207f65f0ba0d191a38aa0703cfb1a320888b1c6a2318009bdcca08e9f",
+      "matching_distinct_substantial_lines": 44,
+      "local_distinct_substantial_lines": 310,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_vp.c",
+      "local_sha256": "a474f2ff7b3feebc4a17881bd837f4eaea84b2dd9f4430bf81946ea49fc78a92",
+      "comparison_file": "hw/xbox/mcpx/apu/vp/vp.c",
+      "comparison_sha256": "7c18d7a65dc51f096ad93e26ab92bf0bd84c219851e8350981762c688f039fc5",
+      "matching_distinct_substantial_lines": 455,
+      "local_distinct_substantial_lines": 1328,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_xaudio2.c",
+      "local_sha256": "62f00b3dda4ce8b01654234819cca406788ab98086514f60acf2748ad46b82ec",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 179,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/apu_xaudio2.h",
+      "local_sha256": "490b3dfead4d1454004500c0c5378bf4e15233f5f2045c3cbd2d3960f2940445",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 16,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/apu/fpconv.h",
+      "local_sha256": "ca7e711189b49e441912092643f0a21e675c31c8b6d4b8a1b3c75813ae60bdf4",
+      "comparison_file": "hw/xbox/mcpx/apu/fpconv.h",
+      "comparison_sha256": "931f7774272448f4b09d9527eeef6c4418e0f71be2ccdf4ee2ac32ea1191a3df",
+      "matching_distinct_substantial_lines": 18,
+      "local_distinct_substantial_lines": 22,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/menu_pushbuffer_data.h",
+      "local_sha256": "c6e3701f5c7609ece34132a9b283dbca41ce9193727e662315bfeedbd9a678c6",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 6,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_core.c",
+      "local_sha256": "25551d7e1c32949357c74385a6edd59321cccf360e108bd77c16236d52ce759e",
+      "comparison_file": "hw/xbox/nv2a/pramdac.c",
+      "comparison_sha256": "ce4e02ce1f8b5c677c3ec99f2e56a5bb6c0e3017de86af51416c05121fbb9189",
+      "matching_distinct_substantial_lines": 51,
+      "local_distinct_substantial_lines": 770,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_image_blit.h",
+      "local_sha256": "93009c7c5437a4be6fc92685b0ba26fd35f49209d4c0c6a49bfd7eec55867ff3",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 17,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_mmio_hook.c",
+      "local_sha256": "c94d2b77d8ddd1d53af19340ee448d80ad559f3bfab0bf5919d7afad501c44e6",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 220,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_mmio_hook.h",
+      "local_sha256": "9f1c3c476dc99ed0b668ac579a1e18f81249145a8790856fa41b2be88cbd22a6",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 10,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_pb_replay.c",
+      "local_sha256": "c6b3b6076a0d6da8520a35d4c5d1f860bd132e26bebd3fafc16f9415fa9f7e3f",
+      "comparison_file": "hw/xbox/acpi_xbox.c",
+      "comparison_sha256": "7c0b5f6bc4cef8cc531a5abfdcb863880f146dc35c9513afc1c0a90ba7461748",
+      "matching_distinct_substantial_lines": 0,
+      "local_distinct_substantial_lines": 185,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_pb_test.c",
+      "local_sha256": "65dd02d8d2293442bf725f8fd05d3c7757ff33f78c21dd624d361bb3ee7c5bbf",
+      "comparison_file": "hw/xbox/nv2a/pfifo.c",
+      "comparison_sha256": "c1e985bcf4acc3cbb1464e179e35ba9dc88b15532814a6547d28fa117b5af0b9",
+      "matching_distinct_substantial_lines": 3,
+      "local_distinct_substantial_lines": 114,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_pgraph_d3d11.c",
+      "local_sha256": "a1ea2c7b40444903ab232d62f250df6d1b91c3f453d9ffa22039a2f8dcf0bf93",
+      "comparison_file": "hw/xbox/nv2a/pgraph/pgraph.c",
+      "comparison_sha256": "8e26f34e521c7d0224d450628256cbde20bfe1bbc6e168f56a846a3892188913",
+      "matching_distinct_substantial_lines": 33,
+      "local_distinct_substantial_lines": 7095,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_pgraph_d3d11.h",
+      "local_sha256": "12c12bc48a0d6a1358eb11fb1bcd3d67d9a7cbce4250da064e71d45f89e1a702",
+      "comparison_file": "hw/xbox/mcpx/apu/dsp/interp/debug.c",
+      "comparison_sha256": "fceefc2c933b383487840d5676928e3378f905d3c832e0711093f51cc17c815f",
+      "matching_distinct_substantial_lines": 1,
+      "local_distinct_substantial_lines": 46,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_regs.h",
+      "local_sha256": "74d6e47773affd0912e88515b0af98b6e5c38678a0843c61a5066c50e0195b2b",
+      "comparison_file": "hw/xbox/nv2a/nv2a_regs.h",
+      "comparison_sha256": "4ba30b760e74b8426bccc955a0b62875b021cc0b8a47320e4bee9561a2da62ad",
+      "matching_distinct_substantial_lines": 1417,
+      "local_distinct_substantial_lines": 1422,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/nv2a_state.h",
+      "local_sha256": "a0f487872732c9bae9453675c6c45ba0edf298ded6d520324e0f184674882670",
+      "comparison_file": "hw/xbox/nv2a/nv2a_int.h",
+      "comparison_sha256": "728e981a2c778a5bbe148cfa4a7ca37c9362c648619237aa9c6a0a15f28584ca",
+      "matching_distinct_substantial_lines": 67,
+      "local_distinct_substantial_lines": 121,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    },
+    {
+      "local": "src/nv2a/qemu_shim.h",
+      "local_sha256": "32e253bc5be49ebcb4630335b5cb2fbe0f5d8c0ac57b328be32d10407569c6e5",
+      "comparison_file": "hw/xbox/nv2a/nv2a_int.h",
+      "comparison_sha256": "728e981a2c778a5bbe148cfa4a7ca37c9362c648619237aa9c6a0a15f28584ca",
+      "matching_distinct_substantial_lines": 2,
+      "local_distinct_substantial_lines": 197,
+      "classification": "public-attributed adapter; comparison only, not a claim of exact historical import revision"
+    }
+  ]
+}

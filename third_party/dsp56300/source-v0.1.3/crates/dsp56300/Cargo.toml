@@ -1,0 +1,18 @@
+[package]
+name = "dsp56300"
+description = "DSP56300 assembler, disassembler, and JIT emulator"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords = ["dsp", "dsp56300", "assembler", "emulator", "jit"]
+categories = ["emulators", "compilers"]
+
+[dependencies]
+dsp56300-core = { version = "0.1.0", path = "../core" }
+dsp56300-asm = { version = "0.1.0", path = "../asm", default-features = false }
+dsp56300-disasm = { version = "0.1.0", path = "../disasm", default-features = false }
+dsp56300-emu = { version = "0.1.0", path = "../emu", default-features = false }

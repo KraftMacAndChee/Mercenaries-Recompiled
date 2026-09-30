@@ -1,0 +1,10 @@
+# Embed only our correction; the retail script still comes from the user's disc.
+set(WMD_FIX_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/wmd_inspectors.lua")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${WMD_FIX_FILE}")
+file(READ "${WMD_FIX_FILE}" WMD_FIX_SOURCE)
+string(REPLACE "\\" "\\\\" WMD_FIX_SOURCE "${WMD_FIX_SOURCE}")
+string(REPLACE "\"" "\\\"" WMD_FIX_SOURCE "${WMD_FIX_SOURCE}")
+string(REPLACE "\r" "" WMD_FIX_SOURCE "${WMD_FIX_SOURCE}")
+string(REPLACE "\n" "\\n\"\n\"" WMD_FIX_SOURCE "${WMD_FIX_SOURCE}")
+set(WMD_FIX_SOURCE "\"${WMD_FIX_SOURCE}\"")
+configure_file(src/wmd_inspectors_script.h.in wmd_inspectors_script.h @ONLY)

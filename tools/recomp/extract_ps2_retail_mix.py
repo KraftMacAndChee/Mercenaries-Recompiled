@@ -1,0 +1,123 @@
+"""Regenerate preserved PS2 mixing parameters from a user's retail ASSETS.DSK.
+
+Only selected numeric playback parameters and evidence hashes are output; no
+samples, complete banks, disc image or game executable are copied to sources.
+"""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import struct
+import sys
+ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT))
+from tools.diagnostics.inspect_retail_templates import dsk_records
+from tools.diagnostics.inspect_retail_script import chunks
+
+SUPPORTED='36107873f2bb4e09fbc081ba16cc1b3868ce7469fde475372d82e30370919dd0'
+NAMES={'auto':'w_autoca.wpn_autocannon_fire_lp','drag':'w_dragun.wpn_rifle_Dragunov_fire'}
+
+
+def pairs(data):
+    if not data.endswith(b'\0'):raise ValueError('Unterminated property record')
+    parts=data[:-1].decode('ascii').split('\0')
+    if len(parts)%2:raise ValueError('Unpaired property record')
+    result={}
+    for key,value in zip(parts[::2],parts[1::2]):
+        if not key or key in result:raise ValueError('Empty/duplicate property')
+        result[key]=value
+    return result
+
+
+def decode_sound(data):
+    fields=dict(chunks(data));info=pairs(fields[b'INFO'])
+    tracks=[];tset=dict(chunks(fields[b'TSET']))
+    for kind,record in chunks(tset[b'TRKS']):
+        if kind!=b'REC_':raise ValueError('Unexpected track tag')
+        events=[]
+        for tag,event in chunks(record):
+            if tag in (b'VEVT',b'PEVT'):events.append({'type':tag.decode(),**pairs(event)})
+            elif tag==b'PLAY':
+                play=dict(chunks(event));item={'type':'PLAY',**pairs(play[b'INFO'])}
+                item['waves']=[pairs(wave) for kind,wave in chunks(play[b'WAVE']) if kind==b'REC_']
+                if int(item['num_elements'])!=len(item['waves']):raise ValueError('Wave count mismatch')
+                events.append(item)
+            else:raise ValueError('Unexpected event tag')
+        tracks.append(events)
+    if len(tracks)!=int(pairs(tset[b'INFO'])['num_elements']):raise ValueError('Track count mismatch')
+    return {'name':info['name'],'fields':pairs(fields[b'FLOT']),'tracks':tracks}
+
+
+def extract(path):
+    path=Path(path);digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    if digest!=SUPPORTED:raise ValueError('Unsupported PS2 retail ASSETS.DSK')
+    found={};records={}
+    for index,key,kind,payload in dsk_records(path):
+        if kind!=0xFA83847D:continue
+        for tag,body in chunks(dict(chunks(payload))[b'ucfb']):
+            if tag!=b'xsh_':continue
+            name=pairs(dict(chunks(body))[b'INFO'])['name']
+            for label,wanted in NAMES.items():
+                if name!=wanted:continue
+                if label in found:raise ValueError('Duplicate sound definition')
+                found[label]=decode_sound(body)
+                records[label]={'record_index':index,'record_key':f'{key:08X}',
+                                'sound_name':name,'definition_sha256':hashlib.sha256(body).hexdigest()}
+    if set(found)!=set(NAMES):raise ValueError('Missing firing definition')
+    return found,{'retail_assets_sha256':digest,'records':records}
+
+
+def parameters(sounds):
+    result={}
+    def event(sound,index,kind):
+        values=[x for x in sounds[sound]['tracks'][index] if x['type']==kind]
+        if len(values)!=1:raise ValueError('Missing or repeated track event')
+        return values[0]
+    def pitch(cents):
+        # Integer XACT encoding retained exactly: truncate toward zero.
+        return int(int(cents)*4096/1200)
+    if len(sounds['auto']['tracks'])!=2 or len(sounds['drag']['tracks'])!=4:raise ValueError('Unexpected firing layers')
+    gain=int(sounds['auto']['fields']['volume'])
+    if gain>0:raise ValueError('Unsupported positive sound gain')
+    result['AUTO_GAIN_CODE']=(-gain)//16
+    result['DRAG_MIN_DISTANCE']=float(sounds['drag']['fields']['minimum_distance'])
+    result['DRAG_ROLLOFF']=float(sounds['drag']['fields']['rolloff_factor'])
+    for sound,index,label in [('auto',0,'AUTO_OLD'),('drag',0,'DRAG_ATTACK'),('drag',1,'DRAG_AK'),('drag',2,'DRAG_CANNON'),('drag',3,'DRAG_RIFLE')]:
+        track=sounds[sound]['tracks'][index]
+        for tag,suffix,convert in [('PEVT','PITCH',pitch),('VEVT','VOLUME',int)]:
+            if not any(x['type']==tag for x in track):continue
+            e=event(sound,index,tag)
+            if e['relativevalue']!='1':raise ValueError('Unsupported absolute envelope')
+            for field in ('low','high'):result[label+'_'+suffix+'_'+field.upper()]=convert(e[field])
+            result[label+'_'+suffix+'_TIME']=int(e['time'])
+            result[label+'_'+suffix+'_DURATION']=int(e['fadelength'])
+        play=event(sound,index,'PLAY')
+        result[label+'_PLAY_TIME']=int(play.get('timestamp',0))
+        result[label+'_PLAY_PITCH_LOW']=pitch(play['pitch_low'])
+        result[label+'_PLAY_PITCH_HIGH']=pitch(play['pitch_high'])
+    return result
+
+
+def header(values):
+    lines=['/* Generated by extract_ps2_retail_mix.py from supported retail PS2 data.',
+           ' * Earlier source-project involvement is recorded in docs/runtime/ps2-upgrades.md.',
+           ' * Only playback parameters are included; no game banks or samples. */',
+           '#ifndef RECOMP_PS2_RETAIL_MIX_H','#define RECOMP_PS2_RETAIL_MIX_H']
+    for key,value in values.items():
+        literal=f'{value:.9g}' if isinstance(value,float) else str(value)
+        if isinstance(value,float):literal+=('' if '.' in literal else '.0')+'f'
+        lines.append(f'#define PS2_MIX_{key} ({literal})')
+    return '\n'.join(lines+['#endif',''])
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('assets',type=Path)
+    p.add_argument('--header',type=Path,required=True);p.add_argument('--evidence',type=Path,required=True)
+    a=p.parse_args();sounds,evidence=extract(a.assets);values=parameters(sounds)
+    a.header.write_text(header(values),encoding='utf-8')
+    evidence['method']='Selected numeric playback fields decoded from retail PS2 chunks; XACT integer encoding preserves current bank output.'
+    evidence['parameters']=values
+    a.evidence.write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
+    print(f'Generated {len(values)} parameters from two retail sound definitions; no banks/samples copied')
+
+if __name__=='__main__':main()

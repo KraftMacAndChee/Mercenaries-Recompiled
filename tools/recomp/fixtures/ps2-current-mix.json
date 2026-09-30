@@ -1,0 +1,15 @@
+{
+  "purpose": "Exact current-mix preservation baseline captured 2026-09-29. This records existing behavior.",
+  "baseline": {
+    "converted_banks": {
+      "w_autoca": {"bytes": 512, "sha256": "7dd570e8c6aff9ccc9ffaf144abeb086965afcc5be881808d3144908191fa2c3"},
+      "w_dragun": {"bytes": 884, "sha256": "f5bb2569624d0cb72d16a366f53a0e6788cfbe20556bdff2b897c787950039da"}
+    },
+    "supplied_waves": {
+      "rifle_shot1.wav": "03a9044ebca6c82593f4aed5e437ee4789269ebf14212f3478afb2460c30d1f0",
+      "wpn_cannon_20mm_fire.wav": "4865c594cd95ecea70735998c2ada5d026c26efa14d2de11b06093ec6ec0eaa6",
+      "wpn_cannon_20mm_fire_01.wav": "6fac807e0b7df7ec11d51ba8f348da0698304fbfaa0d3a0d1da4b48ba2159c0a",
+      "wpn_cannon_20mm_fire_st.wav": "8ae0d3cf72abe3083a608c5ed1262e6df5faf0e6823dee6af15f457275e30af8"
+    }
+  }
+}

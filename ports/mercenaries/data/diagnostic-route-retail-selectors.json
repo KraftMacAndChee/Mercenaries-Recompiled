@@ -1,0 +1,1099 @@
+{
+  "basis": "Retail selectors for independently reproducible points. Other points retain their existing provenance and require separate review; no claim is made about them.",
+  "retail_assets_sha256": "8b8ee254a245490ea4cda54ccea05b7a7a51afc41125aaf3cf5fd8ec512d1610",
+  "selectors": [
+    {
+      "array": "targets",
+      "index": 4,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 4
+    },
+    {
+      "array": "targets",
+      "index": 5,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 5
+    },
+    {
+      "array": "targets",
+      "index": 6,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 6
+    },
+    {
+      "array": "targets",
+      "index": 7,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 7
+    },
+    {
+      "array": "targets",
+      "index": 8,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 8
+    },
+    {
+      "array": "targets",
+      "index": 9,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 9
+    },
+    {
+      "array": "targets",
+      "index": 10,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 10
+    },
+    {
+      "array": "targets",
+      "index": 11,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 11
+    },
+    {
+      "array": "targets",
+      "index": 12,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 12
+    },
+    {
+      "array": "targets",
+      "index": 13,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 13
+    },
+    {
+      "array": "targets",
+      "index": 17,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 17
+    },
+    {
+      "array": "targets",
+      "index": 18,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 18
+    },
+    {
+      "array": "targets",
+      "index": 19,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 19
+    },
+    {
+      "array": "targets",
+      "index": 20,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 20
+    },
+    {
+      "array": "targets",
+      "index": 21,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 21
+    },
+    {
+      "array": "targets",
+      "index": 22,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 22
+    },
+    {
+      "array": "targets",
+      "index": 23,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 23
+    },
+    {
+      "array": "targets",
+      "index": 24,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 24
+    },
+    {
+      "array": "targets",
+      "index": 25,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 25
+    },
+    {
+      "array": "targets",
+      "index": 26,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 26
+    },
+    {
+      "array": "targets",
+      "index": 27,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 27
+    },
+    {
+      "array": "targets",
+      "index": 28,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 28
+    },
+    {
+      "array": "targets",
+      "index": 29,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 29
+    },
+    {
+      "array": "targets",
+      "index": 30,
+      "record": 3185,
+      "path": "t_dmz-south_02a",
+      "node": 30
+    },
+    {
+      "array": "targets",
+      "index": 31,
+      "record": 3185,
+      "path": "t_dmz-south_01a",
+      "node": 1
+    },
+    {
+      "array": "targets",
+      "index": 32,
+      "record": 3185,
+      "path": "t_dmz-south_01a",
+      "node": 2
+    },
+    {
+      "array": "targets",
+      "index": 33,
+      "record": 3185,
+      "path": "t_dmz-south_01a",
+      "node": 3
+    },
+    {
+      "array": "targets",
+      "index": 34,
+      "record": 3185,
+      "path": "t_dmz-south_01a",
+      "node": 4
+    },
+    {
+      "array": "targets",
+      "index": 42,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 3
+    },
+    {
+      "array": "targets",
+      "index": 43,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 4
+    },
+    {
+      "array": "targets",
+      "index": 44,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 5
+    },
+    {
+      "array": "targets",
+      "index": 45,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 6
+    },
+    {
+      "array": "targets",
+      "index": 46,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 7
+    },
+    {
+      "array": "targets",
+      "index": 47,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 8
+    },
+    {
+      "array": "targets",
+      "index": 48,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 9
+    },
+    {
+      "array": "targets",
+      "index": 49,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 10
+    },
+    {
+      "array": "targets",
+      "index": 50,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 11
+    },
+    {
+      "array": "targets",
+      "index": 51,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 12
+    },
+    {
+      "array": "targets",
+      "index": 52,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 13
+    },
+    {
+      "array": "targets",
+      "index": 53,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 14
+    },
+    {
+      "array": "targets",
+      "index": 54,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 15
+    },
+    {
+      "array": "targets",
+      "index": 55,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 16
+    },
+    {
+      "array": "targets",
+      "index": 56,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 17
+    },
+    {
+      "array": "targets",
+      "index": 57,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 18
+    },
+    {
+      "array": "targets",
+      "index": 58,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 19
+    },
+    {
+      "array": "targets",
+      "index": 59,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 20
+    },
+    {
+      "array": "targets",
+      "index": 60,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 21
+    },
+    {
+      "array": "targets",
+      "index": 61,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 22
+    },
+    {
+      "array": "targets",
+      "index": 62,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 23
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 4,
+      "record": 3184,
+      "path": "p_dmz-hq-peds_02a",
+      "node": 1
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 5,
+      "record": 3184,
+      "path": "p_dmz-hq-peds_02a",
+      "node": 2
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 7,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 3
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 8,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 4
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 9,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 5
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 10,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 6
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 11,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 7
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 12,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 8
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 13,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 9
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 14,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 10
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 15,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 11
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 16,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 12
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 17,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 13
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 18,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 14
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 19,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 15
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 20,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 16
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 21,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 17
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 22,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 18
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 23,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 19
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 24,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 20
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 25,
+      "record": 3185,
+      "path": "t_dmz-hq_03a",
+      "node": 21
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 36,
+      "record": 3184,
+      "path": "p_dmz-hq-peds_02a",
+      "node": 1
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 37,
+      "record": 3184,
+      "path": "p_dmz-hq-peds_02a",
+      "node": 2
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 3,
+      "record": 3185,
+      "path": "t_dmz-hq_04b",
+      "node": 8
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 4,
+      "record": 3185,
+      "path": "t_dmz-hq_05a",
+      "node": 0
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 5,
+      "record": 3185,
+      "path": "t_dmz-hq_05a",
+      "node": 1
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 6,
+      "record": 3185,
+      "path": "t_dmz-hq_05a",
+      "node": 2
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 7,
+      "record": 3185,
+      "path": "t_dmz-hq_05a",
+      "node": 3
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 8,
+      "record": 3185,
+      "path": "t_dmz-hq_05a",
+      "node": 4
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 10,
+      "record": 3185,
+      "path": "t_dmz_02b",
+      "node": 2
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 12,
+      "record": 3478,
+      "path": "CardEncRunner01a",
+      "node": 3
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 13,
+      "record": 3478,
+      "path": "CardEncRunner01a",
+      "node": 4
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 14,
+      "record": 3478,
+      "path": "CardEncRunner01a",
+      "node": 6
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 19,
+      "record": 3478,
+      "path": "CardEncRunner02a",
+      "node": 0
+    }
+  ],
+  "remaining_review": [],
+  "world_selectors": [
+    {
+      "array": "targets",
+      "index": 0,
+      "record": 5345,
+      "world": "swn",
+      "instance": 1052,
+      "name": "loc_playerstart",
+      "model": "global_location"
+    },
+    {
+      "array": "targets",
+      "index": 3,
+      "record": 5345,
+      "world": "swn",
+      "instance": 1101,
+      "name": "",
+      "model": "dmz_nklamppostNight01"
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 6,
+      "record": 4980,
+      "world": "sw",
+      "instance": 4167,
+      "name": "loc_hq-allies-bouncer",
+      "model": "global_location"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 38,
+      "record": 4980,
+      "world": "sw",
+      "instance": 4167,
+      "name": "loc_hq-allies-bouncer",
+      "model": "global_location"
+    }
+  ],
+  "axis_selectors": [
+    {
+      "array": "targets",
+      "index": 37,
+      "x": {
+        "kind": "navigation",
+        "record": 3185,
+        "path": "t_dmz-hq_03a",
+        "node": 0
+      },
+      "z": {
+        "kind": "world",
+        "record": 5345,
+        "world": "swn",
+        "instance": 259,
+        "name": "",
+        "model": "global_roadblock01"
+      }
+    },
+    {
+      "array": "targets",
+      "index": 38,
+      "x": {
+        "kind": "navigation",
+        "record": 3185,
+        "path": "t_dmz-hq_03a",
+        "node": 1
+      },
+      "z": {
+        "kind": "world",
+        "record": 5345,
+        "world": "swn",
+        "instance": 259,
+        "name": "",
+        "model": "global_roadblock01"
+      }
+    },
+    {
+      "array": "targets",
+      "index": 68,
+      "x": {
+        "kind": "navigation",
+        "record": 3185,
+        "path": "t_dmz-hq_04b",
+        "node": 0
+      },
+      "z": {
+        "kind": "world",
+        "record": 5345,
+        "world": "swn",
+        "instance": 327,
+        "name": "",
+        "model": "global_roadblock01"
+      }
+    }
+  ],
+  "project_policy_selectors": [
+    {
+      "array": "targets",
+      "index": 1,
+      "position": [
+        1548.554,
+        1758.0
+      ],
+      "purpose": "south-gate-approach"
+    },
+    {
+      "array": "targets",
+      "index": 2,
+      "position": [
+        1555.0,
+        1740.0
+      ],
+      "purpose": "south-gate-approach"
+    },
+    {
+      "array": "targets",
+      "index": 14,
+      "position": [
+        1630.0,
+        1560.0
+      ],
+      "purpose": "encounter-east-detour"
+    },
+    {
+      "array": "targets",
+      "index": 15,
+      "position": [
+        1630.0,
+        1510.0
+      ],
+      "purpose": "encounter-east-detour"
+    },
+    {
+      "array": "targets",
+      "index": 16,
+      "position": [
+        1630.0,
+        1463.0
+      ],
+      "purpose": "encounter-east-detour"
+    },
+    {
+      "array": "targets",
+      "index": 35,
+      "position": [
+        1490.0,
+        1138.0
+      ],
+      "purpose": "checkpoint-corner-and-fence"
+    },
+    {
+      "array": "targets",
+      "index": 36,
+      "position": [
+        1485.0,
+        1128.0
+      ],
+      "purpose": "checkpoint-corner-and-fence"
+    },
+    {
+      "array": "targets",
+      "index": 39,
+      "position": [
+        1438.0,
+        1122.39
+      ],
+      "purpose": "checkpoint-corner-and-fence"
+    },
+    {
+      "array": "targets",
+      "index": 40,
+      "position": [
+        1438.0,
+        1135.0
+      ],
+      "purpose": "checkpoint-corner-and-fence"
+    },
+    {
+      "array": "targets",
+      "index": 41,
+      "position": [
+        1415.0,
+        1135.0
+      ],
+      "purpose": "checkpoint-corner-and-fence"
+    },
+    {
+      "array": "targets",
+      "index": 63,
+      "position": [
+        1365.0,
+        865.0
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "targets",
+      "index": 64,
+      "position": [
+        1345.0,
+        855.0
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "targets",
+      "index": 65,
+      "position": [
+        1345.0,
+        842.766
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "targets",
+      "index": 66,
+      "position": [
+        1365.0,
+        842.766
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "targets",
+      "index": 67,
+      "position": [
+        1380.0,
+        842.766
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "targets",
+      "index": 69,
+      "position": [
+        1434.0,
+        840.5
+      ],
+      "purpose": "hq-roadblock-turn"
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 0,
+      "position": [
+        1452.0,
+        865.0
+      ],
+      "purpose": "parking-wall-detour"
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 1,
+      "position": [
+        1428.0,
+        865.0
+      ],
+      "purpose": "parking-wall-detour"
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 2,
+      "position": [
+        1428.0,
+        848.0
+      ],
+      "purpose": "parking-wall-detour"
+    },
+    {
+      "array": "parking_walk_targets",
+      "index": 3,
+      "position": [
+        1472.0,
+        848.0
+      ],
+      "purpose": "parking-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 0,
+      "position": [
+        1490.0,
+        1142.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 1,
+      "position": [
+        1470.0,
+        1142.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 2,
+      "position": [
+        1455.0,
+        1142.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 3,
+      "position": [
+        1455.0,
+        1113.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 4,
+      "position": [
+        1436.0,
+        1100.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 5,
+      "position": [
+        1420.0,
+        1098.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 6,
+      "position": [
+        1410.0,
+        1100.0
+      ],
+      "purpose": "checkpoint-fence-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 26,
+      "position": [
+        1380.0,
+        870.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 27,
+      "position": [
+        1386.0,
+        846.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 28,
+      "position": [
+        1370.0,
+        833.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 29,
+      "position": [
+        1412.0,
+        822.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 30,
+      "position": [
+        1428.0,
+        848.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 31,
+      "position": [
+        1472.0,
+        852.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 32,
+      "position": [
+        1450.0,
+        862.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 33,
+      "position": [
+        1450.0,
+        879.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 34,
+      "position": [
+        1488.0,
+        879.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "checkpoint_walk_targets",
+      "index": 35,
+      "position": [
+        1488.0,
+        852.0
+      ],
+      "purpose": "hq-wall-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 0,
+      "position": [
+        1489.0,
+        825.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 1,
+      "position": [
+        1458.0,
+        827.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 2,
+      "position": [
+        1458.0,
+        787.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 9,
+      "position": [
+        1523.0,
+        616.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 11,
+      "position": [
+        1635.0,
+        604.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 15,
+      "position": [
+        1657.0,
+        646.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 16,
+      "position": [
+        1657.5,
+        664.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 17,
+      "position": [
+        1665.0,
+        680.0
+      ],
+      "purpose": "card-walk-detour"
+    },
+    {
+      "array": "card_walk_targets",
+      "index": 18,
+      "position": [
+        1635.0,
+        715.0
+      ],
+      "purpose": "card-walk-detour"
+    }
+  ],
+  "project_policy_basis": "diagnostic-route-policy-evidence.json: retained project-selected test destinations, independently checked against retail obstacles; not original path nodes and not a new historical origin claim."
+}

@@ -1,0 +1,936 @@
+# libfuzzer dictionary for DSP56300 emu fuzz target
+# Auto-generated from crates/emu/tests/emu.rs
+#
+# PRAM words start at byte offset 29, encoded as 3-byte little-endian.
+
+# --- Header field tokens (bytes 0-28) ---
+
+# flags (u16 LE)
+flags_run="\x00\x00"
+flags_execute_one="\x01\x00"
+
+# SR bits (u32 LE, bytes 2-5)
+sr_carry="\x01\x00\x00\x00"
+sr_overflow="\x04\x00\x00\x00"
+sr_zero="\x08\x00\x00\x00"
+sr_negative="\x10\x00\x00\x00"
+sr_extension="\x20\x00\x00\x00"
+sr_limit="\x40\x00\x00\x00"
+sr_S0="\x00\x04\x00\x00"
+sr_S1="\x00\x08\x00\x00"
+sr_LF="\x00\x80\x00\x00"
+
+# --- PRAM opcodes (3-byte little-endian 24-bit values) ---
+
+# 0x000000 nop
+op_000000="\x00\x00\x00"
+# 0x000001
+op_000001="\x01\x00\x00"
+# 0x000002
+op_000002="\x02\x00\x00"
+# 0x000003
+op_000003="\x03\x00\x00"
+# 0x000004 rti
+op_000004="\x04\x00\x00"
+# 0x000005 illegal
+op_000005="\x05\x00\x00"
+# 0x000006 trap
+op_000006="\x06\x00\x00"
+# 0x000008 inc A
+op_000008="\x08\x00\x00"
+# 0x00000A dec A
+op_00000A="\x0a\x00\x00"
+# 0x00000E punlockr
+op_00000E="\x0e\x00\x00"
+# 0x00000F plockr
+op_00000F="\x0f\x00\x00"
+# 0x000010
+op_000010="\x10\x00\x00"
+# 0x000018 trapcs
+op_000018="\x18\x00\x00"
+# 0x000020
+op_000020="\x20\x00\x00"
+# 0x000030
+op_000030="\x30\x00\x00"
+# 0x000042
+op_000042="\x42\x00\x00"
+# 0x000086 wait
+op_000086="\x86\x00\x00"
+# 0x000087 stop
+op_000087="\x87\x00\x00"
+# 0x00008C enddo
+op_00008C="\x8c\x00\x00"
+# 0x000100
+op_000100="\x00\x01\x00"
+# 0x000104 reset
+op_000104="\x04\x01\x00"
+# 0x000200
+op_000200="\x00\x02\x00"
+# 0x000202 dor forever
+op_000202="\x02\x02\x00"
+# 0x000203 do forever
+op_000203="\x03\x02\x00"
+# 0x000218 brkcc NE
+op_000218="\x18\x02\x00"
+# 0x000219 brkcc PL
+op_000219="\x19\x02\x00"
+# 0x00021A brkcc EQ
+op_00021A="\x1a\x02\x00"
+# 0x000300
+op_000300="\x00\x03\x00"
+# 0x000308 debugcs
+op_000308="\x08\x03\x00"
+# 0x0004F9
+op_0004F9="\xf9\x04\x00"
+# 0x0004FA
+op_0004FA="\xfa\x04\x00"
+# 0x000800 debug
+op_000800="\x00\x08\x00"
+# 0x000FB8
+op_000FB8="\xb8\x0f\x00"
+# 0x000FBA
+op_000FBA="\xba\x0f\x00"
+# 0x000FF8
+op_000FF8="\xf8\x0f\x00"
+# 0x001234
+op_001234="\x34\x12\x00"
+# 0x008018
+op_008018="\x18\x80\x00"
+# 0x008028
+op_008028="\x28\x80\x00"
+# 0x00A000 movep x:periph,p:(R0)
+op_00A000="\x00\xa0\x00"
+# 0x00E000 movep p:(R0),x:periph
+op_00E000="\x00\xe0\x00"
+# 0x00F0B9
+op_00F0B9="\xb9\xf0\x00"
+# 0x00FFBB andi
+op_00FFBB="\xbb\xff\x00"
+# 0x00FFFB ori
+op_00FFFB="\xfb\xff\x00"
+# 0x010000 bclr #0,X:$FFFF80
+op_010000="\x00\x00\x01"
+# 0x010025 bset #5,X:$FFFF80
+op_010025="\x25\x00\x01"
+# 0x0101C0 mpy y1,#1,a
+op_0101C0="\xc0\x01\x01"
+# 0x012480 dmac ss X0,X0,A
+op_012480="\x80\x24\x01"
+# 0x012490
+op_012490="\x90\x24\x01"
+# 0x0124A0 dmac ss X0,X0,B
+op_0124A0="\xa0\x24\x01"
+# 0x012580 dmac su X0,X0,A
+op_012580="\x80\x25\x01"
+# 0x0125C0 dmac uu X0,X0,A
+op_0125C0="\xc0\x25\x01"
+# 0x012680
+op_012680="\x80\x26\x01"
+# 0x012690
+op_012690="\x90\x26\x01"
+# 0x0126C0 mac(uu) X0,X0,A
+op_0126C0="\xc0\x26\x01"
+# 0x012780
+op_012780="\x80\x27\x01"
+# 0x012790
+op_012790="\x90\x27\x01"
+# 0x0127C0 mpy(uu) X0,X0,A
+op_0127C0="\xc0\x27\x01"
+# 0x014002 bchg #2,X:$FFFF80
+op_014002="\x02\x40\x01"
+# 0x014023 btst #3,X:$FFFF80
+op_014023="\x23\x40\x01"
+# 0x014084
+op_014084="\x84\x40\x01"
+# 0x014086
+op_014086="\x86\x40\x01"
+# 0x01408C
+op_01408C="\x8c\x40\x01"
+# 0x0140C0 add #xxxx,A
+op_0140C0="\xc0\x40\x01"
+# 0x0140C2 or #xxxx,A
+op_0140C2="\xc2\x40\x01"
+# 0x0140C3 eor #xxxx,A
+op_0140C3="\xc3\x40\x01"
+# 0x0140C4 sub #xxxx,A
+op_0140C4="\xc4\x40\x01"
+# 0x0140C5 cmp #xxxx,A
+op_0140C5="\xc5\x40\x01"
+# 0x0140C6 and #xxxx,A
+op_0140C6="\xc6\x40\x01"
+# 0x0141C0 mpyi #xxxx,X0,A
+op_0141C0="\xc0\x41\x01"
+# 0x0141C1 mpyri
+op_0141C1="\xc1\x41\x01"
+# 0x0141C2 maci
+op_0141C2="\xc2\x41\x01"
+# 0x0141C3 macri
+op_0141C3="\xc3\x41\x01"
+# 0x0141C4 mpyi neg
+op_0141C4="\xc4\x41\x01"
+# 0x0141C5
+op_0141C5="\xc5\x41\x01"
+# 0x0141DC mpyi -#imm,Y0,B
+op_0141DC="\xdc\x41\x01"
+# 0x0141E0 mpyi #imm,X1,A
+op_0141E0="\xe0\x41\x01"
+# 0x0141F0
+op_0141F0="\xf0\x41\x01"
+# 0x014585 cmp #5,A
+op_014585="\x85\x45\x01"
+# 0x014F86 (computed: 0x014086 | 0x0F << 8)
+op_014F86="\x86\x4f\x01"
+# 0x015080 add #imm,A
+op_015080="\x80\x50\x01"
+# 0x015084 (computed: 0x014084 | 0x10 << 8)
+op_015084="\x84\x50\x01"
+# 0x01508C (computed: 0x01408C | 0x10 << 8)
+op_01508C="\x8c\x50\x01"
+# 0x015F82 or #$1F,A
+op_015F82="\x82\x5f\x01"
+# 0x017F83 eor #$3F,A
+op_017F83="\x83\x7f\x01"
+# 0x018040 div X0,A
+op_018040="\x40\x80\x01"
+# 0x018058 div Y0,B
+op_018058="\x58\x80\x01"
+# 0x018060 div X1,A
+op_018060="\x60\x80\x01"
+# 0x018070 div Y1,A
+op_018070="\x70\x80\x01"
+# 0x018080
+op_018080="\x80\x80\x01"
+# 0x0180A0
+op_0180A0="\xa0\x80\x01"
+# 0x01C080
+op_01C080="\x80\xc0\x01"
+# 0x01C0A0
+op_01C0A0="\xa0\xc0\x01"
+# 0x01D815 norm R0,A
+op_01D815="\x15\xd8\x01"
+# 0x01D81D norm R0,B
+op_01D81D="\x1d\xd8\x01"
+# 0x020000 tcc B,A
+op_020000="\x00\x00\x02"
+# 0x020008 tcc A,B cc=CC
+op_020008="\x08\x00\x02"
+# 0x020010 tcc CC (null,null)
+op_020010="\x10\x00\x02"
+# 0x020040 tcc X0,A
+op_020040="\x40\x00\x02"
+# 0x0200D4
+op_0200D4="\xd4\x00\x02"
+# 0x0200F4
+op_0200F4="\xf4\x00\x02"
+# 0x020884
+op_020884="\x84\x08\x02"
+# 0x021000 GE
+op_021000="\x00\x10\x02"
+# 0x022000 NE
+op_022000="\x00\x20\x02"
+# 0x023000 PL
+op_023000="\x00\x30\x02"
+# 0x024000 NN
+op_024000="\x00\x40\x02"
+# 0x025000 EC
+op_025000="\x00\x50\x02"
+# 0x026000 LC
+op_026000="\x00\x60\x02"
+# 0x027000 GT
+op_027000="\x00\x70\x02"
+# 0x028000 CS
+op_028000="\x00\x80\x02"
+# 0x029000 LT
+op_029000="\x00\x90\x02"
+# 0x02A000 EQ
+op_02A000="\x00\xa0\x02"
+# 0x02B000 MI
+op_02B000="\x00\xb0\x02"
+# 0x02C000 NR
+op_02C000="\x00\xc0\x02"
+# 0x02D000 ES
+op_02D000="\x00\xd0\x02"
+# 0x02E000 LS
+op_02E000="\x00\xe0\x02"
+# 0x02F000 LE
+op_02F000="\x00\xf0\x02"
+# 0x03030D tcc A,B R3,R5 cc=CC
+op_03030D="\x0d\x03\x03"
+# 0x040051 lua (R0+$05),R1
+op_040051="\x51\x00\x04"
+# 0x0439E8 lua (R1-2),N0
+op_0439E8="\xe8\x39\x04"
+# 0x044420 movep periph read
+op_044420="\x20\x44\x04"
+# 0x044480 movep periph read
+op_044480="\x80\x44\x04"
+# 0x0444BC
+op_0444BC="\xbc\x44\x04"
+# 0x04480A lua (R0)+,N2
+op_04480A="\x0a\x48\x04"
+# 0x0448A0
+op_0448A0="\xa0\x48\x04"
+# 0x0449A0
+op_0449A0="\xa0\x49\x04"
+# 0x044AA0
+op_044AA0="\xa0\x4a\x04"
+# 0x044BA0
+op_044BA0="\xa0\x4b\x04"
+# 0x045802
+op_045802="\x02\x58\x04"
+# 0x045808
+op_045808="\x08\x58\x04"
+# 0x048000
+op_048000="\x00\x80\x04"
+# 0x048020
+op_048020="\x20\x80\x04"
+# 0x048080
+op_048080="\x80\x80\x04"
+# 0x0480A0
+op_0480A0="\xa0\x80\x04"
+# 0x04C480 movep write
+op_04C480="\x80\xc4\x04"
+# 0x04C4BB
+op_04C4BB="\xbb\xc4\x04"
+# 0x04C4BC
+op_04C4BC="\xbc\xc4\x04"
+# 0x04C4BD
+op_04C4BD="\xbd\xc4\x04"
+# 0x04C8A0
+op_04C8A0="\xa0\xc8\x04"
+# 0x051020
+op_051020="\x20\x10\x05"
+# 0x0542A0 movec #$42,M0
+op_0542A0="\xa0\x42\x05"
+# 0x056020
+op_056020="\x20\x60\x05"
+# 0x059020
+op_059020="\x20\x90\x05"
+# 0x05A404
+op_05A404="\x04\xa4\x05"
+# 0x05E020
+op_05E020="\x20\xe0\x05"
+# 0x05F420
+op_05F420="\x20\xf4\x05"
+# 0x0600A0 rep #0
+op_0600A0="\xa0\x00\x06"
+# 0x060120 rep #1
+op_060120="\x20\x01\x06"
+# 0x060180 do #1
+op_060180="\x80\x01\x06"
+# 0x0601A0 rep #1
+op_0601A0="\xa0\x01\x06"
+# 0x060280 do #2
+op_060280="\x80\x02\x06"
+# 0x0602A0 rep #2
+op_0602A0="\xa0\x02\x06"
+# 0x060380 do #3
+op_060380="\x80\x03\x06"
+# 0x060390 dor #3
+op_060390="\x90\x03\x06"
+# 0x0603A0 rep #3
+op_0603A0="\xa0\x03\x06"
+# 0x060480 do #4
+op_060480="\x80\x04\x06"
+# 0x060580 do #5
+op_060580="\x80\x05\x06"
+# 0x060A80 do #10
+op_060A80="\x80\x0a\x06"
+# 0x060A90
+op_060A90="\x90\x0a\x06"
+# 0x061000 do X:$10
+op_061000="\x00\x10\x06"
+# 0x061020 rep X:$10
+op_061020="\x20\x10\x06"
+# 0x066000 do X:(R0)
+op_066000="\x00\x60\x06"
+# 0x066020
+op_066020="\x20\x60\x06"
+# 0x066120 rep X:(R1)
+op_066120="\x20\x61\x06"
+# 0x06C400 do X0
+op_06C400="\x00\xc4\x06"
+# 0x06C410
+op_06C410="\x10\xc4\x06"
+# 0x06C420 rep X0
+op_06C420="\x20\xc4\x06"
+# 0x071004
+op_071004="\x04\x10\x07"
+# 0x071010
+op_071010="\x10\x10\x07"
+# 0x072080 movep y:periph,x:(R0)
+op_072080="\x80\x20\x07"
+# 0x076005
+op_076005="\x05\x60\x07"
+# 0x076084 movem X0,P:(R0)
+op_076084="\x84\x60\x07"
+# 0x079004
+op_079004="\x04\x90\x07"
+# 0x07A080 movep x:(R0),y:periph
+op_07A080="\x80\xa0\x07"
+# 0x07D884
+op_07D884="\x84\xd8\x07"
+# 0x07E005
+op_07E005="\x05\xe0\x07"
+# 0x07F420 movep #imm,X:periph
+op_07F420="\x20\xf4\x07"
+# 0x080000
+op_080000="\x00\x00\x08"
+# 0x081800 (computed: 0x080000 | 0b011_000 << 8)
+op_081800="\x00\x18\x08"
+# 0x082000
+op_082000="\x00\x20\x08"
+# 0x084400
+op_084400="\x00\x44\x08"
+# 0x086040
+op_086040="\x40\x60\x08"
+# 0x086080
+op_086080="\x80\x60\x08"
+# 0x08C400
+op_08C400="\x00\xc4\x08"
+# 0x08CE04
+op_08CE04="\x04\xce\x08"
+# 0x08E080
+op_08E080="\x80\xe0\x08"
+# 0x08F040 movep P:ea,X:periph
+op_08F040="\x40\xf0\x08"
+# 0x09A000
+op_09A000="\x00\xa0\x09"
+# 0x09A009
+op_09A009="\x09\xa0\x09"
+# 0x0A1000
+op_0A1000="\x00\x10\x0a"
+# 0x0A1025
+op_0A1025="\x25\x10\x0a"
+# 0x0A1082 jclr
+op_0A1082="\x82\x10\x0a"
+# 0x0A10A3 jset
+op_0A10A3="\xa3\x10\x0a"
+# 0x0A4000 bclr #0,X:(R0)-N0
+op_0A4000="\x00\x40\x0a"
+# 0x0A5000 bclr #0,X:(R0)-
+op_0A5000="\x00\x50\x0a"
+# 0x0A6002
+op_0A6002="\x02\x60\x0a"
+# 0x0A6025
+op_0A6025="\x25\x60\x0a"
+# 0x0A6081
+op_0A6081="\x81\x60\x0a"
+# 0x0A60A0
+op_0A60A0="\xa0\x60\x0a"
+# 0x0A6800 bclr #0,X:(R0+N0)
+op_0A6800="\x00\x68\x0a"
+# 0x0A7184
+op_0A7184="\x84\x71\x0a"
+# 0x0A71C4
+op_0A71C4="\xc4\x71\x0a"
+# 0x0A7800 bclr #0,X:-(R0)
+op_0A7800="\x00\x78\x0a"
+# 0x0A80A3
+op_0A80A3="\xa3\x80\x0a"
+# 0x0A8500
+op_0A8500="\x00\x85\x0a"
+# 0x0A8523
+op_0A8523="\x23\x85\x0a"
+# 0x0A8530
+op_0A8530="\x30\x85\x0a"
+# 0x0A8580
+op_0A8580="\x80\x85\x0a"
+# 0x0AC400 jclr #0,X0
+op_0AC400="\x00\xc4\x0a"
+# 0x0AC420 jset #0,X0
+op_0AC420="\x20\xc4\x0a"
+# 0x0AC445
+op_0AC445="\x45\xc4\x0a"
+# 0x0AC465
+op_0AC465="\x65\xc4\x0a"
+# 0x0AD8C0 vsl
+op_0AD8C0="\xc0\xd8\x0a"
+# 0x0AE081 punlock
+op_0AE081="\x81\xe0\x0a"
+# 0x0AE0AA
+op_0AE0AA="\xaa\xe0\x0a"
+# 0x0B1005
+op_0B1005="\x05\x10\x0b"
+# 0x0B1023
+op_0B1023="\x23\x10\x0b"
+# 0x0B1083
+op_0B1083="\x83\x10\x0b"
+# 0x0B10A3
+op_0B10A3="\xa3\x10\x0b"
+# 0x0B6000
+op_0B6000="\x00\x60\x0b"
+# 0x0B6023
+op_0B6023="\x23\x60\x0b"
+# 0x0B6080
+op_0B6080="\x80\x60\x0b"
+# 0x0B60A0
+op_0B60A0="\xa0\x60\x0b"
+# 0x0B7184
+op_0B7184="\x84\x71\x0b"
+# 0x0B71C4
+op_0B71C4="\xc4\x71\x0b"
+# 0x0B8023
+op_0B8023="\x23\x80\x0b"
+# 0x0B80A3
+op_0B80A3="\xa3\x80\x0b"
+# 0x0B8400
+op_0B8400="\x00\x84\x0b"
+# 0x0B8481
+op_0B8481="\x81\x84\x0b"
+# 0x0B8500
+op_0B8500="\x00\x85\x0b"
+# 0x0BC400 jsclr
+op_0BC400="\x00\xc4\x0b"
+# 0x0BC420 jsset
+op_0BC420="\x20\xc4\x0b"
+# 0x0BC443
+op_0BC443="\x43\xc4\x0b"
+# 0x0BC463
+op_0BC463="\x63\xc4\x0b"
+# 0x0BE081 plock
+op_0BE081="\x81\xe0\x0b"
+# 0x0BE0AA
+op_0BE0AA="\xaa\xe0\x0b"
+# 0x0BF080
+op_0BF080="\x80\xf0\x0b"
+# 0x0BF081 plock abs
+op_0BF081="\x81\xf0\x0b"
+# 0x0C0000 jmp $0
+op_0C0000="\x00\x00\x0c"
+# 0x0C0001
+op_0C0001="\x01\x00\x0c"
+# 0x0C0002
+op_0C0002="\x02\x00\x0c"
+# 0x0C0003
+op_0C0003="\x03\x00\x0c"
+# 0x0C0004
+op_0C0004="\x04\x00\x0c"
+# 0x0C0005
+op_0C0005="\x05\x00\x0c"
+# 0x0C0006
+op_0C0006="\x06\x00\x0c"
+# 0x0C0007
+op_0C0007="\x07\x00\x0c"
+# 0x0C0008
+op_0C0008="\x08\x00\x0c"
+# 0x0C0010
+op_0C0010="\x10\x00\x0c"
+# 0x0C0016
+op_0C0016="\x16\x00\x0c"
+# 0x0C0020
+op_0C0020="\x20\x00\x0c"
+# 0x0C0042 jmp $0042
+op_0C0042="\x42\x00\x0c"
+# 0x0C0043
+op_0C0043="\x43\x00\x0c"
+# 0x0C1800 extract #CO,A,A
+op_0C1800="\x00\x18\x0c"
+# 0x0C1880 extractu #CO,A,A
+op_0C1880="\x80\x18\x0c"
+# 0x0C1940 insert #CO,X0,A
+op_0C1940="\x40\x19\x0c"
+# 0x0C1A08 extract X0,A,A
+op_0C1A08="\x08\x1a\x0c"
+# 0x0C1A19 extract X0,B,B
+op_0C1A19="\x19\x1a\x0c"
+# 0x0C1A88 extractu X0,A,A
+op_0C1A88="\x88\x1a\x0c"
+# 0x0C1B48 insert X0,X0,A
+op_0C1B48="\x48\x1b\x0c"
+# 0x0C1B88 merge X0,A
+op_0C1B88="\x88\x1b\x0c"
+# 0x0C1C00
+op_0C1C00="\x00\x1c\x0c"
+# 0x0C1C04 asr #2,A,A
+op_0C1C04="\x04\x1c\x0c"
+# 0x0C1C83
+op_0C1C83="\x83\x1c\x0c"
+# 0x0C1D04 asl #2,A,A
+op_0C1D04="\x04\x1d\x0c"
+# 0x0C1D83
+op_0C1D83="\x83\x1d\x0c"
+# 0x0C1E00 clb A,A
+op_0C1E00="\x00\x1e\x0c"
+# 0x0C1E18 lsl X0,A
+op_0C1E18="\x18\x1e\x0c"
+# 0x0C1E28 normf X0,A
+op_0C1E28="\x28\x1e\x0c"
+# 0x0C1E38 lsr X0,A
+op_0C1E38="\x38\x1e\x0c"
+# 0x0C1E44 asl A1,A,A
+op_0C1E44="\x44\x1e\x0c"
+# 0x0C1E48 asl X0,A,A
+op_0C1E48="\x48\x1e\x0c"
+# 0x0C1E68 asr X0,A,A
+op_0C1E68="\x68\x1e\x0c"
+# 0x0C1E80 lsl #0,A
+op_0C1E80="\x80\x1e\x0c"
+# 0x0C1E82
+op_0C1E82="\x82\x1e\x0c"
+# 0x0C1E86
+op_0C1E86="\x86\x1e\x0c"
+# 0x0C1E8B lsl #5,B
+op_0C1E8B="\x8b\x1e\x0c"
+# 0x0C1EC2 lsr #1,A
+op_0C1EC2="\xc2\x1e\x0c"
+# 0x0C1ECA lsr #5,A
+op_0C1ECA="\xca\x1e\x0c"
+# 0x0C1FF0
+op_0C1FF0="\xf0\x1f\x0c"
+# 0x0C1FF1 cmpu A,B
+op_0C1FF1="\xf1\x1f\x0c"
+# 0x0C1FF2
+op_0C1FF2="\xf2\x1f\x0c"
+# 0x0C1FF8
+op_0C1FF8="\xf8\x1f\x0c"
+# 0x0C1FF9 cmpu X0,B
+op_0C1FF9="\xf9\x1f\x0c"
+# 0x0C1FFA
+op_0C1FFA="\xfa\x1f\x0c"
+# 0x0C1FFC
+op_0C1FFC="\xfc\x1f\x0c"
+# 0x0C1FFE cmpu Y1,A
+op_0C1FFE="\xfe\x1f\x0c"
+# 0x0C9082 brclr
+op_0C9082="\x82\x90\x0c"
+# 0x0C90A2 brset
+op_0C90A2="\xa2\x90\x0c"
+# 0x0CA000 brclr x:(R0)
+op_0CA000="\x00\xa0\x0c"
+# 0x0CA010 brset x:(R0)
+op_0CA010="\x10\xa0\x0c"
+# 0x0CC000
+op_0CC000="\x00\xc0\x0c"
+# 0x0CC400
+op_0CC400="\x00\xc4\x0c"
+# 0x0CC420
+op_0CC420="\x20\xc4\x0c"
+# 0x0CC483
+op_0CC483="\x83\xc4\x0c"
+# 0x0CC4A3
+op_0CC4A3="\xa3\xc4\x0c"
+# 0x0D0010 jsr
+op_0D0010="\x10\x00\x0d"
+# 0x0D100A bscc long EQ
+op_0D100A="\x0a\x10\x0d"
+# 0x0D104A bcc EQ
+op_0D104A="\x4a\x10\x0d"
+# 0x0D1080 bsr
+op_0D1080="\x80\x10\x0d"
+# 0x0D10C0 bra
+op_0D10C0="\xc0\x10\x0d"
+# 0x0D1980 bsr R1
+op_0D1980="\x80\x19\x0d"
+# 0x0D1A00 bscc R2
+op_0D1A00="\x00\x1a\x0d"
+# 0x0D1AC0 bra R2
+op_0D1AC0="\xc0\x1a\x0d"
+# 0x0D1B4A bcc R3 (EQ)
+op_0D1B4A="\x4a\x1b\x0d"
+# 0x0D9081
+op_0D9081="\x81\x90\x0d"
+# 0x0D90A1
+op_0D90A1="\xa1\x90\x0d"
+# 0x0DA000 bsclr x:(R0)
+op_0DA000="\x00\xa0\x0d"
+# 0x0DA010 bsset x:(R0)
+op_0DA010="\x10\xa0\x0d"
+# 0x0DC000
+op_0DC000="\x00\xc0\x0d"
+# 0x0DC020 bsset #0,x:periph
+op_0DC020="\x20\xc0\x0d"
+# 0x0DC480
+op_0DC480="\x80\xc4\x0d"
+# 0x0DC4A0
+op_0DC4A0="\xa0\xc4\x0d"
+# 0x0E8000 jcc
+op_0E8000="\x00\x80\x0e"
+# 0x0EA100 jcc EQ
+op_0EA100="\x00\xa1\x0e"
+# 0x0F0F0F
+op_0F0F0F="\x0f\x0f\x0f"
+# 0x0FA100
+op_0FA100="\x00\xa1\x0f"
+# 0x100000
+op_100000="\x00\x00\x10"
+# 0x109900 (computed: 0x100000 | 1<<15 | 0x19<<8)
+op_109900="\x00\x99\x10"
+# 0x10D900 (computed: 0x100000 | 1<<15 | 1<<14 | 0x19<<8)
+op_10D900="\x00\xd9\x10"
+# 0x10E000
+op_10E000="\x00\xe0\x10"
+# 0x10E00B
+op_10E00B="\x0b\xe0\x10"
+# 0x116000 PM1 Y
+op_116000="\x00\x60\x11"
+# 0x162000 PM1 X
+op_162000="\x00\x20\x16"
+# 0x1A2000 PM1 X A->X:(R0)
+op_1A2000="\x00\x20\x1a"
+# 0x1A6000 PM1 Y A->Y:(R0)
+op_1A6000="\x00\x60\x1a"
+# 0x1B6000 PM1 Y write B
+op_1B6000="\x00\x60\x1b"
+# 0x1E2000 PM1 X B->X:(R0)
+op_1E2000="\x00\x20\x1e"
+# 0x1EE000 PM1 Y read
+op_1EE000="\x00\xe0\x1e"
+# 0x200000
+op_200000="\x00\x00\x20"
+# 0x200001 tfr B,A
+op_200001="\x01\x00\x20"
+# 0x200002
+op_200002="\x02\x00\x20"
+# 0x200003 tst A
+op_200003="\x03\x00\x20"
+# 0x200004
+op_200004="\x04\x00\x20"
+# 0x200005
+op_200005="\x05\x00\x20"
+# 0x200006
+op_200006="\x06\x00\x20"
+# 0x200007 (computed)
+op_200007="\x07\x00\x20"
+# 0x200009
+op_200009="\x09\x00\x20"
+# 0x20000A (computed)
+op_20000A="\x0a\x00\x20"
+# 0x20000B tst B
+op_20000B="\x0b\x00\x20"
+# 0x20000D (computed)
+op_20000D="\x0d\x00\x20"
+# 0x20000E subr A,B
+op_20000E="\x0e\x00\x20"
+# 0x20000F cmpm A,B
+op_20000F="\x0f\x00\x20"
+# 0x200010 add B,A
+op_200010="\x10\x00\x20"
+# 0x200011
+op_200011="\x11\x00\x20"
+# 0x200012
+op_200012="\x12\x00\x20"
+# 0x200013 clr A
+op_200013="\x13\x00\x20"
+# 0x200014
+op_200014="\x14\x00\x20"
+# 0x200016
+op_200016="\x16\x00\x20"
+# 0x200017 not A
+op_200017="\x17\x00\x20"
+# 0x200018
+op_200018="\x18\x00\x20"
+# 0x200019
+op_200019="\x19\x00\x20"
+# 0x20001A
+op_20001A="\x1a\x00\x20"
+# 0x20001B clr B
+op_20001B="\x1b\x00\x20"
+# 0x20001C
+op_20001C="\x1c\x00\x20"
+# 0x20001D
+op_20001D="\x1d\x00\x20"
+# 0x20001E subl A,B
+op_20001E="\x1e\x00\x20"
+# 0x20001F
+op_20001F="\x1f\x00\x20"
+# 0x200020 (computed)
+op_200020="\x20\x00\x20"
+# 0x200021
+op_200021="\x21\x00\x20"
+# 0x200022 asr A
+op_200022="\x22\x00\x20"
+# 0x200023
+op_200023="\x23\x00\x20"
+# 0x200024 (computed)
+op_200024="\x24\x00\x20"
+# 0x200025
+op_200025="\x25\x00\x20"
+# 0x200026 abs A
+op_200026="\x26\x00\x20"
+# 0x200027
+op_200027="\x27\x00\x20"
+# 0x200028 add X,B
+op_200028="\x28\x00\x20"
+# 0x200029 adc X,B
+op_200029="\x29\x00\x20"
+# 0x20002A
+op_20002A="\x2a\x00\x20"
+# 0x20002B (computed)
+op_20002B="\x2b\x00\x20"
+# 0x20002C (computed)
+op_20002C="\x2c\x00\x20"
+# 0x20002D sbc X,B
+op_20002D="\x2d\x00\x20"
+# 0x20002E
+op_20002E="\x2e\x00\x20"
+# 0x20002F (computed)
+op_20002F="\x2f\x00\x20"
+# 0x200030 add Y,A
+op_200030="\x30\x00\x20"
+# 0x200031 (computed)
+op_200031="\x31\x00\x20"
+# 0x200032 asl A
+op_200032="\x32\x00\x20"
+# 0x200033
+op_200033="\x33\x00\x20"
+# 0x200034 sub Y,A
+op_200034="\x34\x00\x20"
+# 0x200035 (computed)
+op_200035="\x35\x00\x20"
+# 0x200036 neg A
+op_200036="\x36\x00\x20"
+# 0x200037
+op_200037="\x37\x00\x20"
+# 0x200038 add Y,B
+op_200038="\x38\x00\x20"
+# 0x200039 (computed)
+op_200039="\x39\x00\x20"
+# 0x20003A
+op_20003A="\x3a\x00\x20"
+# 0x20003B (computed)
+op_20003B="\x3b\x00\x20"
+# 0x20003C
+op_20003C="\x3c\x00\x20"
+# 0x20003D (computed)
+op_20003D="\x3d\x00\x20"
+# 0x20003E
+op_20003E="\x3e\x00\x20"
+# 0x20003F (computed)
+op_20003F="\x3f\x00\x20"
+# 0x200040 add X0,A
+op_200040="\x40\x00\x20"
+# 0x200041 tfr X0,A
+op_200041="\x41\x00\x20"
+# 0x200042 or X0,A
+op_200042="\x42\x00\x20"
+# 0x200043 eor X0,A
+op_200043="\x43\x00\x20"
+# 0x200044 sub X0,A
+op_200044="\x44\x00\x20"
+# 0x200045 cmp X0,A
+op_200045="\x45\x00\x20"
+# 0x200046 and X0,A
+op_200046="\x46\x00\x20"
+# 0x200047
+op_200047="\x47\x00\x20"
+# 0x20004A
+op_20004A="\x4a\x00\x20"
+# 0x20004B
+op_20004B="\x4b\x00\x20"
+# 0x20004C
+op_20004C="\x4c\x00\x20"
+# 0x20004D
+op_20004D="\x4d\x00\x20"
+# 0x20004E
+op_20004E="\x4e\x00\x20"
+# 0x200051 tfr Y0,A
+op_200051="\x51\x00\x20"
+# 0x200080 mpy +X0,Y0,A
+op_200080="\x80\x00\x20"
+# 0x200081
+op_200081="\x81\x00\x20"
+# 0x200082 mac +X0,Y0,A
+op_200082="\x82\x00\x20"
+# 0x200083
+op_200083="\x83\x00\x20"
+# 0x200084
+op_200084="\x84\x00\x20"
+# 0x200088
+op_200088="\x88\x00\x20"
+# 0x200090 mpy Y0,Y0,A
+op_200090="\x90\x00\x20"
+# 0x2000A0 mpy X1,X0,A
+op_2000A0="\xa0\x00\x20"
+# 0x2000B0 mpy Y1,Y0,A
+op_2000B0="\xb0\x00\x20"
+# 0x2000C0 mpy X0,Y1,A
+op_2000C0="\xc0\x00\x20"
+# 0x2000D8 mpy Y0,X0,B
+op_2000D8="\xd8\x00\x20"
+# 0x2000E0 mpy X1,Y0,A
+op_2000E0="\xe0\x00\x20"
+# 0x2000F0 mpy Y1,X1,A
+op_2000F0="\xf0\x00\x20"
+# 0x202040 add X0,A ifcc
+op_202040="\x40\x20\x20"
+# 0x203013 clr A ifcc.u
+op_203013="\x13\x30\x20"
+# 0x205800 PM2 R-update (R0)+
+op_205800="\x00\x58\x20"
+# 0x208E1B move X0,A + clr B
+op_208E1B="\x1b\x8e\x20"
+# 0x20C40B
+op_20C40B="\x0b\xc4\x20"
+# 0x244200
+op_244200="\x00\x42\x24"
+# 0x304200
+op_304200="\x00\x42\x30"
+# 0x381013
+op_381013="\x13\x10\x38"
+# 0x400000
+op_400000="\x00\x00\x40"
+# 0x401000 PM4X A10->L:$10
+op_401000="\x00\x10\x40"
+# 0x405800 PM4X A10->L:(R0)+
+op_405800="\x00\x58\x40"
+# 0x409000 PM4X L:$10->A10
+op_409000="\x00\x90\x40"
+# 0x411000 PM4X B10->L:$10
+op_411000="\x00\x10\x41"
+# 0x419000
+op_419000="\x00\x90\x41"
+# 0x41D800 PM4X L:(R0)+->B10
+op_41D800="\x00\xd8\x41"
+# 0x421000 PM4X X->L:$10
+op_421000="\x00\x10\x42"
+# 0x429003
+op_429003="\x03\x90\x42"
+# 0x431000 PM4X Y->L:$10
+op_431000="\x00\x10\x43"
+# 0x439000 PM4X L:$10->Y
+op_439000="\x00\x90\x43"
+# 0x448313
+op_448313="\x13\x83\x44"
+# 0x44E000
+op_44E000="\x00\xe0\x44"
+# 0x481000 PM4X A->L:$10
+op_481000="\x00\x10\x48"
+# 0x48E000 PM4X L:(R0)->A
+op_48E000="\x00\xe0\x48"
+# 0x491000 PM4X B->L:$10
+op_491000="\x00\x10\x49"
+# 0x49E000 PM4X L:(R0)->B
+op_49E000="\x00\xe0\x49"
+# 0x4A1000 PM4X AB->L:$10
+op_4A1000="\x00\x10\x4a"
+# 0x4A9000 PM4X L:$10->AB
+op_4A9000="\x00\x90\x4a"
+# 0x4B1000 PM4X BA->L:$10
+op_4B1000="\x00\x10\x4b"
+# 0x4B9000 PM4X L:$10->BA
+op_4B9000="\x00\x90\x4b"
+# 0x56051B
+op_56051B="\x1b\x05\x56"
+# 0x5E8200
+op_5E8200="\x00\x82\x5e"
+# 0x800800 PM8 write
+op_800800="\x00\x08\x80"
+# 0xABCDE0
+op_ABCDE0="\xe0\xcd\xab"
+# 0xB09C00 PM8 X:(R4)+->X0, Y0->Y:(R0)+
+op_B09C00="\x00\x9c\xb0"
+# 0xC08100 PM8 X0/Y0 ea1
+op_C08100="\x00\x81\xc0"
+# 0xC08800
+op_C08800="\x00\x88\xc0"
+# 0xC58800
+op_C58800="\x00\x88\xc5"
+# 0xCAFE03
+op_CAFE03="\x03\xfe\xca"
+# 0xCB8800 PM8 X:(ea)->A, Y:(ea)->B
+op_CB8800="\x00\x88\xcb"
+# 0xCE8800 PM8 X:(R0),B Y:(R4),A
+op_CE8800="\x00\x88\xce"
+# 0xFFFFFF
+op_FFFFFF="\xff\xff\xff"

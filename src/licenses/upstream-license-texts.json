@@ -1,0 +1,14 @@
+{
+  "retrieved": "2026-09-29",
+  "scope": "Verbatim upstream license texts only; not a claim about the revision of adapted runtime code.",
+  "files": {
+    "xemu-LGPL-2.1.txt": {
+      "url": "https://raw.githubusercontent.com/xemu-project/xemu/master/COPYING.LIB",
+      "sha256": "31c90ce76b6f5aab90a205851e71d5c27e31c0aa3d7017a4383b98a6fe3f1faa"
+    },
+    "xemu-GPL-2.0.txt": {
+      "url": "https://raw.githubusercontent.com/xemu-project/xemu/master/COPYING",
+      "sha256": "dd3ce02338c3a48abb6ba59b48809f7108a8bd242cb0cc8be90daafa30707c28"
+    }
+  }
+}

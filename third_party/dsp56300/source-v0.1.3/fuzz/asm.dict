@@ -1,0 +1,327 @@
+# DSP56300 assembler libfuzzer dictionary
+# Generated from crates/asm/src/{parser.rs,token.rs,ast.rs}
+
+# newline (for multi-line inputs)
+"\x0a"
+
+# ---- memory space prefixes ----
+"x:"
+"y:"
+"p:"
+"l:"
+
+# ---- directives ----
+"org"
+"dc"
+"ds"
+"equ"
+"end"
+"section"
+"endsec"
+"xref"
+"xdef"
+"global"
+"include"
+
+# ---- zero-operand instructions ----
+"nop"
+"rts"
+"rti"
+"reset"
+"stop"
+"wait"
+"enddo"
+"illegal"
+"ill"
+"debug"
+"trap"
+"pflush"
+"pflushun"
+"pfree"
+
+# ---- single-accumulator instructions ----
+"inc"
+"dec"
+
+# ---- arithmetic/logic with immediate ----
+"add"
+"sub"
+"cmp"
+"and"
+"or"
+"eor"
+"andi"
+"ori"
+
+# ---- shift instructions ----
+"asl"
+"asr"
+"lsl"
+"lsr"
+
+# ---- branch/jump instructions ----
+"jmp"
+"jsr"
+"bra"
+"bsr"
+
+# ---- bit manipulation ----
+"bchg"
+"bclr"
+"bset"
+"btst"
+
+# ---- bit branch ----
+"jclr"
+"jset"
+"jsclr"
+"jsset"
+"brclr"
+"brset"
+"bsclr"
+"bsset"
+
+# ---- loop ----
+"do"
+"dor"
+"rep"
+"forever"
+
+# ---- move instructions ----
+"move"
+"movec"
+"movem"
+"movep"
+
+# ---- multiply ----
+"mpy"
+"mpyr"
+"mac"
+"macr"
+"mpyi"
+"mpyri"
+"maci"
+"macri"
+"dmacss"
+"dmacsu"
+"dmacuu"
+"macsu"
+"macuu"
+"mpysu"
+"mpyuu"
+"div"
+
+# ---- compare/misc ALU ----
+"cmpu"
+"norm"
+"normf"
+"clb"
+"merge"
+
+# ---- extract/insert ----
+"extract"
+"extractu"
+"insert"
+
+# ---- address ----
+"lua"
+"lra"
+"vsl"
+
+# ---- cache/debug ----
+"plock"
+"plockr"
+"punlock"
+"punlockr"
+
+# ---- parallel ALU mnemonics ----
+"tfr"
+"addr"
+"subr"
+"addl"
+"subl"
+"tst"
+"rnd"
+"clr"
+"not"
+"abs"
+"neg"
+"ror"
+"rol"
+"adc"
+"sbc"
+"cmpm"
+"max"
+
+# ---- conditional instruction prefixes ----
+"tcc"
+"debugcc"
+"trapcc"
+"brkcc"
+"ifcc"
+
+# ---- condition codes ----
+"cc"
+"ge"
+"ne"
+"pl"
+"nn"
+"ec"
+"gt"
+"cs"
+"lt"
+"eq"
+"mi"
+"nr"
+"es"
+"ls"
+"le"
+
+# ---- registers: accumulators ----
+"a"
+"b"
+"a0"
+"a1"
+"a2"
+"b0"
+"b1"
+"b2"
+"a10"
+"b10"
+"ab"
+"ba"
+
+# ---- registers: data ALU ----
+"x0"
+"x1"
+"y0"
+"y1"
+
+# ---- registers: address ----
+"r0"
+"r1"
+"r2"
+"r3"
+"r4"
+"r5"
+"r6"
+"r7"
+"n0"
+"n1"
+"n2"
+"n3"
+"n4"
+"n5"
+"n6"
+"n7"
+"m0"
+"m1"
+"m2"
+"m3"
+"m4"
+"m5"
+"m6"
+"m7"
+
+# ---- registers: control ----
+"sr"
+"omr"
+"sp"
+"ssh"
+"ssl"
+"la"
+"lc"
+"mr"
+"ccr"
+
+# ---- registers: composite (L-move) ----
+"x"
+"y"
+
+# ---- punctuation and operators ----
+"#"
+","
+"("
+")"
+"+"
+"-"
+":"
+">"
+"<"
+"*"
+"|"
+"&"
+"~"
+"/"
+"."
+";"
+
+# ---- hex prefix ----
+"$"
+
+# ---- immediate prefixes ----
+"#$"
+"#>$"
+"#<$"
+"#>"
+"#<"
+
+# ---- addressing modes ----
+"(r0)+"
+"(r0)-"
+"(r0)+n0"
+"(r0)-n0"
+"(r0+n0)"
+"(r0)"
+"-(r0)"
+"(r4)+"
+"(r4)-"
+"(r4)+n4"
+"(r4)-n4"
+"(r4+n4)"
+"(r4)"
+"-(r4)"
+
+# ---- common operand patterns ----
+"x:(r0)"
+"x:(r0)+"
+"x:(r0)-"
+"y:(r0)"
+"y:(r0)+"
+"y:(r0)-"
+"l:(r0)"
+"l:(r0)+"
+"p:(r0)"
+"x:(r4)"
+"x:(r4)+"
+"y:(r4)+"
+
+# ---- common address/immediate values ----
+"$0"
+"$00"
+"$0000"
+"$ff"
+"$ffff"
+"$ffffff"
+"$1"
+"$100"
+"$ffffc0"
+
+# ---- fractional literals ----
+"0.5"
+"0.0"
+"1.0"
+".5"
+
+# ---- parallel move separators (space between ALU and move) ----
+" "
+
+# ---- ifcc suffix ----
+".u"
+
+# ---- do/dor loop end label pattern ----
+",_end"
+",end"
+
+# ---- comment ----
+"; comment"

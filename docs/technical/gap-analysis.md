@@ -1,0 +1,125 @@
+# xboxrecomp Gap Analysis vs xemu
+
+Comprehensive comparison of what xemu implements vs what xboxrecomp provides.
+Prioritized by impact on Blood Wake and Wreckless (both launch-era titles).
+
+## Status Legend
+- DONE = Fully implemented in xboxrecomp
+- ADDED = Added in this analysis pass
+- PARTIAL = Scaffolded but incomplete
+- MISSING = Not implemented, needed
+- N/A = Not needed for static recomp
+
+## GPU / NV2A
+
+| Feature | xemu | xboxrecomp | Status | Priority |
+|---------|------|-----------|--------|----------|
+| NV2A register read/write (PMC, PFB, PTIMER, etc.) | Full | Full | DONE | - |
+| MMIO interception (VEH-based) | N/A (LLE) | Full | DONE | - |
+| Push buffer parsing (PFIFO DMA pusher) | Full | Stub | N/A | Low (D3D8 API intercept instead) |
+| PGRAPH → D3D11 method translator | N/A | From burnout3 | ADDED | High |
+| Push buffer replay | N/A | From burnout3 | ADDED | Medium |
+| **Register combiners (pixel shaders)** | Full (8 stages, RGB/alpha, final combiner) | Full (8 stages, HLSL generation, 128-entry cache) | DONE | - |
+| **Vertex shader microcode translation** | Full (MAC+ILU ops, 192 constants, 12 temps) | Full (d3d8_vsh.c: parser, HLSL gen, 64-entry cache) | DONE | - |
+| **Texture unswizzling (Z-order/Morton)** | Full | Full | ADDED | High |
+| Texture format coverage (66 formats) | Full | 17 formats + 3 new | PARTIAL | High |
+| Palettized textures (P8 with palette lookup) | Full | Format mapped, no palette | PARTIAL | Medium |
+| Signed texture formats (R6G5B5, etc.) | Full | Missing | MISSING | Low |
+| YUV texture formats | Full | Missing | MISSING | Low |
+| Mipmapping | Full chain | Level 0 only | PARTIAL | Medium |
+| Cube textures | Full | Missing | MISSING | Low |
+| Volume textures | Full | Missing | MISSING | Low |
+| Anti-aliasing modes | Full | Missing | MISSING | Low |
+| Render target format negotiation | Full | Basic | PARTIAL | Medium |
+
+## D3D8 Translation Layer
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Device creation/reset/present | DONE | D3D11 backend |
+| Fixed-function vertex transform (FVF) | DONE | HLSL vertex shader |
+| Texture stage states (4 stages) | DONE | Full D3DTOP set: MODULATE/2X/4X, ADD/SIGNED/2X, SUBTRACT, BLEND*, DOTPRODUCT3 |
+| Render states (blend, depth, stencil, cull) | DONE | ~20 states translated |
+| Vertex/index buffer management | DONE | System memory staging |
+| DrawPrimitive/DrawIndexedPrimitive | DONE | All primitive types |
+| Quad list support | DONE | Converted to tri list |
+| Viewport/scissor | DONE | |
+| **Xbox pixel shader (register combiners)** | DONE | d3d8_combiners.c: 8 stages + final, HLSL cache |
+| **Xbox vertex shader (NV2A microcode)** | DONE | d3d8_vsh.c: 14 MAC + 8 ILU ops, 192 constants, 64-entry cache |
+| **Multi-texture (4 stages, full TSS ops)** | DONE | All D3DTOP ops, D3DTA args, 4 samplers bound |
+| **Hardware T&L lighting (8 lights)** | DONE | Directional, point, spot; material; global ambient |
+| **Vertex fog (linear/exp/exp2)** | DONE | VS fog factor, PS fog color blending |
+| **Triangle fan conversion** | DONE | Fan/quad → tri list in DrawPrimitiveUP |
+| **DrawPrimitiveUP ring buffer** | DONE | 4MB ring buffer, no per-call buffer create/destroy |
+| Bump mapping / normal mapping | PARTIAL | Register combiners support bump; tex coord gen missing |
+| Environment mapping | PARTIAL | Register combiners handle it; tex coord gen missing |
+| Per-pixel fog (table fog) | MISSING | Vertex fog done; table fog needs PS computation |
+
+## Kernel
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Memory management (147 ordinals) | DONE | Win32 heap backend |
+| File I/O with path translation | DONE | Xbox paths → host filesystem |
+| Threading | DONE | Single-thread cooperative model |
+| Synchronization (events, semaphores, waits) | DONE | Win32 primitives |
+| Timers and DPCs | DONE | |
+| Crypto (SHA, RC4, RSA, DES) | DONE | Full implementation |
+| Object manager | DONE | Basic reference counting |
+| I/O manager | DONE | IRP stubs |
+| HAL (IRQL, perf counters, PCI) | DONE | Simulated, not enforced |
+| **EEPROM data** | ADDED | Region, language, video standard populated |
+| **AV pack / video mode detection** | ADDED | Returns HDTV/component, 480p capable |
+| **SMBus / SMC** | ADDED | Version, tray state, AV pack, temperature |
+| Xbox Live / network | Stub | PhyGetLinkState returns "no link" |
+| USB/OHCI gamepad | N/A | Bypassed via XInput |
+| DVD/disc drive | N/A | Host filesystem instead |
+
+## Audio
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| DirectSound buffer creation | DONE | Stub buffers accept all calls |
+| Buffer Play/Stop/Volume/Frequency | DONE | Routed to APU mixer |
+| APU Voice Processor (VP) | DONE | 64 voices, PCM/ADPCM |
+| APU GP DSP effects (reverb, chorus) | Stub | Bypassed |
+| APU EP final encode | Stub | Direct passthrough |
+| Audio mute flag for testing | ADDED | g_audio_muted global |
+| 3D positional audio | Stub | SetPosition etc. are no-ops |
+| DirectSound streams | Stub | Xbox-specific streaming |
+| WMA decoding | Missing | Blood Wake uses WMADEC section |
+| I3DL2 environmental reverb | Missing | |
+| HRTF 3D audio | Partial | Basic VP support |
+
+## Input
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Controller polling (4 ports) | DONE | XInput backend |
+| Digital + analog buttons | DONE | |
+| Rumble/vibration | DONE | |
+| Headset | Missing | Not needed for gameplay |
+
+## Next Steps (Priority Order)
+
+1. ~~**Register combiner translation**~~ - DONE. d3d8_combiners.c/h: 1,415 lines. Full 8-stage combiner + final combiner, runtime HLSL generation with 128-entry compiled shader cache.
+
+2. ~~**Vertex shader microcode translation**~~ - DONE. d3d8_vsh.c/h: 1,868 lines. 128-bit instruction parser, HLSL generator for 14 MAC + 8 ILU ops, 64-entry compiled shader cache, 192-constant buffer, input layout management.
+
+3. ~~**Multi-texture pixel shader**~~ - DONE. Full 4-stage TSS with all D3DTOP operations, D3DTA argument resolution (DIFFUSE, CURRENT, TEXTURE, TFACTOR, SPECULAR + COMPLEMENT/ALPHAREPLICATE modifiers), 4 samplers bound per draw.
+
+4. ~~**Hardware T&L lighting**~~ - DONE. Up to 8 lights (directional, point, spot) with material properties, global ambient, specular highlights. World-space normal transform via inverse-transpose matrix.
+
+5. ~~**Vertex fog**~~ - DONE. Linear/exp/exp2 fog modes computed in vertex shader, blended with fog color in pixel shader.
+
+6. ~~**Triangle fan + quad list conversion**~~ - DONE. Fan→tri list and quad→tri list conversion in DrawPrimitiveUP.
+
+7. ~~**DrawPrimitiveUP performance**~~ - DONE. 4MB ring buffer with WRITE_NO_OVERWRITE/WRITE_DISCARD, no per-call buffer create/destroy.
+
+8. **WMA audio decoder** - Blood Wake has a WMADEC section. Need either a software WMA decoder or integration with Windows Media Foundation.
+
+9. **Mipmap support** - Currently only level 0. Add mipmap chain upload in texture creation and UnlockRect.
+
+10. **Texture coordinate generation** - TEXCOORDINDEX with TCI_CAMERASPACENORMAL, TCI_CAMERASPACEPOSITION, TCI_CAMERASPACEREFLECTIONVECTOR for environment mapping.
+
+11. **Per-pixel (table) fog** - Vertex fog is done; table fog needs distance computation in pixel shader.

@@ -1,0 +1,65 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Unknown </title></head><body>
+<h1 id="initial-source-export-validation-2026-09-30">Initial source export validation - 2026-09-30</h1>
+<p>Validation used a fresh extraction of the curated source ZIP, its own Python
+3.12 virtual environment with the pinned requirements, and the supported MSVC
+14.44.35207 / Windows SDK 10.0.26100.0 toolchain. No original workspace source
+or generated C was used by the isolated build. The verified retail Xbox input
+was supplied from the maintainer's local extracted game directory; it is not
+included in the export.</p>
+<h2 id="results">Results</h2>
+<ul>
+<li>Public dependency setup succeeded in the isolated environment.</li>
+<li><code>Recompile.ps1 -GameDirectory &lt;verified-retail-directory&gt;</code> completed:
+  <strong>14,083/14,083 functions lifted, zero failures, 56 unresolved direct targets</strong>.
+  Those unresolved targets remain part of the existing generated fallback path;
+  a successful build does not establish that every guest execution path works.</li>
+<li><code>Build.ps1</code> successfully configured, compiled, and linked both the Release
+  runtime and first-launch launcher from that freshly generated tree.</li>
+<li>Source-policy/provenance tests: <strong>46 passed, one skipped</strong> (creating a symbolic
+  link was unavailable in the test environment).</li>
+<li>New exporter tests: <strong>three passed</strong>, covering manifest/archive byte identity,
+  exclusion of local outputs, refusal to overwrite an export, and rejection of
+  renamed game executables and crash captures.</li>
+<li>ZIP path/signature policy, reviewed-fixture digest, CRCs, per-file SHA-256
+  equality, and the GitHub file-size ceiling passed. The source manifest records
+  the exact payload. No payload file is ignored by the final root Git rules.</li>
+<li>Links in the current entry-point guides resolve inside the export. Historical
+  investigation records retain citations to non-distributed local evidence.</li>
+<li>A limited scan for private-key headers, GitHub tokens, and AWS access-key IDs
+  found no matches; this is not a comprehensive secret or provenance audit.</li>
+</ul>
+<h2 id="build-identities">Build identities</h2>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>SHA-256</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mercenaries_recomp.exe</code></td>
+<td><code>A45B981EC29219A3532EA2F09738CBFB45E286172CBB87DDB95B438F1367C6EE</code></td>
+</tr>
+<tr>
+<td><code>Mercenaries Recompiled.exe</code></td>
+<td><code>41067E50AF8202D91BED4CC4263A4D408B31287F0686B58503E39A69A6BC05C5</code></td>
+</tr>
+</tbody>
+</table>
+<p>The final packaging changes after that build affect documentation, Git ignore
+rules, and source-export tooling/tests only. Maintained runtime, translator,
+patch, build, and resource inputs were compared byte-for-byte with the isolated
+build's source inputs before final delivery.</p>
+<h2 id="scope-and-limitations">Scope and limitations</h2>
+<p>The check started from an already extracted and hash-verified retail XBE. It did
+not repeat ISO extraction or the top-level ISO provenance step. No gameplay,
+first-launch GUI, Wine/Proton, or clean-machine installation test was performed
+for this documentation/source-packaging change. The separate historical full
+suite baseline remains in <a href="maintenance-validation.md">maintenance validation</a>
+and <a href="stale-comment-cleanup.md">stale-comment cleanup</a>; it was not rerun here.</p>
+<p>The compiled executables, generated game C, extracted input, full build logs,
+and test scratch outputs stay outside the public source package. Passing these
+checks does not grant rights to supplied artwork/audio or establish legal
+clearance. Preserve the <a href="dependencies.md">dependency notices</a>.</p>
+</body></html>

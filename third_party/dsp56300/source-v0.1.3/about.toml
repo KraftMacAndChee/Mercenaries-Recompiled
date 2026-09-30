@@ -1,0 +1,24 @@
+# cargo-about configuration for generating third-party license notices.
+#
+# Generate with:
+#   cargo about generate -c about.toml about.hbs -o THIRDPARTY
+#
+# Note: MPL-2.0 is accepted because it only appears via build-dependencies
+# (cbindgen) which are not linked into the output binary.
+
+accepted = [
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-3.0",
+    "Unlicense",
+    "Zlib",
+]
+
+ignore-build-dependencies = true
+ignore-dev-dependencies = true
+ignore-transitive-dependencies = false
+

@@ -1,0 +1,249 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1
+        with:
+          cache-all-crates: true
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets
+
+      - name: Docs
+        run: cargo doc --workspace --no-deps
+
+  test:
+    name: Test (${{ matrix.os }})
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-26-intel, windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1
+        with:
+          cache-all-crates: true
+
+      - uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Test with coverage
+        if: matrix.os == 'ubuntu-latest'
+        run: cargo llvm-cov --workspace --release --lcov --output-path lcov.info
+
+      - name: Test
+        if: matrix.os != 'ubuntu-latest'
+        run: cargo test --workspace --release
+
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v5
+        with:
+          files: lcov.info
+          use_oidc: true
+          verbose: true
+
+  build:
+    name: Build (${{ matrix.target }})
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - aarch64-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - aarch64-apple-darwin
+          - x86_64-pc-windows-gnu
+          - aarch64-pc-windows-gnullvm
+    runs-on: ${{ contains(matrix.target, 'apple') && 'macos-latest' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install cross-compilation tools (Linux ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+
+      - name: Install cross-compilation tools (Windows GNU x86_64)
+        if: matrix.target == 'x86_64-pc-windows-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+
+      - name: Install cross-compilation tools (Windows gnullvm aarch64)
+        if: matrix.target == 'aarch64-pc-windows-gnullvm'
+        env:
+          LLVM_MINGW_VERSION: "20250305"
+          LLVM_MINGW_URL: "https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-ubuntu-20.04-x86_64.tar.xz"
+        run: |
+          curl -fsSL "$LLVM_MINGW_URL" | sudo tar xJ -C /opt
+          echo "/opt/llvm-mingw-${LLVM_MINGW_VERSION}-ucrt-ubuntu-20.04-x86_64/bin" >> "$GITHUB_PATH"
+          echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=aarch64-w64-mingw32-clang" >> "$GITHUB_ENV"
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1
+        with:
+          target: ${{ matrix.target }}
+          cache-all-crates: true
+          cache-key: ${{ matrix.target }}
+
+      - uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2
+        with:
+          tool: cargo-about
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }} --workspace
+
+      - name: Determine version
+        id: version
+        run: |
+          version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' Cargo.toml | head -1)
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Package
+        env:
+          STAGING: dsp56300-${{ steps.version.outputs.value }}-${{ matrix.target }}
+          RELEASE: target/${{ matrix.target }}/release
+        run: |
+          mkdir -p "$STAGING"/bin "$STAGING"/lib "$STAGING"/include
+          for name in dsp56300-asm dsp56300-disasm dsp56300-emu; do
+            cp "$RELEASE/$name" "$STAGING/bin/" 2>/dev/null || cp "$RELEASE/$name.exe" "$STAGING/bin/"
+          done
+          cp "$RELEASE"/libdsp56300_emu_ffi.a "$STAGING/lib/"
+          cp crates/emu-ffi/include/dsp56300.h "$STAGING/include/"
+          cargo about generate -c about.toml -m crates/asm/Cargo.toml about.hbs -o "$STAGING/THIRDPARTY-asm"
+          cargo about generate -c about.toml -m crates/disasm/Cargo.toml about.hbs -o "$STAGING/THIRDPARTY-disasm"
+          cargo about generate -c about.toml -m crates/emu/Cargo.toml about.hbs -o "$STAGING/THIRDPARTY-emu"
+          cp LICENSE "$STAGING/"
+          tar czf "${STAGING}.tar.gz" "$STAGING"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: dsp56300-${{ matrix.target }}
+          path: dsp56300-*.tar.gz
+          compression-level: 0
+
+  smoke-test:
+    name: Smoke test (${{ matrix.target }})
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+          - target: x86_64-apple-darwin
+            os: macos-26-intel
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+          - target: aarch64-pc-windows-gnullvm
+            os: windows-11-arm
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          sparse-checkout: examples
+
+      - name: Download artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: dsp56300-${{ matrix.target }}
+
+      - name: Extract
+        shell: bash
+        run: tar xzf dsp56300-*.tar.gz
+
+      - name: Smoke test
+        shell: bash
+        run: |
+          chmod +x dsp56300-*/bin/* 2>/dev/null || true
+          bin=$(echo dsp56300-*/bin)
+          asm=$(ls "$bin"/dsp56300-asm*)
+          disasm=$(ls "$bin"/dsp56300-disasm*)
+          emu=$(ls "$bin"/dsp56300-emu*)
+          "$asm" --version
+          "$disasm" --version
+          "$emu" --version
+          "$asm" -f lod -o thru.lod examples/thru.a56
+          printf '\xAA\xBB\xCC\x11\x22\x33' > input.bin
+          "$emu" thru.lod < input.bin > output.bin
+          cmp input.bin output.bin
+
+  release:
+    name: GitHub Release
+    needs: [lint, test, build, smoke-test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: dsp56300-*
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v2
+        with:
+          generate_release_notes: true
+          files: dsp56300-*
+
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    needs: [lint, test, smoke-test]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@46268bd060767258de96ed93c1251119784f2ab6 # v1
+
+      - name: Install cargo-release
+        run: cargo install cargo-release --locked
+
+      - name: Authenticate with crates.io
+        id: auth
+        uses: rust-lang/crates-io-auth-action@bbd81622f20ce9e2dd9622e3218b975523e45bbe # v1
+
+      - name: Publish crates
+        run: cargo release publish --execute --no-confirm --allow-branch=HEAD
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}

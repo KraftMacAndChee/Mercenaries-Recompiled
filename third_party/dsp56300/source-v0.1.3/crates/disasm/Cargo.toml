@@ -1,0 +1,26 @@
+[package]
+name = "dsp56300-disasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+description = "DSP56300 disassembler"
+keywords = ["dsp56300", "motorola", "disassembler", "dsp", "embedded"]
+categories = ["emulators", "development-tools::debugging"]
+
+[features]
+default = ["cli"]
+cli = ["dep:clap", "dep:owo-colors"]
+
+[dependencies]
+dsp56300-core = { version = "0.1.0", path = "../core" }
+clap = { version = "4", features = ["derive"], optional = true }
+owo-colors = { version = "4", optional = true }
+
+[[bin]]
+name = "dsp56300-disasm"
+path = "src/bin/disasm.rs"
+required-features = ["cli"]

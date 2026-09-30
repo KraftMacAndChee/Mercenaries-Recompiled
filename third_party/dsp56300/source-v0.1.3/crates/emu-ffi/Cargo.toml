@@ -1,0 +1,20 @@
+[package]
+name = "dsp56300-emu-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+description = "C FFI bindings for the DSP56300 emulator"
+
+[lib]
+crate-type = ["staticlib"]
+
+[build-dependencies]
+cc = "1"
+cbindgen = "0.29"
+
+[dependencies]
+dsp56300-core = { version = "0.1.0", path = "../core" }
+dsp56300-emu = { version = "0.1.0", path = "../emu", default-features = false }

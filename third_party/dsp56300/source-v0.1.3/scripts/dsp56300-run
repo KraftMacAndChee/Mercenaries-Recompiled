@@ -1,0 +1,49 @@
+#!/bin/bash
+# Assemble and run a DSP56300 .a56 program with live audio I/O.
+#
+# Usage: dsp56300-run examples/reverb.a56 [-- emu options...]
+#
+# Environment variables:
+#   DSP_RATE  - sample rate in Hz (default: 48000)
+set -euo pipefail
+
+SRC="$(realpath "$1")"
+shift
+SRC_DIR="$(dirname "$SRC")"
+
+# Find project root by looking for Cargo.toml above the script
+ROOT="$(cd "$(dirname "$(realpath "$0")")/.." && pwd)"
+
+ASM="$ROOT/target/release/dsp56300-asm"
+EMU="$ROOT/target/release/dsp56300-emu"
+
+# Build if needed
+if [[ ! -x "$ASM" ]] || [[ ! -x "$EMU" ]]; then
+    echo "Building dsp56300 tools..." >&2
+    cargo build --release --manifest-path "$ROOT/Cargo.toml" \
+        --bin dsp56300-asm --bin dsp56300-emu >&2
+fi
+
+# Temp dir for intermediate files
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+
+# Preprocess: use m4 if source contains m4 macros, otherwise cpp
+if grep -q '^define(' "$SRC"; then
+    m4 "$SRC" > "$TMP/pp.a56"
+else
+    cpp -traditional -P -nostdinc -Uicon -I"$SRC_DIR" "$SRC" > "$TMP/pp.a56"
+fi
+
+# Assemble
+"$ASM" -I "$SRC_DIR" -f lod "$TMP/pp.a56" -o "$TMP/program.lod"
+
+RATE="${DSP_RATE:-48000}"
+
+# Run: capture audio -> DSP -> playback
+echo "Running $(basename "$SRC") at ${RATE}Hz (Ctrl-C to stop)" >&2
+ffmpeg -hide_banner -loglevel error \
+    -f pulse -i default \
+    -f s24le -ac 2 -ar "$RATE" - | \
+  "$EMU" "$@" "$TMP/program.lod" | \
+  aplay -f S24_3LE -c 2 -r "$RATE" -q
