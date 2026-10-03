@@ -1185,7 +1185,7 @@ int d3d8_vsh_generate_hlsl(const NV2AVshProgram *program,
         "    float  oPts : PSIZE;\n"
         "    float4 oB0  : TEXCOORD4;\n"
         "    float4 oB1  : TEXCOORD5;\n"
-        "    noperspective float4 guestDepth : TEXCOORD6;\n"
+        "    float4 guestDepth : TEXCOORD6;\n"
         "};\n\n");
 
     /* Main function */
@@ -1336,6 +1336,11 @@ int d3d8_vsh_generate_hlsl(const NV2AVshProgram *program,
         "    o.oB0  = saturate(nv2a_nan_to_one(oB0));\n"
         "    o.oB1  = saturate(nv2a_nan_to_one(oB1));\n"
         "%s"
+        /* Carry numerator and denominator in clip space. Perspective interpolation
+         * then reconstructs window depth without noperspective clipping errors
+         * on terrain triangles crossing the camera plane. Keep ZW unweighted
+         * for the diagnostic triangle-depth stage. */
+        "    o.guestDepth.xy *= oPos.w;\n"
         "    return o;\n"
         "}\n",
         vsh_cached_getenv("MERCENARIES_STRICT_SCREEN_ROUNDING") != NULL ?

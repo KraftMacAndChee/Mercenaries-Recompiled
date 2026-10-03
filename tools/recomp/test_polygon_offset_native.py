@@ -43,8 +43,8 @@ int main(void){
  }
  for(unsigned axis=0;axis<2;axis++){
   snprintf(hlsl,sizeof(hlsl),
-   "struct V{float4 pos:SV_POSITION;float4 c0:COLOR0;float4 c1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float f:FOG;float size:PSIZE;float4 b0:TEXCOORD4;float4 b1:TEXCOORD5;noperspective float4 guestDepth:TEXCOORD6;};"
-   "V main(uint id:SV_VertexID){V o=(V)0;float2 p=id==0?float2(-1,-1):(id==1?float2(-1,3):float2(3,-1));float z=0.25+0.125*p.%s;float w=id==0?0.75:(id==1?17.0:187.5);o.guestDepth=float4(z*16777215.0-16777215.0,16777215.0,(p.x+1)*32,(1-p.y)*32);o.pos=float4(p*w,z*w,w);return o;}",axis?"y":"x");
+   "struct V{float4 pos:SV_POSITION;float4 c0:COLOR0;float4 c1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float f:FOG;float size:PSIZE;float4 b0:TEXCOORD4;float4 b1:TEXCOORD5;float4 guestDepth:TEXCOORD6;};"
+   "V main(uint id:SV_VertexID){V o=(V)0;float2 p=id==0?float2(-1,-1):(id==1?float2(-1,3):float2(3,-1));float z=0.25+0.125*p.%s;float w=id==0?0.75:(id==1?17.0:187.5);o.guestDepth=float4((z*16777215.0-16777215.0)*w,16777215.0*w,(p.x+1)*32,(1-p.y)*32);o.pos=float4(p*w,z*w,w);return o;}",axis?"y":"x");
   ID3DBlob *b=compile(hlsl,"vs_5_0");assert(SUCCEEDED(ID3D11Device_CreateVertexShader(device,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&vs[axis])));ID3D10Blob_Release(b);
  }
  bd.ByteWidth=sizeof(constants);bd.Usage=D3D11_USAGE_DEFAULT;bd.BindFlags=D3D11_BIND_CONSTANT_BUFFER;

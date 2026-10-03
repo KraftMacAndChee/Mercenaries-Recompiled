@@ -19,10 +19,10 @@ typedef int BOOL;typedef long HRESULT;typedef unsigned UINT;typedef void IDXGISw
 #define FAILED(hr) ((hr)<0)
 static HRESULT present_result;static int failures;
 static struct {void *d3d11_device, *d3d11_context, *current_rtv, *current_dsv; int flip_model; UINT swap_chain_flags;} g_device_state;
-static unsigned last_flags,rebinds,fullscreen_queries;static BOOL fullscreen;static HRESULT query_result;
+static unsigned last_flags,last_sync,rebinds,fullscreen_queries;static BOOL fullscreen;static HRESULT query_result;
 static HRESULT IDXGISwapChain_GetFullscreenState(IDXGISwapChain *c,BOOL *f,void *o){(void)c;(void)o;++fullscreen_queries;*f=fullscreen;return query_result;}
 static void ID3D11DeviceContext_OMSetRenderTargets(void *c,UINT n,void **r,void *d){assert(c==g_device_state.d3d11_context&&n==1&&*r==g_device_state.current_rtv&&d==g_device_state.current_dsv);++rebinds;}
-static HRESULT IDXGISwapChain_Present(IDXGISwapChain *c,UINT s,UINT f){(void)c;(void)s;last_flags=f;return present_result;}
+static HRESULT IDXGISwapChain_Present(IDXGISwapChain *c,UINT s,UINT f){(void)c;last_sync=s;last_flags=f;return present_result;}
 static HRESULT ID3D11Device_GetDeviceRemovedReason(void *d){(void)d;return -7;}
 static void xbox_preview_log_event(const char *c,const char *f,...){(void)c;(void)f;failures++;}
 typedef struct {long long QuadPart;} LARGE_INTEGER;
@@ -54,22 +54,25 @@ int main(void){
  clock_now+=5000000000LL;record_frame_submission();d3d8_GetFrameTimingSnapshot(&s);
  assert(fabs(s.max_ms-4294967.295)<1e-6);d3d8_GetFrameTimingSnapshot(NULL);
  uint64_t count=s.submitted_frames;
- g_pending_scanout_present=1;present_result=0;preview_present(NULL,0,0);
+ g_pending_scanout_present=1;present_result=0;preview_present(NULL,0);
  assert(!g_pending_scanout_present && g_frame_submissions==count+1 && failures==0);
- g_pending_scanout_present=1;present_result=-1;preview_present(NULL,0,0);
+ g_pending_scanout_present=1;present_result=-1;preview_present(NULL,0);
  assert(!g_pending_scanout_present && g_frame_submissions==count+1 && failures==1);
- g_pending_scanout_present=1;present_result=1;preview_present(NULL,0,0);
+ g_pending_scanout_present=1;present_result=1;preview_present(NULL,0);
  assert(!g_pending_scanout_present && g_frame_submissions==count+1 && failures==1);
  assert(!rebinds && !fullscreen_queries);
  g_device_state.flip_model=1;g_device_state.current_rtv=&s;
  g_device_state.swap_chain_flags=DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
- present_result=0;preview_present(NULL,0,0);assert(rebinds==1&&last_flags==DXGI_PRESENT_ALLOW_TEARING);
- fullscreen=1;preview_present(NULL,0,0);assert(rebinds==2&&last_flags==0);
- fullscreen=0;preview_present(NULL,1,0);assert(rebinds==3&&last_flags==0);
- query_result=-1;preview_present(NULL,0,0);assert(rebinds==4&&last_flags==0);
- present_result=-1;preview_present(NULL,0,0);assert(rebinds==4);
- present_result=0;g_device_state.current_rtv=NULL;preview_present(NULL,0,0);assert(rebinds==4);
- puts("PASS: exact nearest-rank percentiles, bounded rolling window, non-destructive reads and long-gap clamp");
+ present_result=0;preview_present(NULL,0);assert(rebinds==1&&last_flags==DXGI_PRESENT_ALLOW_TEARING&&last_sync==0);
+ fullscreen=1;preview_present(NULL,0);assert(rebinds==2&&last_flags==0);
+ fullscreen=0;g_vsync_enabled=1;preview_present(NULL,DXGI_PRESENT_ALLOW_TEARING);assert(rebinds==3&&last_flags==0&&last_sync==1);
+ g_vsync_enabled=0;
+ query_result=-1;preview_present(NULL,0);assert(rebinds==4&&last_flags==0);
+ present_result=-1;preview_present(NULL,0);assert(rebinds==4);
+ present_result=0;g_device_state.current_rtv=NULL;preview_present(NULL,0);assert(rebinds==4);
+ g_vsync_enabled=1;g_device_state.flip_model=0;preview_present(NULL,DXGI_PRESENT_ALLOW_TEARING);assert(last_sync==1&&last_flags==0);
+ g_vsync_enabled=0;preview_present(NULL,0);assert(last_sync==0&&last_flags==0);
+ puts("PASS: V-Sync intervals and tearing flags; exact nearest-rank percentiles, bounded rolling window, non-destructive reads and long-gap clamp");
 }
 '''
 class TimingTests(unittest.TestCase):

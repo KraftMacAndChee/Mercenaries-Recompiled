@@ -15,9 +15,9 @@ static const char triangle_shader_source[] =
 "nointerpolation float4 p0:TEXCOORD6;nointerpolation float4 p1:TEXCOORD7;nointerpolation float4 p2:TEXCOORD8;};"
 "cbuffer G:register(b0){float4 viewport;}"
 "[maxvertexcount(3)] void main(triangle V input[3],inout TriangleStream<V> stream){"
-"float4 p0=float4(input[0].p0.zw*viewport.xy+viewport.zw,input[0].p0.xy);"
-"float4 p1=float4(input[1].p0.zw*viewport.xy+viewport.zw,input[1].p0.xy);"
-"float4 p2=float4(input[2].p0.zw*viewport.xy+viewport.zw,input[2].p0.xy);"
+"float4 p0=float4(input[0].p0.zw*viewport.xy+viewport.zw,input[0].p0.xy / input[0].pos.w);"
+"float4 p1=float4(input[1].p0.zw*viewport.xy+viewport.zw,input[1].p0.xy / input[1].pos.w);"
+"float4 p2=float4(input[2].p0.zw*viewport.xy+viewport.zw,input[2].p0.xy / input[2].pos.w);"
 "for(uint i=0;i<3;i++){V v=input[i];v.p0=p0;v.p1=p1;v.p2=p2;stream.Append(v);}stream.RestartStrip();}";
 void d3d8_triangle_depth_shutdown(void){
  if(triangle_shader)ID3D11GeometryShader_Release(triangle_shader);

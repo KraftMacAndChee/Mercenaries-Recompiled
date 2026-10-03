@@ -22,7 +22,10 @@ ROOT_FILES = (
     "CMakeLists.txt", "LICENSE", "README.md", "CONTRIBUTING.md",
     ".gitignore", ".gitattributes", "ARCHITECTURE.md", "CODE_MAP.md",
     "SUBSYSTEMS.md", "DATA_FLOW.md", "COMPATIBILITY.md", "WORKAROUNDS.md",
-    "MAINTENANCE.md", "ARCHITECTURE_EVIDENCE.md", "DEV_HISTORY_ASTRA.md",
+    "MAINTENANCE.md",
+)
+OPTIONAL_ROOT_FILES = (
+    "ARCHITECTURE_EVIDENCE.md", "DEV_HISTORY_ASTRA.md",
     "DEV_HISTORY_SOL.md", "DOCUMENTATION_AUDIT.md",
 )
 EXCLUDED = (
@@ -51,6 +54,8 @@ def source_files(root: Path, helper) -> list[tuple[str, Path]]:
         if not (root / name).is_file():
             raise ValueError(f"Required source file missing: {name}")
         files.append((name, root / name))
+    files.extend((name, root / name) for name in OPTIONAL_ROOT_FILES
+                 if (root / name).is_file())
     files.sort(key=lambda item: item[0])
     names = [name.casefold() for name, _ in files]
     if len(names) != len(set(names)):

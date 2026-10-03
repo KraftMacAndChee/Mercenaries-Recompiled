@@ -785,6 +785,7 @@ void d3d8_DebugSetPresentCallback(void (*callback)(void));
 /* Optional host override; point-filtered UI samplers remain untouched. */
 void d3d8_SetForceAnisotropic16x(BOOL enabled);
 void d3d8_SetPresentationAspect(UINT width, UINT height);
+void d3d8_SetVSync(BOOL enabled);
 void d3d8_SetFrameCap(UINT fps); /* 0 disables the cap. */
 BOOL d3d8_ResizePresentation(UINT width, UINT height, BOOL fullscreen);
 

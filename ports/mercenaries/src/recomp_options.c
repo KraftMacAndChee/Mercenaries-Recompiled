@@ -10,7 +10,7 @@
 #include <string.h>
 
 typedef struct recomp_option_values {
-    int fps_cap, aspect, resolution, anisotropic, display, haze,
+    int fps_cap, vsync, fov, aspect, resolution, anisotropic, display, haze,
         wake_distance, npc_draw_distance, npc_lod, fixed_xbox_prompts, object_distance, og_bugs, ps2_upgrades;
 } recomp_option_values;
 
@@ -30,6 +30,10 @@ static const char *g_fps_cap_labels[] = {"30", "60", "90", "120", "UNCAPPED"};
 static int g_object_distance_for_world;
 static int clamp_setting(int value, int maximum) { return value < 0 ? 0 : (value > maximum ? maximum : value); }
 static void build_config_path(char path[MAX_PATH]) {
+    DWORD configured = GetEnvironmentVariableA("MERCENARIES_CONFIG_ROOT", path, MAX_PATH);
+    if (configured && configured < MAX_PATH && configured + sizeof("\\mercenaries_recomp.ini") <= MAX_PATH) {
+        strcat_s(path, MAX_PATH, "\\mercenaries_recomp.ini"); return;
+    }
     DWORD length = GetModuleFileNameA(NULL, path, MAX_PATH); char *separator;
     if (length == 0u || length >= MAX_PATH) { strcpy_s(path, MAX_PATH, "mercenaries_recomp.ini"); return; }
     separator = strrchr(path, '\\');
@@ -43,6 +47,8 @@ static void write_setting(const char *name, int value) {
 static void write_all_settings(void) {
     write_setting("FPSCap", g_fps_caps[g_options.applied.fps_cap]);
     write_setting("60FPS", g_options.applied.fps_cap != 0); /* older-build rollback */
+    write_setting("FOV", g_options.applied.fov);
+    write_setting("VSync", g_options.applied.vsync);
     write_setting("AspectRatio", g_options.applied.aspect);
     write_setting("DrawDistance", 0); /* Clear legacy overrides when settings are saved. */
     write_setting("ResolutionScale", g_options.applied.resolution);
@@ -92,6 +98,10 @@ void recomp_options_init(void) {
     if (g_options.initialized) return;
     build_config_path(g_options.path);
     loaded.fps_cap = load_fps_cap();
+    loaded.fov = (int)GetPrivateProfileIntA("RecompOptions", "FOV", RECOMP_OPTIONS_FOV_DEFAULT, g_options.path);
+    if (loaded.fov < RECOMP_OPTIONS_FOV_MIN) loaded.fov = RECOMP_OPTIONS_FOV_MIN;
+    if (loaded.fov > RECOMP_OPTIONS_FOV_MAX) loaded.fov = RECOMP_OPTIONS_FOV_MAX;
+    loaded.vsync = clamp_setting(GetPrivateProfileIntA("RecompOptions", "VSync", 0, g_options.path), 1);
     loaded.aspect = clamp_setting(GetPrivateProfileIntA("RecompOptions", "AspectRatio", 0, g_options.path), 3);
     /* Legacy DrawDistance is deliberately ignored: the retail terrain cache
      * has a fixed budget and extending camera distance can exhaust it. */
@@ -143,8 +153,10 @@ void recomp_options_cancel_edit(void) {
 }
 static uint32_t changed_options(void) {
     uint32_t changes = 0u;
+    if (g_options.pending.fov != g_options.applied.fov) changes |= RECOMP_OPTIONS_CHANGE_FOV;
     if (g_options.pending.object_distance != g_options.applied.object_distance) changes |= RECOMP_OPTIONS_CHANGE_OBJECT_DISTANCE;
     if (g_options.pending.fps_cap != g_options.applied.fps_cap) changes |= RECOMP_OPTIONS_CHANGE_FPS;
+    if (g_options.pending.vsync != g_options.applied.vsync) changes |= RECOMP_OPTIONS_CHANGE_VSYNC;
     if (g_options.pending.aspect != g_options.applied.aspect) changes |= RECOMP_OPTIONS_CHANGE_ASPECT;
     if (g_options.pending.resolution != g_options.applied.resolution) changes |= RECOMP_OPTIONS_CHANGE_RESOLUTION;
     if (g_options.pending.anisotropic != g_options.applied.anisotropic) changes |= RECOMP_OPTIONS_CHANGE_AF;
@@ -177,9 +189,15 @@ int recomp_options_adjust(uint32_t hash, int direction) {
     recomp_options_init();
     switch (hash) {
     case RECOMP_OPTIONS_OBJECT_DISTANCE_HASH: return 1; /* Disabled; consume without changing. */
+    case RECOMP_OPTIONS_FOV_HASH:
+        g_options.pending.fov = RECOMP_OPTIONS_FOV_MIN + clamp_setting(
+            g_options.pending.fov - RECOMP_OPTIONS_FOV_MIN + (direction < 0 ? -1 : 1),
+            RECOMP_OPTIONS_FOV_MAX - RECOMP_OPTIONS_FOV_MIN);
+        return 1;
     case RECOMP_OPTIONS_FPS_HASH: g_options.pending.fps_cap = cycle(g_options.pending.fps_cap, 4, direction); return 1;
     case RECOMP_OPTIONS_ASPECT_HASH: g_options.pending.aspect = cycle(g_options.pending.aspect, 3, direction); return 1;
     case RECOMP_OPTIONS_RESOLUTION_HASH: g_options.pending.resolution = cycle(g_options.pending.resolution, 5, direction); return 1;
+    case RECOMP_OPTIONS_VSYNC_HASH: g_options.pending.vsync ^= 1; return 1;
     case RECOMP_OPTIONS_AF_HASH: g_options.pending.anisotropic ^= 1; return 1;
     case RECOMP_OPTIONS_DISPLAY_HASH: g_options.pending.display = cycle(g_options.pending.display, 2, direction); return 1;
     case RECOMP_OPTIONS_HAZE_HASH: g_options.pending.haze = cycle(g_options.pending.haze, 2, direction); return 1;
@@ -218,7 +236,9 @@ const char *recomp_options_label(uint32_t hash) {
     case RECOMP_QUIT_HASH:return "QUIT TO DESKTOP";
     case RECOMP_OPTIONS_OBJECT_DISTANCE_HASH: return "OBJECT DRAW DISTANCE: ORIGINAL (DISABLED)";
     case RECOMP_OPTIONS_MENU_HASH: return "RECOMP OPTIONS";
+    case RECOMP_OPTIONS_FOV_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "FOV (4:3): %d", g_options.pending.fov); break;
     case RECOMP_OPTIONS_FPS_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "FPS CAP: %s", g_fps_cap_labels[g_options.pending.fps_cap]); break;
+    case RECOMP_OPTIONS_VSYNC_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "V-SYNC: %s", g_options.pending.vsync ? "ON" : "OFF"); break;
     case RECOMP_OPTIONS_ASPECT_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "ASPECT RATIO: %s", aspects[g_options.pending.aspect]); break;
     case RECOMP_OPTIONS_RESOLUTION_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "RESOLUTION SCALE: %s", resolutions[g_options.pending.resolution]); break;
     case RECOMP_OPTIONS_AF_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "ANISOTROPIC FILTERING: %s", g_options.pending.anisotropic ? "16X" : "OFF"); break;
@@ -242,7 +262,9 @@ uint32_t recomp_options_localization_hash(uint32_t hash) {
     switch (hash) {
     case RECOMP_OPTIONS_OBJECT_DISTANCE_HASH:
     case RECOMP_OPTIONS_MENU_HASH:
+    case RECOMP_OPTIONS_FOV_HASH:
     case RECOMP_OPTIONS_FPS_HASH:
+    case RECOMP_OPTIONS_VSYNC_HASH:
     case RECOMP_OPTIONS_ASPECT_HASH:
     case RECOMP_OPTIONS_RESOLUTION_HASH:
     case RECOMP_OPTIONS_AF_HASH:
@@ -261,6 +283,7 @@ uint32_t recomp_options_localization_hash(uint32_t hash) {
     }
 }
 int recomp_options_fps_cap(void) { recomp_options_init(); return g_fps_caps[g_options.applied.fps_cap]; }
+int recomp_options_vsync(void) { recomp_options_init(); return g_options.applied.vsync; }
 int recomp_options_aspect_ratio(void) { recomp_options_init(); return g_options.applied.aspect; }
 int recomp_options_draw_distance(void) { return 0; }
 int recomp_options_resolution(void) { recomp_options_init(); return g_options.applied.resolution; }
@@ -389,6 +412,21 @@ float recomp_options_scale_object_distance(float distance, uint32_t type) {
         return distance * recomp_options_object_distance_multiplier();
     default: return distance;
     }
+}
+float recomp_options_fov_slider_position(void) {
+    recomp_options_init();
+    return (float)(g_options.pending.fov - RECOMP_OPTIONS_FOV_MIN) /
+           (float)(RECOMP_OPTIONS_FOV_MAX - RECOMP_OPTIONS_FOV_MIN);
+}
+float recomp_options_scale_fov(float horizontal_fov) {
+    const float radians_per_degree = 0.017453292519943295f;
+    recomp_options_init();
+    if (g_options.applied.fov == RECOMP_OPTIONS_FOV_DEFAULT) return horizontal_fov;
+    /* Scale the frustum, retaining the title's relative zoom and aspect correction.
+     * The retail 4:3 baseline at XBE 0x00300DC8 is 55 degrees. */
+    const float scale = tanf(g_options.applied.fov * radians_per_degree * 0.5f) /
+                        tanf(RECOMP_OPTIONS_FOV_DEFAULT * radians_per_degree * 0.5f);
+    return 2.0f * atanf(tanf(horizontal_fov * 0.5f) * scale);
 }
 static float selected_camera_aspect(float guest_aspect) {
     /* Preserve retail 4:3 object proportions after presentation scaling.

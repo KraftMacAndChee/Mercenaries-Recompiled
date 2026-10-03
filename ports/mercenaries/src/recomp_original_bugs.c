@@ -7,6 +7,7 @@ int recomp_original_bug_fix_enabled(recomp_original_bug_fix fix)
     case RECOMP_FIX_NW_MAFIA2_MUSIC:
     case RECOMP_FIX_DATELINE_TYPING_SOUND:
     case RECOMP_FIX_SKY_CLOUD_TRANSITION:
+    case RECOMP_FIX_JENNIFER_ALT_BACKPACK:
         return !recomp_options_og_bugs();
     default:
         return 0;
@@ -83,4 +84,16 @@ void recomp_original_bug_cloud_colors(volatile float *rgba)
         return;
     for (unsigned i = 0; i < 9; ++i)
         rgba[i * 4 + 3] *= sky_cloud_opacity;
+}
+
+uint32_t recomp_original_bug_accessory_show_slot(uint32_t player_model, uint32_t accessory_model)
+{
+    /* Retail's alternate Jennifer setup hides her backpack, but the generic
+     * scope/vehicle visibility restoration shows every accessory again.
+     * Use the same hide method when restoring this model's backpack. */
+    /* prokat_hum_britishAlt / prokat_hum_british_backpack */
+    if (player_model == 0x9FDBE410u && accessory_model == 0x5120F434u &&
+        recomp_original_bug_fix_enabled(RECOMP_FIX_JENNIFER_ALT_BACKPACK))
+        return 0x1CCu;
+    return 0x1D0u;
 }

@@ -114,7 +114,8 @@ int wmain(int argc,wchar_t **argv) {
 (CASE/'test.c').write_text(source)
 (CASE/'CMakeLists.txt').write_text(f'''cmake_minimum_required(VERSION 3.20)
 project(setup_test C CXX RC)
-add_executable(setup_test test.c "{(port/'src/setup_art.cpp').as_posix()}" "{(port/'resources/app.rc').as_posix()}" "{(port/'resources/launcher.rc').as_posix()}")
+add_executable(setup_test test.c "{(port/'src/setup_art.cpp').as_posix()}" "{(port/'src/mod_loader.cpp').as_posix()}" "{(port/'src/mod_selector.cpp').as_posix()}" "{(port/'resources/app.rc').as_posix()}" "{(port/'resources/launcher.rc').as_posix()}")
+set_property(TARGET setup_test PROPERTY CXX_STANDARD 17)
 target_include_directories(setup_test PRIVATE "{(port/'src').as_posix()}" "{(port/'resources').as_posix()}")
 target_compile_definitions(setup_test PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_compile_options(setup_test PRIVATE /utf-8 /UNDEBUG)
@@ -122,8 +123,8 @@ target_link_libraries(setup_test PRIVATE gdiplus ole32 bcrypt comctl32 comdlg32 
 target_link_options(setup_test PRIVATE /STACK:8388608,65536)
 set_property(TARGET setup_test PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 ''')
-cmake=ROOT/'.venv/Scripts/cmake.exe'
-subprocess.run([str(cmake),'-S',str(CASE),'-B',str(CASE/'build'),'-G','Visual Studio 16 2019','-A','x64'],check=True)
+cmake=shutil.which('cmake') or str(ROOT/'.venv/Scripts/cmake.exe')
+subprocess.run([str(cmake),'-S',str(CASE),'-B',str(CASE/'build'),'-G','Visual Studio 17 2022','-A','x64'],check=True)
 subprocess.run([str(cmake),'--build',str(CASE/'build'),'--config','Release','--parallel','4'],check=True)
 runtime=CASE/'runtime'
 assert not runtime.exists(), 'Use a fresh disposable test directory'

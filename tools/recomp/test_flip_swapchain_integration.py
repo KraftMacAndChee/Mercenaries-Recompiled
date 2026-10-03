@@ -25,7 +25,7 @@ typedef struct {
  UINT width,height,current_target_width,current_target_height,current_target_physical_width,current_target_physical_height;
 } D3D8DeviceState;
 static void (*g_host_overlay_callback)(void);
-static D3D8DeviceState g_device_state;static BOOL g_pending_scanout_present;static unsigned submissions,errors,default_creates,explicit_failures;
+static D3D8DeviceState g_device_state;static BOOL g_pending_scanout_present;static BOOL g_vsync_enabled;static unsigned submissions,errors,default_creates,explicit_failures;
 static HRESULT test_create(IDXGIAdapter *adapter,D3D_DRIVER_TYPE type,HMODULE software,UINT flags,const D3D_FEATURE_LEVEL *levels,UINT count,UINT version,const DXGI_SWAP_CHAIN_DESC *desc,IDXGISwapChain **chain,ID3D11Device **device,D3D_FEATURE_LEVEL *level,ID3D11DeviceContext **context){
  assert(type==(adapter?D3D_DRIVER_TYPE_UNKNOWN:D3D_DRIVER_TYPE_HARDWARE));
  if(desc->SwapEffect==DXGI_SWAP_EFFECT_FLIP_DISCARD&&getenv("TEST_FAIL_FLIP_CREATION"))return E_INVALIDARG;
@@ -60,7 +60,8 @@ static void check_frame(unsigned channel){
  }
  ID3D11DeviceContext_Unmap(s->d3d11_context,(ID3D11Resource*)staging,0);
  ID3D11Texture2D_Release(staging);ID3D11Texture2D_Release(back);
- assert(SUCCEEDED(preview_present(s->swap_chain,0,0)));
+ g_vsync_enabled=(channel==1);
+ assert(SUCCEEDED(preview_present(s->swap_chain,0)));
  ID3D11RenderTargetView *rt=NULL;ID3D11DepthStencilView *ds=NULL;
  ID3D11DeviceContext_OMGetRenderTargets(s->d3d11_context,1,&rt,&ds);
  assert(rt==s->current_rtv && ds==s->current_dsv);if(rt)ID3D11RenderTargetView_Release(rt);if(ds)ID3D11DepthStencilView_Release(ds);
@@ -81,7 +82,7 @@ int main(void){
   for(unsigned j=0;j<3;j++)check_frame(j);
  }
  if(getenv("TEST_FAIL_EXPLICIT_ADAPTER"))assert(default_creates==1 && explicit_failures>0);
- assert(submissions==12&&errors==0);puts("PASS: production creation, pixel contents, post-Present targets and repeated buffer resizing");
+ assert(submissions==12&&errors==0);puts("PASS: production creation, pixel contents, V-Sync switching, post-Present targets and repeated buffer resizing");
  ID3D11DeviceContext_ClearState(s->d3d11_context);ID3D11RenderTargetView_Release(s->default_rtv);ID3D11DepthStencilView_Release(s->default_dsv);ID3D11Texture2D_Release(s->default_depth);
  IDXGISwapChain_Release(s->swap_chain);ID3D11DeviceContext_Release(s->d3d11_context);ID3D11Device_Release(s->d3d11_device);DestroyWindow(w);return 0;
 }

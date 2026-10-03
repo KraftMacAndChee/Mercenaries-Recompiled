@@ -21,22 +21,24 @@ static const char *pgraph_cached_getenv(const char *s){(void)s;return NULL;}
 tail=r"""
 int main(void){unsigned cases=0,bad=0,guard_bad=0;
  for(unsigned fmt=1;fmt<=2;fmt++)for(unsigned aa=0;aa<3;aa++)for(unsigned origin=0;origin<2;origin++)
- for(unsigned pad=0;pad<2;pad++)for(unsigned start=0;start<3;start++)for(unsigned end=0;end<3;end++){
+ for(unsigned pad=0;pad<2;pad++)for(unsigned start=0;start<3;start++)for(unsigned end=0;end<3;end++)
+ for(unsigned alignment=0;alignment<4;alignment++){
+  unsigned base=0x10000+alignment;
   unsigned bpp=fmt==2?4:2,sx=aa?2:1,sy=aa==2?2:1;
   unsigned width=32+origin*3,height=24+origin*5,pitch=width*sx*bpp+pad*16;
   unsigned x0=start*20,y0=start*15,x1=x0+end*22,y1=y0+end*17;
   memset(ram,0x5a,sizeof(ram));memcpy(expected,ram,sizeof(ram));
   g_pg.surface_format=(fmt<<4)|(aa<<12);g_pg.surface_pitch=pitch<<16;
   g_pg.surface_clip_h=(32u<<16)|(origin*3);g_pg.surface_clip_v=(24u<<16)|(origin*5);
-  g_pg.surface_zeta_offset=0x10000;g_pg.zstencil_clear=0x1234abcd;
+  g_pg.surface_zeta_offset=base;g_pg.zstencil_clear=0x1234abcd;
   g_pg.clear_rect_h=(x1<<16)|x0;g_pg.clear_rect_v=(y1<<16)|y0;
   for(unsigned y=0;y<height*sy;y++)for(unsigned x=0;x<width*sx;x++)
    if(x/sx>=x0&&x/sx<=x1&&y/sy>=y0&&y/sy<=y1)
-    memcpy(expected+0x10000+y*pitch+x*bpp,&g_pg.zstencil_clear,bpp);
+    memcpy(expected+base+y*pitch+x*bpp,&g_pg.zstencil_clear,bpp);
   mirror_guest_zeta_clear(3);cases++;bad+=memcmp(ram,expected,sizeof(ram))!=0;
   int corrupt=0;
   for(unsigned i=0;i<sizeof(ram);i++){
-   int inside=i>=0x10000&&i<0x10000+pitch*height*sy&&(i-0x10000)%pitch<width*sx*bpp;
+   int inside=i>=base&&i<base+pitch*height*sy&&(i-base)%pitch<width*sx*bpp;
    if(!inside&&ram[i]!=0x5a)corrupt=1;
   }
   guard_bad+=corrupt;

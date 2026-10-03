@@ -91,3 +91,19 @@ def test_export_rejects_capture_before_writing_output(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="capture/credential"):
         module.package(tmp_path / "export")
     assert not (tmp_path / "export").exists()
+
+
+@pytest.mark.parametrize("include_history", [False, True])
+def test_export_optional_history_and_required_build_inputs(tmp_path, include_history):
+    module = exporter()
+    helper = module.archive_helpers()
+    fixture_tree(module, tmp_path)
+    if include_history:
+        for name in module.OPTIONAL_ROOT_FILES:
+            (tmp_path / name).write_text("historical record\n")
+    names = {name for name, _ in module.source_files(tmp_path, helper)}
+    for name in module.OPTIONAL_ROOT_FILES:
+        assert (name in names) == include_history
+    (tmp_path / "CMakeLists.txt").unlink()
+    with pytest.raises(ValueError, match="Required source file missing: CMakeLists"):
+        module.source_files(tmp_path, helper)

@@ -20,7 +20,7 @@ def main():
         r=ROOT.as_posix()
         (p/'CMakeLists.txt').write_text(f"""cmake_minimum_required(VERSION 3.20)
 project(proton_regression C)
-add_executable(proton_regression test.c "{r}/src/kernel/kernel_path.c" "{r}/src/d3d/d3d8_compiler.c")
+add_executable(proton_regression test.c "{r}/src/kernel/kernel_path.c" "{r}/src/kernel/mod_overlay.c" "{r}/src/d3d/d3d8_compiler.c")
 target_include_directories(proton_regression PRIVATE "{r}/src" "{r}/src/kernel" "{r}/src/d3d")
 target_compile_definitions(proton_regression PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_compile_options(proton_regression PRIVATE /UNDEBUG)

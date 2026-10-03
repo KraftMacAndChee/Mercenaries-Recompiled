@@ -1,6 +1,8 @@
 /* Included by recomp_manual.c: all guest calls preserve the interrupted CPU
  * context. F9 only queues commands; this runs at the retail world-update checkpoint. */
 #include "dev_battle.h"
+#include "dev_weapons.h"
+#include "dev_factions.h"
 #include "free_cam.h"
 static uint32_t dev_spawn_serial;
 static uint32_t dev_last_spawn_guid;
@@ -85,7 +87,7 @@ static void dev_property(uint32_t stack,uint32_t scratch,uint32_t list,
 static uint32_t dev_vehicle_asset_list(const char *name)
 {
     static const char *allowed[]={"template_vehicles","template_vehicles_ch1",
-        "template_vehicles_ch2","template_vehicles_ch3","template_vehicles_ch4","template_humans"};
+        "template_vehicles_ch2","template_vehicles_ch3","template_vehicles_ch4","template_humans","template_weapons"};
     if(!name)return 0;
     for(unsigned i=0;i<sizeof(allowed)/sizeof(allowed[0]);i++)if(!strcmp(name,allowed[i])){
         uint32_t hash=2166136261u;
@@ -258,7 +260,7 @@ static int dev_test_take_spawn(unsigned *index)
     }
     if (!strncmp(name,"request:",8)) {
         char *end=NULL;unsigned long command=strtoul(name+8,&end,10);
-        if(end && *end==0 && command<0x100000u){*index=(unsigned)command;return 1;}
+        if(end && *end==0 && command<0x2000000u){*index=(unsigned)command;return 1;}
         return 0;
     }
     if (!strncmp(name,"policy:",7)) {
@@ -285,13 +287,15 @@ void recomp_dev_spawn_tick(void)
     unsigned index;
     if(executing)return;
     recomp_dev_battle_refresh_player();
+    recomp_dev_relations_tick();
     if(!recomp_dev_take_spawn(&index)&&!dev_test_take_spawn(&index))return;
     if(index==0x7fffffffu){dev_inspect_spawn();return;}
     unsigned troop=(index&DEV_SPAWN_TROOP)!=0, crew=(index>>DEV_SPAWN_CREW_SHIFT)&3u;
     unsigned crew_faction=(index>>DEV_SPAWN_FACTION_SHIFT)&7u;
+    unsigned weapon_index=(index>>DEV_SPAWN_WEAPON_SHIFT)&DEV_SPAWN_WEAPON_MASK;
     unsigned requested=troop?1u+((index>>DEV_SPAWN_COUNT_SHIFT)&15u):1u;
     const DevVehicle *vehicle=troop?recomp_dev_troop_at(index&DEV_SPAWN_INDEX_MASK):recomp_dev_vehicle_at(index&DEV_SPAWN_INDEX_MASK);
-    if(!vehicle || requested>12 || crew>2 || (crew && crew_faction>=5)){recomp_dev_spawn_result(0,"Invalid spawn request.");return;}
+    if(!vehicle || weapon_index>=DEV_WEAPON_COUNT || (!troop && weapon_index) || requested>12 || crew>2 || (crew && crew_faction>=5)){recomp_dev_spawn_result(0,"Invalid spawn request.");return;}
     if(!g_xbox_mem_offset||guest_u32(0x413F6C)!=0x4249D707u||
        guest_u32(0x413F68)!=0xC2CBD863u||g_esp<0x20000u||g_esp>=0x4000000u){
         recomp_dev_spawn_result(0,"Enter normal gameplay before spawning units.");return;
@@ -343,6 +347,17 @@ void recomp_dev_spawn_tick(void)
         result="Vehicle model dependencies are unavailable in this map. Spawn cancelled.";goto done;
     }
     if(crew && !troop && !dev_prepare_crew(stack,crew_faction,crew,&driver,&gunner,&passenger)){result="Crew dependencies are unavailable. Spawn cancelled.";goto done;}
+    if(troop && weapon_index){
+        uint32_t args[]={dev_hash(dev_weapons[weapon_index].template_name),dev_hash("geometryfile")};
+        uint32_t weapon_model=dev_call(stack,0x1ED340,0,2,args);
+        if(!weapon_model || !dev_resident_model(weapon_model)){
+            dev_load_layer(stack,"template_weapons");
+            weapon_model=dev_call(stack,0x1ED340,0,2,args);
+        }
+        if(!weapon_model || !dev_resident_model(weapon_model)){
+            result="Selected weapon dependencies are unavailable. Spawn cancelled.";goto done;
+        }
+    }
     uint32_t player_arg[]={0x660E4490u};
     uint32_t player=dev_call(stack,0x8C7E0,0,1,player_arg);
     if(!dev_guest_address(player,0x76C)) {result="Player is not ready.";goto done;}
@@ -400,7 +415,11 @@ void recomp_dev_spawn_tick(void)
         dev_property(stack,prop,list,"name",spawn_name);
         dev_property(stack,prop,list,"dieuponhibernation","true");
         if(troop){
-            if(variant)dev_apply_troop_variant(stack,prop,list,variant);
+            if(variant){
+                DevTroopVariant selected=*variant;
+                if(weapon_index)selected.weapon=dev_weapons[weapon_index].template_name;
+                dev_apply_troop_variant(stack,prop,list,&selected);
+            }else if(weapon_index)dev_property(stack,prop,list,"weapon_A_template",dev_weapons[weapon_index].template_name);
             dev_property(stack,prop,list,"path","none");
             dev_property(stack,prop,list,"encounter","none");
             dev_property(stack,prop,list,"squad","none");
@@ -429,7 +448,7 @@ void recomp_dev_spawn_tick(void)
         if(success&&dev_guest_address(guest_u32(actor+8),0x2C))dev_last_spawn_guid=guest_u32(guest_u32(actor+8)+0x28);
         if(success){
             created++;dev_transient_actor(actor);
-            xbox_preview_log_event("dev-unit","name=%s actor=%08X template=%s crew=%u faction=%u",spawn_name,actor,vehicle->template_name,crew,crew_faction);
+            xbox_preview_log_event("dev-unit","name=%s actor=%08X template=%s crew=%u faction=%u weapon=%s",spawn_name,actor,vehicle->template_name,crew,crew_faction,dev_weapons[weapon_index].name);
             if(crew){
                 for(unsigned seat=0;seat<8;seat++){
                     char rider_name[64];

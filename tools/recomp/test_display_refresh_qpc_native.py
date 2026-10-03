@@ -25,7 +25,7 @@ static ULONGLONG GetTickCount64(void) { return (ULONGLONG)(qpc_now / 60); }
 static void d3d8_debug_capture_display_refresh(ULONGLONG now) { (void)now; ++captures; }
 static BOOL g_pending_scanout_present;
 static void d3d8_DebugSetSubmissionSource(uint32_t s){assert(s==5u);}
-#define preview_present(chain, sync, flags) (++presents)
+#define preview_present(chain, flags) (++presents)
 '''
 HARNESS = r'''
 int main(void) {

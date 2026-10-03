@@ -4966,12 +4966,22 @@ static void mirror_guest_zeta_clear(uint32_t clear_parameter)
         uint8_t *row = d->vram_ptr + g_pg.surface_zeta_offset +
                        (size_t)y * pitch;
         uint32_t x;
+        /* Fixed-size copies permit vector stores without assuming guest
+         * alignment or writing past the clipped row into padding. */
         if (bytes_per_pixel == 4u) {
-            for (x = xmin; x <= xmax; ++x)
-                memcpy(row + (size_t)x * 4u, &g_pg.zstencil_clear, 4u);
+            const uint32_t clear = g_pg.zstencil_clear;
+            const uint32_t block[4] = { clear, clear, clear, clear };
+            for (x = xmin; x + 3u <= xmax; x += 4u)
+                memcpy(row + (size_t)x * 4u, block, sizeof(block));
+            for (; x <= xmax; ++x)
+                memcpy(row + (size_t)x * 4u, &clear, 4u);
         } else {
             const uint16_t clear16 = (uint16_t)g_pg.zstencil_clear;
-            for (x = xmin; x <= xmax; ++x)
+            const uint16_t block[8] = { clear16, clear16, clear16, clear16,
+                                       clear16, clear16, clear16, clear16 };
+            for (x = xmin; x + 7u <= xmax; x += 8u)
+                memcpy(row + (size_t)x * 2u, block, sizeof(block));
+            for (; x <= xmax; ++x)
                 memcpy(row + (size_t)x * 2u, &clear16, 2u);
         }
     }
@@ -9016,6 +9026,9 @@ static void mirror_guest_fixed_function_blit(const ImmediateOutputVertex *vertic
         const uint32_t source_y_step = source_height / target_height;
         const uint32_t source_y_remainder_step = source_height % target_height;
         uint32_t source_y_remainder = 0u;
+        uint32_t previous_source_y = UINT32_MAX;
+        const int disjoint = source_end <= (uint64_t)target_offset ||
+                             target_end <= (uint64_t)source_offset;
 
         for (y = 0u; y < target_height; ++y) {
             uint8_t *target_row = d->vram_ptr + target_offset +
@@ -9023,10 +9036,20 @@ static void mirror_guest_fixed_function_blit(const ImmediateOutputVertex *vertic
                 (size_t)target_x * 4u;
             const uint8_t *source_row = d->vram_ptr + source_offset +
                 (size_t)source_y * source_pitch;
-            for (x = 0u; x < target_width; ++x) {
-                memcpy(target_row + (size_t)x * 4u,
-                       source_row + source_columns[x], 4u);
+            /* Disjoint copies may reuse identical scaled rows. Overlapping
+             * guest buffers must retain the original read/write pixel order. */
+            if (disjoint && source_width == target_width) {
+                memcpy(target_row, source_row, (size_t)target_width * 4u);
+            } else if (disjoint && source_y == previous_source_y) {
+                memcpy(target_row, target_row - target_pitch,
+                       (size_t)target_width * 4u);
+            } else {
+                for (x = 0u; x < target_width; ++x) {
+                    memcpy(target_row + (size_t)x * 4u,
+                           source_row + source_columns[x], 4u);
+                }
             }
+            previous_source_y = source_y;
             source_y += source_y_step;
             source_y_remainder += source_y_remainder_step;
             if (source_y_remainder >= target_height) {

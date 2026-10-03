@@ -52,6 +52,7 @@ def main():
             target=root/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
         shutil.copy2(Path(__file__).resolve().parents[1]/'resources/developer.ini',root/'developer.ini')
         shutil.copy2(Path(__file__).resolve().parents[1]/'resources/modcompatibility.ini',root/'modcompatibility.ini')
+        shutil.copy2(Path(__file__).resolve().parents[3]/'docs/MODDING.md',root/'MODDING.md')
         if a.include_toolchain:
             shutil.copy2(a.archive/'toolchain-source.zip',root/'ISO-to-Port-Toolchain.zip')
         notes=a.notes.read_text(encoding='utf-8-sig').strip()
@@ -136,6 +137,8 @@ Release notes
         temporary=a.output.with_suffix('.zip.partial')
         if temporary.exists(): raise RuntimeError('A previous partial package exists')
         with zipfile.ZipFile(temporary,'x',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+            # Keep the mod-install location discoverable before any mod exists.
+            z.writestr(root.name + '/mods/', b'')
             for rel in sorted(staged):
                 z.write(root/rel,root.name+'/'+rel,compress_type=zipfile.ZIP_STORED if rel.endswith('.zip') else zipfile.ZIP_DEFLATED)
         with zipfile.ZipFile(temporary) as z:
@@ -145,6 +148,8 @@ Release notes
                     raise RuntimeError('Preview member verification failed: '+rel)
             check=Path(work)/'extracted';z.extractall(check)
         extracted=check/root.name
+        if not (extracted/'mods').is_dir() or any((extracted/'mods').iterdir()):
+            raise RuntimeError('Player package must contain an empty mods directory')
         result=subprocess.run([str(extracted/'Mercenaries Recompiled.exe'),'--validate-only'],creationflags=flags,timeout=20)
         if result.returncode!=2: raise RuntimeError('Clean launcher did not report missing game data as expected')
         extractor=subprocess.run([str(extracted/'tools/xdvdfs.exe'),'--version'],capture_output=True,text=True,creationflags=flags,timeout=20,check=True)
@@ -167,7 +172,7 @@ Release notes
                 'maintainedToolchainIncluded':a.include_toolchain,
                 'separateToolchain':str(source_output.resolve()) if source_output else None,
                 'toolchainArchiveSha256':provenance['toolchainArchiveSha256'],
-                'noGameDataSavesOrSettings':True}
+                'noGameDataSavesOrSettings':True, 'emptyModsDirectory':True}
         a.output.with_suffix('.verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
         print(json.dumps(report,indent=2))
 if __name__=='__main__':main()

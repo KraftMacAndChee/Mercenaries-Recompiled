@@ -20,12 +20,20 @@ int main(void){
   b=test_compile(hlsl,"vs_5_0");assert(SUCCEEDED(ID3D11Device_CreateVertexShader(d,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&vs[i])));
   if(!i){D3D11_INPUT_ELEMENT_DESC e={"ATTR",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0};assert(SUCCEEDED(ID3D11Device_CreateInputLayout(d,&e,1,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),&layout)));}ID3D10Blob_Release(b);
  }
- b=test_compile("cbuffer C:register(b3){float4 color;}float4 main():SV_TARGET{return color;}","ps_5_0");ID3D11PixelShader *ps=NULL;assert(SUCCEEDED(ID3D11Device_CreatePixelShader(d,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&ps)));ID3D10Blob_Release(b);
+ ID3D11PixelShader *ps[2]={NULL,NULL};
+ const char *pixel_source[2]={
+  "cbuffer C:register(b3){float4 color;}float4 main():SV_TARGET{return color;}",
+  "cbuffer C:register(b3){float4 color;}float4 main(float4 pos:SV_POSITION,float4 gd:TEXCOORD6,out float depth:SV_Depth):SV_TARGET{float z=1.0+gd.x/gd.y;if(!isfinite(z)||z<0.0||z>1.0)z=pos.z;depth=saturate(z);return color;}"
+ };
+ for(unsigned i=0;i<2;i++){b=test_compile(pixel_source[i],"ps_5_0");assert(SUCCEEDED(ID3D11Device_CreatePixelShader(d,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&ps[i])));ID3D10Blob_Release(b);}
  float host[68]={640,480,16777215,0};ID3D11Buffer *hostcb=test_buffer(d,host,sizeof(host),D3D11_BIND_CONSTANT_BUFFER),*colors=test_buffer(d,NULL,16,D3D11_BIND_CONSTANT_BUFFER),*verts=test_buffer(d,NULL,64,D3D11_BIND_VERTEX_BUFFER);
  D3D11_DEPTH_STENCIL_DESC dd={0};dd.DepthEnable=TRUE;dd.DepthWriteMask=D3D11_DEPTH_WRITE_MASK_ALL;dd.DepthFunc=D3D11_COMPARISON_LESS_EQUAL;ID3D11DepthStencilState *ds;assert(SUCCEEDED(ID3D11Device_CreateDepthStencilState(d,&dd,&ds)));
  D3D11_RASTERIZER_DESC rd={0};rd.FillMode=D3D11_FILL_SOLID;rd.CullMode=D3D11_CULL_NONE;rd.DepthClipEnable=TRUE;ID3D11RasterizerState *rs;assert(SUCCEEDED(ID3D11Device_CreateRasterizerState(d,&rd,&rs)));ID3D11DeviceContext_RSSetState(c,rs);ID3D11DeviceContext_OMSetDepthStencilState(c,ds,0);
- ID3D11DeviceContext_IASetInputLayout(c,layout);ID3D11DeviceContext_IASetPrimitiveTopology(c,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);unsigned stride=16,offset=0;ID3D11DeviceContext_IASetVertexBuffers(c,0,1,&verts,&stride,&offset);ID3D11DeviceContext_VSSetConstantBuffers(c,2,1,&hostcb);ID3D11DeviceContext_PSSetConstantBuffers(c,3,1,&colors);ID3D11DeviceContext_PSSetShader(c,ps,NULL,0);
+ ID3D11DeviceContext_IASetInputLayout(c,layout);ID3D11DeviceContext_IASetPrimitiveTopology(c,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);unsigned stride=16,offset=0;ID3D11DeviceContext_IASetVertexBuffers(c,0,1,&verts,&stride,&offset);ID3D11DeviceContext_VSSetConstantBuffers(c,2,1,&hostcb);ID3D11DeviceContext_PSSetConstantBuffers(c,3,1,&colors);ID3D11DeviceContext_PSSetShader(c,ps[0],NULL,0);
  unsigned old_missing=0,new_missing=0,cases=0;
+ for(unsigned depth_mode=0;depth_mode<2;depth_mode++){
+ ID3D11DeviceContext_PSSetShader(c,ps[depth_mode],NULL,0);
+ unsigned mode_missing=0,mode_old_missing=0;
  for(unsigned scale=1;scale<=2;scale++)for(unsigned aa=1;aa<=2;aa++){
   unsigned w=640*scale*aa,h=480*scale;D3D11_TEXTURE2D_DESC td={0};td.Width=w;td.Height=h;td.MipLevels=td.ArraySize=td.SampleDesc.Count=1;td.Format=DXGI_FORMAT_R8G8B8A8_UNORM;td.BindFlags=D3D11_BIND_RENDER_TARGET;ID3D11Texture2D *rt,*z,*read;ID3D11RenderTargetView *rtv;ID3D11DepthStencilView *dsv;
   assert(SUCCEEDED(ID3D11Device_CreateTexture2D(d,&td,NULL,&rt)));assert(SUCCEEDED(ID3D11Device_CreateRenderTargetView(d,(ID3D11Resource*)rt,NULL,&rtv)));td.BindFlags=0;td.Usage=D3D11_USAGE_STAGING;td.CPUAccessFlags=D3D11_CPU_ACCESS_READ;assert(SUCCEEDED(ID3D11Device_CreateTexture2D(d,&td,NULL,&read)));td.BindFlags=D3D11_BIND_DEPTH_STENCIL;td.Usage=D3D11_USAGE_DEFAULT;td.CPUAccessFlags=0;td.Format=DXGI_FORMAT_D24_UNORM_S8_UINT;assert(SUCCEEDED(ID3D11Device_CreateTexture2D(d,&td,NULL,&z)));assert(SUCCEEDED(ID3D11Device_CreateDepthStencilView(d,(ID3D11Resource*)z,NULL,&dsv)));
@@ -47,10 +55,12 @@ int main(void){
     ID3D11DeviceContext_CopyResource(c,(ID3D11Resource*)read,(ID3D11Resource*)rt);D3D11_MAPPED_SUBRESOURCE map;assert(SUCCEEDED(ID3D11DeviceContext_Map(c,(ID3D11Resource*)read,0,D3D11_MAP_READ,0,&map)));for(unsigned y=0;y<h;y++){unsigned char *row=(unsigned char*)map.pData+y*map.RowPitch;for(unsigned x=0;x<w;x++)masks[mode][y*w+x]=row[4*x]==255&&row[4*x+1]==255;}ID3D11DeviceContext_Unmap(c,(ID3D11Resource*)read,0);
    }
    if(ui)assert(memcmp(masks[0],masks[1],w*h)==0);
-   else {unsigned missing[2]={0};for(unsigned i=0;i<w*h;i++){missing[0]+=masks[2][i]&&!masks[0][i];missing[1]+=masks[3][i]&&!masks[1][i];}new_missing+=missing[0];old_missing+=missing[1];cases++;if(missing[0])printf("remaining scale=%u angle=%d distance=%d missing=%u old=%u\n",scale,degrees,distance,missing[0],missing[1]);}
+   else {unsigned missing[2]={0};for(unsigned i=0;i<w*h;i++){missing[0]+=masks[2][i]&&!masks[0][i];missing[1]+=masks[3][i]&&!masks[1][i];}new_missing+=missing[0];old_missing+=missing[1];mode_missing+=missing[0];mode_old_missing+=missing[1];cases++;if(missing[0])printf("remaining scale=%u angle=%d distance=%d missing=%u old=%u\n",scale,degrees,distance,missing[0],missing[1]);}
   }
   for(unsigned m=0;m<4;m++)free(masks[m]);ID3D11DeviceContext_OMSetRenderTargets(c,0,NULL,NULL);ID3D11RenderTargetView_Release(rtv);ID3D11DepthStencilView_Release(dsv);ID3D11Texture2D_Release(rt);ID3D11Texture2D_Release(z);ID3D11Texture2D_Release(read);
  }
+ printf("depth_mode=%u missing=%u old_missing=%u\n",depth_mode,mode_missing,mode_old_missing);assert(mode_missing==0);assert(mode_old_missing>0);
+ }
  printf("cases=%u original_missing=%u improved_missing=%u; UI coverage identical\n",cases,old_missing,new_missing);assert(old_missing>0);assert(new_missing==0);
- ID3D11DeviceContext_ClearState(c);ID3D11DeviceContext_Release(c);ID3D11Device_Release(d);return 0;
+ ID3D11DeviceContext_ClearState(c);for(unsigned i=0;i<2;i++)ID3D11PixelShader_Release(ps[i]);ID3D11DeviceContext_Release(c);ID3D11Device_Release(d);return 0;
 }

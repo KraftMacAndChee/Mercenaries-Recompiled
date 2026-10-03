@@ -40,6 +40,7 @@
 #define RECOMP_TYPES_H
 
 #include <stdint.h>
+#include "../mod_extensions.h"
 int recomp_controls_mouse_look_pending(void);
 float recomp_turbulence_damping_dt(float dt);
 int recomp_static_light_refresh_needed(uint32_t light);

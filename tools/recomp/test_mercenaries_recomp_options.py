@@ -36,7 +36,7 @@ def test_requested_menu_shape_and_placement() -> None:
     assert "MENU_MAIN_HASH" in MENU and "MENU_PAUSE_HASH" in MENU
     assert "MENU_SHELL_OPTIONS_HASH" in MENU
     assert "insert_item_before(menu,RECOMP_OPTIONS_MENU_HASH,0x00DFD9ADu)" in MENU
-    assert "OPTIONS_ITEM_COUNT 13u" in MENU
+    assert "OPTIONS_ITEM_COUNT 15u" in MENU
     assert "RECOMP_OPTIONS_PS2_UPGRADES_HASH" in MENU
     assert "RECOMP_OPTIONS_BOIDS_HASH" not in MENU
     assert "RECOMP_OPTIONS_OBJECT_DISTANCE_HASH" not in MENU
@@ -49,6 +49,7 @@ def test_requested_menu_shape_and_placement() -> None:
     assert "guest(menu + 0x69u) = 1u" not in MENU
     for text in (
         "FPS CAP: %s",
+        "V-SYNC: %s",
         "ASPECT RATIO: %s",
         "NPC WAKE DISTANCE: %s",
         "NPC DRAW DISTANCE: %s",
@@ -94,6 +95,8 @@ def test_settings_persist_beside_the_executable() -> None:
 
 def test_renderer_settings_have_real_backing_behavior() -> None:
     assert "d3d8_SetFrameCap(recomp_options_fps_cap())" in MAIN
+    assert MAIN.count("d3d8_SetVSync(recomp_options_vsync())") == 2
+    assert "RECOMP_OPTIONS_VSYNC_HASH" in MENU
     assert "d3d8_SetForceAnisotropic16x" in MAIN
     assert "d3d8_SetAuthenticLineHazeEnabled" not in MAIN
     assert "d3d8_SetPresentationAspect" in MAIN
@@ -320,7 +323,7 @@ def test_hor_plus_preserves_retail_projected_lod_visibility() -> None:
 
 def test_live_aspect_apply_refreshes_the_retail_camera_projection() -> None:
     assert "recomp_options_refresh_retail_camera_projection();" in MAIN
-    assert "changes & RECOMP_OPTIONS_CHANGE_ASPECT" in MAIN
+    assert "RECOMP_OPTIONS_CHANGE_ASPECT | RECOMP_OPTIONS_CHANGE_FOV" in MAIN
     assert "void recomp_options_refresh_retail_camera_projection(void);" in OPTIONS_HEADER
     assert "void recomp_options_refresh_retail_camera_projection(void)" in MANUAL
     refresh = MANUAL[

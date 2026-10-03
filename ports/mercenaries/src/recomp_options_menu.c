@@ -11,7 +11,7 @@
 #define MENU_BACK_HASH 0x7954FE35u
 #define MENU_OPTIONS_ID 14u
 #define MENU_NONE_ID 0xFFFFFFFFu
-#define OPTIONS_ITEM_COUNT 13u
+#define OPTIONS_ITEM_COUNT 15u
 #define SYNTHETIC_CAPACITY 16u
 extern uint32_t recomp_title_heap_allocate(uint32_t size);
 extern void recomp_title_heap_free(uint32_t address);
@@ -79,7 +79,7 @@ static void restore_menu(void) {
     memset(&g_menu, 0, sizeof(g_menu));
 }
 static void activate_menu(uint32_t menu, int mode) {
-    static const uint32_t hashes[OPTIONS_ITEM_COUNT] = { RECOMP_OPTIONS_FPS_HASH, RECOMP_OPTIONS_ASPECT_HASH,
+    static const uint32_t hashes[OPTIONS_ITEM_COUNT] = { RECOMP_OPTIONS_FPS_HASH, RECOMP_OPTIONS_VSYNC_HASH, RECOMP_OPTIONS_ASPECT_HASH, RECOMP_OPTIONS_FOV_HASH,
         RECOMP_OPTIONS_WAKE_HASH, RECOMP_OPTIONS_NPC_LOD_HASH,
         RECOMP_OPTIONS_RESOLUTION_HASH, RECOMP_OPTIONS_AF_HASH,
         RECOMP_OPTIONS_DISPLAY_HASH, RECOMP_OPTIONS_HAZE_HASH,

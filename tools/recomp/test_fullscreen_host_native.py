@@ -13,6 +13,7 @@ source=r"""
 typedef void IDirect3DDevice8;
 static int mode=2,allowed,toggles,requests,resizes,full,x,y,width,height,fail_exclusive;
 static UINT rw,rh;
+static int vsync, applied_vsync;
 static BOOL resize(UINT w,UINT h,BOOL f){++resizes;rw=w;rh=h;full=f;return !(f && fail_exclusive);}
 static HMONITOR test_monitor(HWND h,DWORD f){return (HMONITOR)1;}
 static BOOL info(HMONITOR h,LPMONITORINFO m){m->rcMonitor=(RECT){-1920,0,0,1080};return 1;}
@@ -27,6 +28,7 @@ static BOOL post(HWND h,UINT m,WPARAM w,LPARAM l){++requests;return 1;}
 #define PostMessageA post
 #define d3d8_ResizePresentation resize
 void d3d8_SetFrameCap(int x){}
+void d3d8_SetVSync(int value){applied_vsync=value;}
 void d3d8_SetForceAnisotropic16x(int x){}
 void pgraph_d3d11_set_haze_mode(int x){}
 void d3d8_SetPresentationAspect(uint32_t a,uint32_t b){}
@@ -34,6 +36,7 @@ void xbox_set_widescreen_enabled(int x){}
 void pgraph_d3d11_set_internal_resolution(uint32_t a,uint32_t b){}
 void recomp_options_refresh_retail_camera_projection(void){}
 int recomp_options_fps_cap(void){return 60;}
+int recomp_options_vsync(void){return vsync;}
 int recomp_options_anisotropic_16x(void){return 0;}
 int recomp_options_authentic_haze(void){return 1;}
 int recomp_options_aspect_ratio(void){return 1;}
@@ -50,6 +53,8 @@ void xbox_preview_log_event(const char*a,const char*b){}
 """+body+r"""
 int main(void){
  g_host_window=(HWND)1;g_host_ready=1;
+ vsync=1;host_apply_recomp_options(RECOMP_OPTIONS_CHANGE_VSYNC);assert(applied_vsync==1);
+ vsync=0;host_apply_recomp_options(RECOMP_OPTIONS_CHANGE_VSYNC);assert(applied_vsync==0);
  host_apply_recomp_options(RECOMP_OPTIONS_CHANGE_DISPLAY);
  assert(full && rw==1280 && rh==720 && x==-1920 && y==0 && width==1280 && height==720);
  host_dev_display(1);assert(!full && rw==1920 && rh==1080 && width==1920 && x==-1920);

@@ -8,6 +8,8 @@
 #define DEV_SPAWN_FACTION_SHIFT 11u
 #define DEV_SPAWN_CREW_SHIFT 14u
 #define DEV_SPAWN_COUNT_SHIFT 16u
+#define DEV_SPAWN_WEAPON_SHIFT 20u
+#define DEV_SPAWN_WEAPON_MASK 31u
 #define DEV_BATTLE_UNTARGETABLE 1u
 #define DEV_BATTLE_PASSIVE 2u
 unsigned recomp_dev_battle_flags(void);

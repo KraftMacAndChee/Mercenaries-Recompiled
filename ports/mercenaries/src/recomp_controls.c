@@ -563,6 +563,10 @@ void recomp_controls_init(HWND window) {
     DWORD n=GetModuleFileNameA(NULL,g_path,MAX_PATH);char *slash=strrchr(g_path,'\\');
     if(!n || n>=MAX_PATH || !slash)strcpy(g_path,".\\mercenaries_recomp.ini");
     else strcpy(slash+1,"mercenaries_recomp.ini");
+    char configured_root[MAX_PATH];
+    DWORD configured_length=GetEnvironmentVariableA("MERCENARIES_CONFIG_ROOT",configured_root,MAX_PATH);
+    if(configured_length && configured_length+sizeof("\\mercenaries_recomp.ini")<=MAX_PATH)
+        snprintf(g_path,MAX_PATH,"%s\\mercenaries_recomp.ini",configured_root);
     const int legacy_keyboard=keyboard_defaults_version()<2;
     g_mouse=GetPrivateProfileIntA("Controls","MouseAim",legacy_keyboard?0:1,g_path)==1;
     g_sensitivity=(int)GetPrivateProfileIntA("Controls","MouseSensitivity",5,g_path);

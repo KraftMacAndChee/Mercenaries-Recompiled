@@ -17,6 +17,7 @@
 #define _GNU_SOURCE   /* FNM_CASEFOLD */
 #include "kernel.h"
 #if defined(_WIN32)
+#include "mod_overlay.h"
 #include "preview_log.h"
 #endif
 #include <string.h>
@@ -422,6 +423,12 @@ NTSTATUS __stdcall xbox_NtCreateFile(
         return STATUS_OBJECT_PATH_NOT_FOUND;
     }
 
+    if (xbox_mod_overlay_readonly(win_path) &&
+        ((DesiredAccess & (GENERIC_WRITE | GENERIC_ALL | DELETE | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | XBOX_FILE_WRITE_DATA | XBOX_FILE_APPEND_DATA)) ||
+         (CreateDisposition != XBOX_FILE_OPEN && CreateDisposition != XBOX_FILE_OPEN_IF))) {
+        if (IoStatusBlock) { IoStatusBlock->Status = STATUS_ACCESS_DENIED; IoStatusBlock->Information = 0; }
+        return STATUS_ACCESS_DENIED;
+    }
     existing_attrs = GetFileAttributesW(win_path);
     if ((CreateOptions & XBOX_FILE_DIRECTORY_FILE) ||
         (existing_attrs != INVALID_FILE_ATTRIBUTES &&
@@ -983,6 +990,7 @@ NTSTATUS __stdcall xbox_NtQueryDirectoryFile(
         }
     }
 
+    xbox_mod_overlay_find_data(FileHandle, &ctx->find_data);
     entry = (PXBOX_FILE_DIRECTORY_INFORMATION)FileInformation;
     memset(entry, 0, Length);
     char filename_ansi[MAX_PATH];

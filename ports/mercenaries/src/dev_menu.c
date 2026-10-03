@@ -2,6 +2,8 @@
  * state untouched. Commands are queued here and executed by the retail thread. */
 #include "dev_menu.h"
 #include "dev_battle.h"
+#include "dev_weapons.h"
+#include "dev_factions.h"
 #include "dev_missions.h"
 #include "free_cam.h"
 #include "recomp_controls.h"
@@ -22,7 +24,9 @@ unsigned recomp_dev_battle_flags(void){return (unsigned)InterlockedCompareExchan
 void recomp_dev_battle_set(unsigned flags){InterlockedExchange(&battle_flags,(LONG)(flags&3u));}
 unsigned recomp_dev_troop_count(void){return (unsigned)(sizeof(troops)/sizeof(troops[0]));}
 const DevVehicle *recomp_dev_troop_at(unsigned i){return i<recomp_dev_troop_count()?troops+i:NULL;}
-static HWND crew_mode, crew_faction, quantity;
+static HWND crew_mode, crew_faction, quantity, weapon;
+static HWND relation_first, relation_second, relation_kind, relation_apply, relation_help, relation_and, relation_are;
+static volatile LONG relation_pending;
 static HWND owner, panel, search, faction, kind, list, details, spawn, status, close_after;
 static HWND mission_faction, mission_list, mission_start, province_list, travel, world_label, mission_help;
 static int mission_view, displayed_province = -2;
@@ -44,6 +48,8 @@ static int developer_setting(const char *name) {
     if (!slash) return 0;
     slash[1] = 0;
     if (strcat_s(path, sizeof(path), "developer.ini")) return 0;
+    char root[MAX_PATH];DWORD length=GetEnvironmentVariableA("MERCENARIES_CONFIG_ROOT",root,MAX_PATH);
+    if(length && length+sizeof("\\developer.ini")<=MAX_PATH)snprintf(path,sizeof(path),"%s\\developer.ini",root);
     return GetPrivateProfileIntA("Developer", name, 0, path) == 1;
 }
 int recomp_dev_menu_allowed(void) {
@@ -83,6 +89,12 @@ int recomp_developer_logging_enabled(void) {
 #define ID_UNTARGETABLE 123
 #define ID_PASSIVE 124
 #define ID_BOIDS 125
+#define ID_WEAPON 126
+#define ID_RELATIONS 127
+#define ID_RELATION_FIRST 128
+#define ID_RELATION_SECOND 129
+#define ID_RELATION_KIND 130
+#define ID_RELATION_APPLY 131
 static void filter_changed(void);
 static const DevVehicle *display_item(unsigned i){return mission_view==2?recomp_dev_troop_at(i):recomp_dev_vehicle_at(i);}
 void recomp_dev_freecam_toggle(void)
@@ -137,16 +149,20 @@ static void refresh_catalog_filters(void)
 static void switch_view(int missions)
 {
  mission_view=missions;
- HWND vehicle_controls[]={search,faction,kind,list,details,spawn,close_after,crew_mode,crew_faction,quantity};
+ HWND vehicle_controls[]={search,faction,kind,list,details,spawn,close_after,crew_mode,crew_faction,quantity,weapon};
  HWND mission_controls[]={mission_faction,mission_list,mission_start,province_list,travel,world_label,mission_help};
- for(unsigned i=0;i<sizeof(vehicle_controls)/sizeof(vehicle_controls[0]);++i)ShowWindow(vehicle_controls[i],missions==1?SW_HIDE:SW_SHOW);
+ for(unsigned i=0;i<sizeof(vehicle_controls)/sizeof(vehicle_controls[0]);++i)ShowWindow(vehicle_controls[i],(missions==0 || missions==2)?SW_SHOW:SW_HIDE);
  for(unsigned i=0;i<sizeof(mission_controls)/sizeof(mission_controls[0]);++i)ShowWindow(mission_controls[i],missions==1?SW_SHOW:SW_HIDE);
  ShowWindow(crew_mode,missions==0?SW_SHOW:SW_HIDE);
  ShowWindow(crew_faction,missions==0?SW_SHOW:SW_HIDE);
  ShowWindow(quantity,missions==2?SW_SHOW:SW_HIDE);
+ ShowWindow(weapon,missions==2?SW_SHOW:SW_HIDE);
+ HWND relation_controls[]={relation_first,relation_second,relation_kind,relation_apply,relation_help,relation_and,relation_are};
+ for(unsigned i=0;i<sizeof(relation_controls)/sizeof(relation_controls[0]);++i)ShowWindow(relation_controls[i],missions==3?SW_SHOW:SW_HIDE);
  ShowWindow(kind,missions==0?SW_SHOW:SW_HIDE);
- if(missions==1)mission_choices();else {refresh_catalog_filters();filter_changed();}
- SetFocus(missions==1?mission_faction:search);InvalidateRect(panel,NULL,TRUE);
+ if(missions==3){SetWindowTextA(status,"Select two different factions and a relationship, then Apply.");}
+ else if(missions==1)mission_choices();else {refresh_catalog_filters();filter_changed();}
+ SetFocus(missions==3?relation_first:missions==1?mission_faction:search);InvalidateRect(panel,NULL,TRUE);
 }
 static void request_transition(int province_travel)
 {
@@ -195,7 +211,7 @@ static void selection_changed(void){
  EnableWindow(spawn,selected>=0&&!busy);
  if(selected<0){SetWindowTextA(details,"No matching units.\r\n\r\nTry another search or filter.");return;}
  const DevVehicle *v=display_item((unsigned)selected);
- snprintf(text,sizeof(text),"%s\r\n\r\nFaction: %s\r\nType: %s\r\n\r\n%s\r\n\r\nUse open, level ground.\r\nNormal faction relationships apply.",v->name,v->faction,v->kind,v->template_name);
+ snprintf(text,sizeof(text),"%s\r\n\r\nFaction: %s\r\nType: %s\r\n\r\n%s\r\n\r\nUse open, level ground.",v->name,v->faction,v->kind,v->template_name);
  SetWindowTextA(details,text);
 }
 static void filter_changed(void){
@@ -218,6 +234,8 @@ static void request_spawn(void){
  unsigned command=(unsigned)selected;
  if(mission_view==2){
   unsigned counts[]={1,4,8,12};LRESULT q=SendMessageA(quantity,CB_GETCURSEL,0,0);
+  LRESULT w=SendMessageA(weapon,CB_GETCURSEL,0,0);
+  command|=(unsigned)(w>=0 && w<DEV_WEAPON_COUNT?w:0)<<DEV_SPAWN_WEAPON_SHIFT;
   command|=DEV_SPAWN_TROOP|((counts[q>=0&&q<4?q:0]-1u)<<DEV_SPAWN_COUNT_SHIFT);
  }else{
   LRESULT mode=SendMessageA(crew_mode,CB_GETCURSEL,0,0),f=SendMessageA(crew_faction,CB_GETCURSEL,0,0);
@@ -225,6 +243,29 @@ static void request_spawn(void){
   command|=(unsigned)(f>=0&&f<5?f:0)<<DEV_SPAWN_FACTION_SHIFT;
  }
  busy=1;InterlockedExchange(&pending,(LONG)command);EnableWindow(spawn,FALSE);EnableWindow(mission_start,FALSE);EnableWindow(travel,FALSE);SetWindowTextA(status,"Finding a clear position...");
+}
+int recomp_dev_request_relation(unsigned first,unsigned second,unsigned relation)
+{
+ unsigned command=dev_relation_command(first,second,relation);
+ return command && recomp_dev_menu_allowed() &&
+        InterlockedCompareExchange(&relation_pending,(LONG)command,0)==0;
+}
+unsigned recomp_dev_take_relation(void){return (unsigned)InterlockedExchange(&relation_pending,0);}
+void recomp_dev_relation_result(int success,const char *message)
+{
+ (void)success;busy=0;SetWindowTextA(status,message);
+ EnableWindow(spawn,selected>=0);EnableWindow(relation_apply,TRUE);mission_choices();
+}
+static void request_relation(void)
+{
+ if(busy)return;
+ unsigned a=(unsigned)SendMessageA(relation_first,CB_GETCURSEL,0,0);
+ unsigned b=(unsigned)SendMessageA(relation_second,CB_GETCURSEL,0,0);
+ unsigned v=(unsigned)SendMessageA(relation_kind,CB_GETCURSEL,0,0);
+ if(!recomp_dev_request_relation(a,b,v)){SetWindowTextA(status,"Choose two different factions and a relationship.");return;}
+ busy=1;EnableWindow(relation_apply,FALSE);EnableWindow(spawn,FALSE);
+ EnableWindow(mission_start,FALSE);EnableWindow(travel,FALSE);
+ SetWindowTextA(status,"Updating faction relations...");
 }
 static void hide_panel(void){
  ShowWindow(panel,SW_HIDE);xbox_InputSetOverlayCapture(FALSE);SetForegroundWindow(owner);SetFocus(owner);if(display_callback)display_callback(0);
@@ -270,16 +311,24 @@ static void layout(void){
  place(list,left,169,split-8,height-241);place(details,left+split+8,177,body-split-16,height-411);
  place(crew_mode,left+split+8,height-220,body-split-12,160);
  place(crew_faction,left+split+8,height-181,body-split-12,220);
+ place(weapon,left+split+8,height-220,body-split-12,300);
  place(quantity,left+split+8,height-181,body-split-12,180);
  place(close_after,left+split+8,height-139,body-split-12,26);place(spawn,left+split+8,height-100,body-split-12,38);
- place(status,left,height-46,body,32);place(GetDlgItem(panel,ID_CLOSE),width-88,15,66,30);place(GetDlgItem(panel,ID_BOOKMARK),20,230,130,36);place(GetDlgItem(panel,ID_INSPECT),20,276,130,36);
- place(GetDlgItem(panel,ID_FREECAM),20,322,130,28);
- place(GetDlgItem(panel,ID_PERFORMANCE),20,359,145,28);
+ place(status,left,height-46,body,32);place(GetDlgItem(panel,ID_CLOSE),width-88,15,66,30);place(GetDlgItem(panel,ID_BOOKMARK),20,268,130,36);place(GetDlgItem(panel,ID_INSPECT),20,314,130,36);
+ place(GetDlgItem(panel,ID_FREECAM),20,360,130,28);
+ place(GetDlgItem(panel,ID_PERFORMANCE),20,397,145,28);
  place(GetDlgItem(panel,ID_VEHICLES),20,76,130,32);place(GetDlgItem(panel,ID_MISSIONS),20,154,130,32);
  place(GetDlgItem(panel,ID_TROOPS),20,115,130,32);
- place(GetDlgItem(panel,ID_UNTARGETABLE),20,399,145,28);
- place(GetDlgItem(panel,ID_PASSIVE),20,436,145,28);
- place(GetDlgItem(panel,ID_BOIDS),20,477,145,36);
+ place(GetDlgItem(panel,ID_UNTARGETABLE),20,437,145,28);
+ place(GetDlgItem(panel,ID_PASSIVE),20,474,145,28);
+ place(GetDlgItem(panel,ID_BOIDS),20,515,145,36);
+ place(GetDlgItem(panel,ID_RELATIONS),20,193,130,32);
+ place(relation_first,left,100,(body-50)/2,250);
+ place(relation_and,left+(body-50)/2+8,104,34,25);
+ place(relation_second,left+(body+50)/2,100,(body-50)/2,250);
+ place(relation_are,left,153,38,25);place(relation_kind,left+42,149,220,200);
+ place(relation_apply,left+278,149,120,34);
+ place(relation_help,left,212,body,height-290);
  place(world_label,left,80,body,30);place(mission_faction,left,123,210,220);
  place(mission_list,left+225,123,body-225,240);place(mission_start,left,170,200,36);
  place(province_list,left,237,250,160);place(travel,left+266,237,170,36);
@@ -294,7 +343,7 @@ static void draw_button(const DRAWITEMSTRUCT *d){
 }
 static void paint_panel(HWND h,HDC dc)
 {
- RECT r;GetClientRect(h,&r);FillRect(dc,&r,background);SetBkMode(dc,TRANSPARENT);SelectObject(dc,title_font);SetTextColor(dc,C_TEXT);TextOutA(dc,px(22),px(22),"Developer tools",15);SelectObject(dc,font);SetTextColor(dc,C_ACCENT);SetTextColor(dc,RGB(148,161,174));TextOutA(dc,px(22),px(200),"DIAGNOSTICS",11);TextOutA(dc,px(22),r.bottom-px(40),"F9 / Esc to close",17);if(mission_view==1)TextOutA(dc,px(170),px(52),"Mission selection and province travel",36);else TextOutA(dc,px(170),px(52),"Search name, faction or variant",30);
+ RECT r;GetClientRect(h,&r);FillRect(dc,&r,background);SetBkMode(dc,TRANSPARENT);SelectObject(dc,title_font);SetTextColor(dc,C_TEXT);TextOutA(dc,px(22),px(22),"Developer tools",15);SelectObject(dc,font);SetTextColor(dc,C_ACCENT);SetTextColor(dc,RGB(148,161,174));TextOutA(dc,px(22),px(238),"DIAGNOSTICS",11);TextOutA(dc,px(22),r.bottom-px(40),"F9 / Esc to close",17);if(mission_view==3)TextOutA(dc,px(170),px(52),"Faction relationships",21);else if(mission_view==1)TextOutA(dc,px(170),px(52),"Mission selection and province travel",36);else TextOutA(dc,px(170),px(52),"Search name, faction or variant",30);
 }
 static LRESULT CALLBACK panel_proc(HWND h,UINT m,WPARAM w,LPARAM l){
  switch(m){
@@ -308,6 +357,8 @@ static LRESULT CALLBACK panel_proc(HWND h,UINT m,WPARAM w,LPARAM l){
   SetTextColor((HDC)w,C_TEXT);SetBkColor((HDC)w,m==WM_CTLCOLORSTATIC?C_BG:C_FIELD);return (LRESULT)(m==WM_CTLCOLORSTATIC?background:field_background);
  case WM_COMMAND:
   if(LOWORD(w)==ID_VEHICLES){switch_view(0);return 0;}
+  if(LOWORD(w)==ID_RELATIONS){switch_view(3);return 0;}
+  if(LOWORD(w)==ID_RELATION_APPLY){request_relation();return 0;}
   if(LOWORD(w)==ID_TROOPS){switch_view(2);return 0;}
   if(LOWORD(w)==ID_UNTARGETABLE || LOWORD(w)==ID_PASSIVE){
    recomp_dev_battle_set((SendDlgItemMessageA(h,ID_UNTARGETABLE,BM_GETCHECK,0,0)==BST_CHECKED?1u:0u)|(SendDlgItemMessageA(h,ID_PASSIVE,BM_GETCHECK,0,0)==BST_CHECKED?2u:0u));return 0;
@@ -385,6 +436,23 @@ void recomp_dev_menu_toggle(void){
   const char *quantities[]={"1 soldier","4 soldiers","8 soldiers","12 soldiers"};
   for(unsigned i=0;i<4;i++)SendMessageA(quantity,CB_ADDSTRING,0,(LPARAM)quantities[i]);
   SendMessageA(quantity,CB_SETCURSEL,0,0);
+  weapon=control("COMBOBOX","",WS_TABSTOP|CBS_DROPDOWNLIST|WS_VSCROLL,ID_WEAPON);
+  for(unsigned i=0;i<DEV_WEAPON_COUNT;++i)SendMessageA(weapon,CB_ADDSTRING,0,(LPARAM)dev_weapons[i].name);
+  SendMessageA(weapon,CB_SETCURSEL,0,0);
+  control("BUTTON","Factions",WS_TABSTOP|BS_OWNERDRAW,ID_RELATIONS);
+  relation_first=control("COMBOBOX","",WS_TABSTOP|CBS_DROPDOWNLIST,ID_RELATION_FIRST);
+  relation_second=control("COMBOBOX","",WS_TABSTOP|CBS_DROPDOWNLIST,ID_RELATION_SECOND);
+  relation_kind=control("COMBOBOX","",WS_TABSTOP|CBS_DROPDOWNLIST,ID_RELATION_KIND);
+  for(unsigned i=0;i<7u;++i){
+   SendMessageA(relation_first,CB_ADDSTRING,0,(LPARAM)dev_faction_names[i]);
+   SendMessageA(relation_second,CB_ADDSTRING,0,(LPARAM)dev_faction_names[i]);
+  }
+  for(unsigned i=0;i<4u;++i)SendMessageA(relation_kind,CB_ADDSTRING,0,(LPARAM)dev_relation_names[i]);
+  SendMessageA(relation_first,CB_SETCURSEL,0,0);SendMessageA(relation_second,CB_SETCURSEL,5,0);
+  SendMessageA(relation_kind,CB_SETCURSEL,3,0);
+  relation_and=control("STATIC","and",SS_LEFT,0);relation_are=control("STATIC","are",SS_LEFT,0);
+  relation_apply=control("BUTTON","Apply",WS_TABSTOP|BS_OWNERDRAW,ID_RELATION_APPLY);
+  relation_help=control("STATIC","Apply changes both factions' attitudes toward each other.",SS_LEFT,0);
   world_label=control("STATIC","",SS_LEFT,0);
   mission_faction=control("COMBOBOX","",WS_TABSTOP|CBS_DROPDOWNLIST|WS_VSCROLL,ID_MISSION_FACTION);
   const char *mission_factions[]={"Allied Nations","Chinese","Russian Mafia","South Korean"};
@@ -400,5 +468,5 @@ void recomp_dev_menu_toggle(void){
   SetTimer(panel,ID_FREECAM,200,NULL);layout();filter_changed();switch_view(0);
  }
  if(display_callback)display_callback(1);
- xbox_InputSetOverlayCapture(TRUE);ShowWindow(panel,SW_SHOW);SetForegroundWindow(panel);SetFocus(recomp_freecam_enabled()?panel:(mission_view==1?mission_faction:search));
+ xbox_InputSetOverlayCapture(TRUE);ShowWindow(panel,SW_SHOW);SetForegroundWindow(panel);SetFocus(recomp_freecam_enabled()?panel:(mission_view==3?relation_first:mission_view==1?mission_faction:search));
 }

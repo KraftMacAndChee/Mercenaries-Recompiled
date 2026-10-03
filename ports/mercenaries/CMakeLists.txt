@@ -54,6 +54,7 @@ set(GAME_SOURCES
     src/main.c
     src/recomp_manual.c
     src/mod_compatibility.c
+    src/mod_extensions.c
     src/recomp_world_properties.c
     src/shop_config.c
     src/audio_bank_fixes.c
@@ -148,6 +149,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 add_executable(mercenaries_launcher WIN32
     src/setup_launcher.c
     src/setup_art.cpp
+    src/mod_loader.cpp
+    src/mod_selector.cpp
 )
 if(WIN32)
     target_sources(mercenaries_launcher PRIVATE resources/app.rc resources/launcher.rc)
@@ -169,7 +172,7 @@ if(MSVC)
 endif()
 set_target_properties(mercenaries_launcher PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    CXX_STANDARD 11
+    CXX_STANDARD 17
     OUTPUT_NAME "Mercenaries Recompiled"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

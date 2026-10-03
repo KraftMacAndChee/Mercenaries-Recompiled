@@ -18,6 +18,9 @@ static uint8_t memory[0x20000];
 static uint32_t eax,ebx,ecx,edx,esi,edi,esp,g_seh_ebp;
 static float xmm0, xmm0v[4];
 static unsigned eliminated,dependent,hidden;
+/* This regression retains the disabled-mod, two-slot inventory policy. */
+static uint32_t recomp_mod_secondary_base(uint32_t actor) { return actor+0x7C0; }
+static uint32_t recomp_mod_secondary_capacity(uint32_t actor) { (void)actor; return 2; }
 #define MEM32(a) (*(uint32_t *)(void *)(memory+(uint32_t)(a)))
 #define MEM8(a) memory[(uint32_t)(a)]
 #define MEMF(a) (*(float *)(void *)(memory+(uint32_t)(a)))
@@ -91,7 +94,7 @@ class SecondaryInventoryTests(unittest.TestCase):
             start=text.index(f"void sub_{name}(void)")
             return text[start:text.index("\n}\n",start)+3]
         insert=extract("0005B1F0"); clear=extract("000579C0")
-        check="if (CMP_GE(eax, 2)) goto loc_0005B344;"
+        check="if (CMP_GE(eax, recomp_mod_secondary_capacity(esi))) goto loc_0005B344;"
         self.assertIn(check,insert)
         old=insert.replace(check,"if ((int8_t)LO8(eax) >= 0) goto loc_0005B344;")
         for label,body in (("fixed",insert),("old",old)):

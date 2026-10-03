@@ -41,7 +41,7 @@ static void d3d8_pump_host_messages(void){pumps++;ticks+=prepare_us;}
 static void d3d8_debug_backbuffer_stats(void){assert(g_debug_capture_at_flip);captures++;ticks+=capture_us;}
 static void d3d8_debug_capture_display_refresh(ULONGLONG ms){(void)ms;refreshes++;}
 static void d3d8_WaitForGuestFrameSlot(void){waits++;ticks+=wait_us;}
-static void preview_present(void *p,int a,int b){assert(p && !a && !b);presents++;ticks+=present_us;g_frame_submissions++;g_frame_interval_count=1;g_frame_interval_next=1;g_frame_intervals_us[0]=submission_tick?(unsigned)(ticks-submission_tick):0;submission_tick=ticks;}
+static void preview_present(void *p,int flags){assert(p && !flags);presents++;ticks+=present_us;g_frame_submissions++;g_frame_interval_count=1;g_frame_interval_next=1;g_frame_intervals_us[0]=submission_tick?(unsigned)(ticks-submission_tick):0;submission_tick=ticks;}
 static void xbox_preview_log_sample(const char *cat,const char *fmt,...){
  assert(!strcmp(cat,"present-slow"));va_list args;va_start(args,fmt);vsnprintf(record,sizeof(record),fmt,args);va_end(args);samples++;
 }

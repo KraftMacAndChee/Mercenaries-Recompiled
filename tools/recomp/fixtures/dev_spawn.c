@@ -27,9 +27,11 @@ static const DevVehicle catalog[]={
 };
 unsigned recomp_dev_vehicle_count(void){return 2;}
 const DevVehicle *recomp_dev_vehicle_at(unsigned i){return i<2?catalog+i:NULL;}
-unsigned recomp_dev_troop_count(void){return 1;}
-const DevVehicle *recomp_dev_troop_at(unsigned i){return i==0?catalog:NULL;}
+static DevVehicle variant_troop;
+unsigned recomp_dev_troop_count(void){return 2;}
+const DevVehicle *recomp_dev_troop_at(unsigned i){return i==0?catalog:i==1?&variant_troop:NULL;}
 void recomp_dev_battle_refresh_player(void){}
+void recomp_dev_relations_tick(void){}
 void recomp_dev_request_boids(void){}
 static unsigned policy;
 unsigned recomp_dev_battle_flags(void){return policy;}
@@ -55,6 +57,7 @@ static void retail_call(void){
  case 0x17F490:big_loads++;if(import_succeeds)missing_template=0;break;
  case 0x1ED340:{
   uint32_t key=guest_u32(g_esp+8);g_eax=missing_template?0:key==0x134603d7?200:100;
+  if(arg==variant_troop.template_hash && key==0x134603d7)g_eax=dev_hash("mafia_hum_soldier");
   if(key==dev_hash("RiderType_a"))g_eax=dev_hash("driver");
   if(key==dev_hash("RiderType_b"))g_eax=dev_hash("gunner");
   if(key==dev_hash("RiderType_c"))g_eax=dev_hash("passenger");
@@ -123,6 +126,19 @@ int main(void){
  assert(!strcmp(property("RiderOccupant_d"),"none"));assert(!strcmp(property("aiType"),"none"));
  reset();pending=DEV_SPAWN_TROOP|(3u<<DEV_SPAWN_COUNT_SHIFT);run();assert(success&&spawns==4);
  assert(!*property("aiType") && !strcmp(property("encounter"),"none"));
+ reset();pending=DEV_SPAWN_TROOP|(8u<<DEV_SPAWN_WEAPON_SHIFT)|(3u<<DEV_SPAWN_COUNT_SHIFT);run();assert(success&&spawns==4);
+ assert(!strcmp(property("weapon_A_template"),"template_pic_sniperrifle"));
+ reset();pending=DEV_SPAWN_TROOP;run();assert(success && !*property("weapon_A_template"));
+ variant_troop=catalog[0];variant_troop.template_hash=dev_hash("template_mafia_soldier");
+ variant_troop.model_hash=dev_hash("mafia_hum_heavysoldier");
+ reset();put(0x6438A8,3);put(0x230008,variant_troop.model_hash);put(0x231008,0x242000);
+ pending=DEV_SPAWN_TROOP|1u|(8u<<DEV_SPAWN_WEAPON_SHIFT);run();assert(success);
+ unsigned weapon_properties=0;for(unsigned i=0;i<properties;i++)if(!strcmp(keys[i],"weapon_A_template"))weapon_properties++;
+ assert(weapon_properties==1 && !strcmp(property("weapon_A_template"),"template_pic_sniperrifle"));
+ assert(!strcmp(property("geometryfile"),"mafia_hum_heavysoldier"));
+ assert(!strcmp(dev_troop_variants[0].weapon,"template_pic_lmg"));
+ reset();pending=DEV_SPAWN_TROOP|(31u<<DEV_SPAWN_WEAPON_SHIFT);run();assert(!success&&!spawns);
+ reset();pending=1u<<DEV_SPAWN_WEAPON_SHIFT;run();assert(!success&&!spawns);
  reset();pending=DEV_SPAWN_TROOP|(12u<<DEV_SPAWN_COUNT_SHIFT);run();assert(!success&&!spawns);
  reset();pending=(2u<<DEV_SPAWN_CREW_SHIFT)|(7u<<DEV_SPAWN_FACTION_SHIFT);run();assert(!success&&!spawns);
  reset();freecam=1;run();assert(!success&&!spawns&&strstr(message,"camera is not ready"));

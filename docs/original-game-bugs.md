@@ -7,8 +7,8 @@ applying discards it. The setting is saved beside the runtime as
 `[RecompOptions] OGBugs=1` or `OGBugs=0` in `mercenaries_recomp.ini`.
 
 This setting does not disable translation, rendering or host-integration fixes.
-It is not a claim to reproduce every original bug. Its current scope is the four
-corrections below. Three use the central fix enum; helicopter boarding reads
+It is not a claim to reproduce every original bug. Its current scope is the five
+corrections below. Four use the central fix enum; helicopter boarding reads
 the applied option directly in `ai_boarding.h`.
 
 ## NW Mafia 2 music cue
@@ -79,11 +79,24 @@ with Off, bringing the dock within reach allows boarding. This is not a change t
 the journalist's filming duration or dialogue timing.
 
 The [boarding implementation](../ports/mercenaries/src/ai_boarding.h) gates this
-behavior directly through `recomp_options_og_bugs()`, outside the three-entry
+behavior directly through `recomp_options_og_bugs()`, outside the four-entry
 central enum. The [native regression](../tools/recomp/test_ai_boarding_native.py)
 checks both paths, height and horizontal distance, driver/passenger seats,
 ordinary vehicles, live option changes, waiting then landing, and guest-register
 preservation. This establishes those tested contracts, not every in-game scene.
+
+## Alternate Jennifer backpack visibility
+
+Retail alternate-costume setup hides Jennifer's backpack, but generic visibility
+restoration after scope or vehicle use can show it again. With OG Bugs Off,
+accessory creation and those restoration paths keep that costume's backpack
+hidden. The normal costume, other accessories, and OG Bugs On retain their
+existing behavior. The option affects subsequent creation/restoration calls.
+
+The [native regression](../tools/recomp/test_jennifer_backpack_native.py)
+executes the patched creation and visibility paths, checking repeated transitions,
+other models/accessories, both option states, and guest call-state preservation.
+An in-game visual check of the alternate costume still remains to be completed.
 
 ## Inspector death tracking is always enabled
 

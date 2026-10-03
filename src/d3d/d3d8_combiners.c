@@ -754,7 +754,7 @@ int d3d8_combiners_generate_hlsl(const NV2ACombinerState *state,
         EMIT("    nointerpolation float4 p0 : TEXCOORD6;\n");
         EMIT("    nointerpolation float4 p1 : TEXCOORD7;\n");
         EMIT("    nointerpolation float4 p2 : TEXCOORD8;\n");
-    } else if (state->guest_depth) EMIT("    noperspective float4 guestDepth : TEXCOORD6;\n");
+    } else if (state->guest_depth) EMIT("    float4 guestDepth : TEXCOORD6;\n");
     EMIT("};\n\n");
 
     /* ---- Main function ---- */
@@ -771,10 +771,8 @@ int d3d8_combiners_generate_hlsl(const NV2ACombinerState *state,
             EMIT("    float z = 1.0 + (input.p0.z + triangle_dz) / input.p0.w;\n");
         } else {
         EMIT("    float z = %s;\n", state->guest_depth ? "1.0 + input.guestDepth.x / input.guestDepth.y" : "input.pos.z");
-        /* Hardware clipping through W=0 can make a noperspective varying
-         * invalid even though the covered fragment has valid raster depth.
-         * Do not turn that into a near-plane occluder by saturating it to 0.
-         * Keep precise guest interpolation whenever it remains in range. */
+        /* Homogeneous transport handles clipping; retain raster depth as a
+         * fallback for non-finite or out-of-range guest shader output. */
         if (state->guest_depth)
             EMIT("    if (!isfinite(z) || z < 0.0 || z > 1.0) z = input.pos.z;\n");
         }

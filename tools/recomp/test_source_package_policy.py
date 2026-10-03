@@ -15,6 +15,8 @@ from tools.recomp.source_package_policy import forbidden_source_path,verify_sour
  'artifacts/backup.zip','.git/objects/data','game.elf','boot.irx','sound.msb',
  'sound.msh','bank.xsb','bank.xwb','movie.pss','nested.zip','../escape.c',
  'C:/game.iso','tools\\game_files\\renamed.data',
+ 'mod-settings/profile/camera.ini','mod-loader.lock',
+ 'mods/Camera/plugin.dll','mod-cache/profile/runtime/game.exe','mod-saves/mercenaries/save.dat',
 ])
 def test_reject_game_and_local_paths(name):
  assert forbidden_source_path(name)
@@ -23,6 +25,7 @@ def test_reject_game_and_local_paths(name):
  'src/audio.c','third_party/lua-5.0.3/COPYRIGHT','docs/runtime/ps2-upgrades.md',
  'ports/mercenaries/resources/ps2_upgrades/rifle_shot1.wav',
  'ports/mercenaries/assets/prompts/playstation.png',
+ 'ports/mercenaries/resources/launcher/mods/background.png',
  'tools/recomp/fixtures/enemy_memory/expected.bin.gz',
 ])
 def test_keep_source_and_reviewed_assets(name):

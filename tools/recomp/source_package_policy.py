@@ -14,7 +14,7 @@ REVIEWED_FIXTURES={'tools/recomp/fixtures/enemy_memory/expected.bin.gz':
 
 GAME_DIRECTORIES=frozenset({
     'game_files','gamefiles','dataxbox','dataps2',
-    '.git','artifacts','references','saves',
+    '.git','artifacts','references','saves','mod-saves','mod-cache','mod-settings',
 })
 GAME_SUFFIXES=frozenset({
     '.iso','.xiso','.cso','.chd','.cue','.bin','.mdf','.mds','.nrg',
@@ -33,10 +33,14 @@ def forbidden_source_path(name):
     path=PurePosixPath(name.replace('\\','/'))
     if path.is_absolute() or '..' in path.parts or any(':' in p for p in path.parts):
         return 'non-relative archive path'
+    if path.parts and path.parts[0].lower() == 'mods':
+        return 'local mod packages'
     if any(p.lower() in GAME_DIRECTORIES for p in path.parts):
         return 'game/local/private directory'
     if path.as_posix() in REVIEWED_FIXTURES:return None
     leaf=path.name.lower()
+    if leaf == 'mod-loader.lock':
+        return 'local mod loader lease'
     # Generated oracle fixtures may use .bin only when separately reviewed;
     # no blanket binary-data exception is made in the published source tree.
     if path.suffix.lower() in GAME_SUFFIXES:

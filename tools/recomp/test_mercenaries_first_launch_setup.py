@@ -15,7 +15,10 @@ ISO_BUILD = (PORT / "scripts" / "Build-From-Iso.ps1").read_text(encoding="utf-8"
 def test_setup_identity_and_offline_distribution() -> None:
     assert 'L"Mercenaries Recompiled Setup"' in LAUNCHER
     assert 'L"tools\\\\xdvdfs.exe"' in LAUNCHER
-    assert LAUNCHER.count("CREATE_NO_WINDOW") >= 2
+    mod_loader = (PORT / "src" / "mod_loader.cpp").read_text(encoding="utf-8")
+    assert "CREATE_NO_WINDOW" in LAUNCHER  # ISO extraction
+    assert "CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT" in mod_loader  # game child
+    assert "mercenaries_mod_launch(g_state.window, g_state.base_dir, g_state.game_dir)" in LAUNCHER
     assert "PBS_MARQUEE" not in LAUNCHER
     assert "PBM_SETMARQUEE" not in LAUNCHER
     assert "WM_INSTALL_PROGRESS" in LAUNCHER

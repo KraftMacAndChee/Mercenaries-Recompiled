@@ -9,3 +9,9 @@
 208 RCDATA "launcher/frame-close-disabled.png"
 209 RCDATA "launcher/AgencyFB-Regular.ttf"
 210 RCDATA "launcher/AgencyFB-COPYRIGHT.txt"
+
+301 RCDATA "launcher/mods/background.png"
+302 RCDATA "launcher/mods/up.png"
+303 RCDATA "launcher/mods/down.png"
+304 RCDATA "launcher/mods/button.png"
+305 RCDATA "launcher/mods/panel.png"

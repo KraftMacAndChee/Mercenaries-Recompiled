@@ -1,3 +1,4 @@
+#include "kernel/mod_overlay.h"
 #include "mod_compatibility.h"
 #include "app_icon.h"
 #include "recomp_controls.h"
@@ -198,8 +199,8 @@ static void preview_snapshot(const char *reason)
         "ready=%d world_pos=%.3f,%.3f,%.3f freecam=%d awake=%u stream_used=%u stream_active=%u stream_pending=%u",
         world_ready,world_x,world_y,world_z,recomp_freecam_enabled(),awake,stream_used,stream_active,stream_pending);
     xbox_preview_log_event("options",
-        "output=%ux%u internal=%ux%u fps_cap=%d aspect=%d af16=%d distance=%d haze=%d npc_draw=%d npc_lod=%d display=%d",
-        width,height,internal_width,internal_height,recomp_options_fps_cap(),recomp_options_aspect_ratio(),
+        "output=%ux%u internal=%ux%u fps_cap=%d vsync=%d aspect=%d af16=%d distance=%d haze=%d npc_draw=%d npc_lod=%d display=%d",
+        width,height,internal_width,internal_height,recomp_options_fps_cap(),recomp_options_vsync(),recomp_options_aspect_ratio(),
         recomp_options_anisotropic_16x(),recomp_options_draw_distance(),recomp_options_authentic_haze(),
         recomp_options_npc_draw_distance(),recomp_options_npc_lod(),recomp_options_display_mode());
 }
@@ -843,13 +844,14 @@ static void host_apply_recomp_options(uint32_t changes)
     RECT rect;
 
     d3d8_SetFrameCap(recomp_options_fps_cap());
+    d3d8_SetVSync(recomp_options_vsync());
     d3d8_SetForceAnisotropic16x(recomp_options_anisotropic_16x());
     pgraph_d3d11_set_haze_mode(recomp_options_authentic_haze());
     recomp_options_presentation_aspect(&aspect_width, &aspect_height);
     d3d8_SetPresentationAspect(aspect_width, aspect_height);
     xbox_set_widescreen_enabled(recomp_options_aspect_ratio() != 0);
 
-    if (changes & RECOMP_OPTIONS_CHANGE_ASPECT)
+    if (changes & (RECOMP_OPTIONS_CHANGE_ASPECT | RECOMP_OPTIONS_CHANGE_FOV))
         recomp_options_refresh_retail_camera_projection();
 
     if (changes & (RECOMP_OPTIONS_CHANGE_ASPECT |
@@ -977,6 +979,7 @@ static BOOL host_graphics_init(HINSTANCE instance, int show_command)
 
     recomp_options_init();
     d3d8_SetFrameCap(recomp_options_fps_cap());
+    d3d8_SetVSync(recomp_options_vsync());
     d3d8_SetForceAnisotropic16x(recomp_options_anisotropic_16x());
     pgraph_d3d11_set_haze_mode(recomp_options_authentic_haze());
     recomp_options_resolution_size(&output_width, &output_height);
@@ -1924,9 +1927,62 @@ cleanup:
     return matches;
 }
 
+/* Direct launches also offer the selector. The launcher's explicit child flag
+ * prevents recursion and keeps Launch Vanilla independent of saved selections. */
+static int redirect_to_mod_selector(void)
+{
+    if (getenv("MERCENARIES_MOD_BOOTSTRAPPED") || getenv("MERCENARIES_TEST_ISOLATE_INPUT"))
+        return 0;
+    WCHAR root[MAX_PATH], pattern[MAX_PATH], launcher[MAX_PATH], command[MAX_PATH + 4];
+    DWORD n = GetModuleFileNameW(NULL, root, MAX_PATH);
+    if (!n || n >= MAX_PATH)
+        return 0;
+    WCHAR *slash = wcsrchr(root, L'\\');
+    if (!slash)
+        return 0;
+    *slash = 0;
+    if (swprintf_s(pattern, MAX_PATH, L"%s\\mods\\*", root) < 0)
+        return 0;
+    WIN32_FIND_DATAW entry;
+    HANDLE find = FindFirstFileW(pattern, &entry);
+    BOOL found = FALSE;
+    if (find == INVALID_HANDLE_VALUE)
+        return 0;
+    do
+    {
+        if ((entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && wcscmp(entry.cFileName, L".") &&
+            wcscmp(entry.cFileName, L".."))
+        {
+            found = TRUE;
+            break;
+        }
+    } while (FindNextFileW(find, &entry));
+    FindClose(find);
+    if (!found)
+        return 0;
+    if (swprintf_s(launcher, MAX_PATH, L"%s\\Mercenaries Recompiled.exe", root) < 0)
+        return -1;
+    swprintf_s(command, MAX_PATH + 4, L"\"%s\"", launcher);
+    STARTUPINFOW si = {sizeof(si)};
+    PROCESS_INFORMATION pi = {0};
+    if (!CreateProcessW(launcher, command, NULL, NULL, FALSE, 0, NULL, root, &si, &pi))
+    {
+        MessageBoxW(NULL,
+                    L"The mod selector could not start. Keep Mercenaries Recompiled.exe alongside "
+                    L"the game executable.",
+                    L"Mercenaries", MB_OK | MB_ICONERROR);
+        return -1;
+    }
+    CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
+    return 1;
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow)
 {
+    int redirected=redirect_to_mod_selector();
+    if(redirected) return redirected>0?0:1;
     recomp_register_shader_warmup();
     void *xbe_data = NULL;
     size_t xbe_size = 0;
@@ -1942,6 +1998,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
             g_game_dir = env_game_dir;
     } else {
         find_default_game_dir();
+    }
+    const char *selected_saves = getenv("MERCENARIES_SAVE_DIR");
+    if (selected_saves && *selected_saves) g_save_dir = selected_saves;
+    if (!xbox_mod_overlay_init()) {
+        MessageBoxA(NULL, "The selected mod overlay could not be loaded. Launch again from the mod selector.", "Mercenaries", MB_OK | MB_ICONERROR);
+        return 1;
     }
     if (snprintf(g_xbe_path, sizeof(g_xbe_path), "%s\\default.xbe",
                  g_game_dir) < 0)

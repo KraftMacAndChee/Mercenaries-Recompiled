@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "app_icon.h"
 #include "setup_art.h"
+#include "mod_loader.h"
 #include <windowsx.h>
 #include <commdlg.h>
 #include <commctrl.h>
@@ -366,30 +367,7 @@ static BOOL write_install_marker(const wchar_t *game_dir)
 
 static BOOL launch_game(void)
 {
-    wchar_t executable[PATH_CAPACITY], command[PATH_CAPACITY * 2];
-    STARTUPINFOW startup = { sizeof(startup) };
-    PROCESS_INFORMATION process = { 0 };
-    if (!path_join(executable, ARRAYSIZE(executable),
-                   g_state.base_dir, GAME_EXE) ||
-        !regular_nonempty_file(executable)) {
-        MessageBoxW(g_state.window,
-                    L"The game executable is missing from this distribution.",
-                    APP_TITLE, MB_OK | MB_ICONERROR);
-        return FALSE;
-    }
-    if (_snwprintf_s(command, ARRAYSIZE(command), _TRUNCATE,
-                     L"\"%s\" \"%s\"", executable, g_state.game_dir) < 0)
-        return FALSE;
-    if (!CreateProcessW(executable, command, NULL, NULL, FALSE,
-                        CREATE_NO_WINDOW, NULL,
-                        g_state.base_dir, &startup, &process)) {
-        MessageBoxW(g_state.window, L"Mercenaries could not be started.",
-                    APP_TITLE, MB_OK | MB_ICONERROR);
-        return FALSE;
-    }
-    CloseHandle(process.hThread);
-    CloseHandle(process.hProcess);
-    return TRUE;
+    return mercenaries_mod_launch(g_state.window, g_state.base_dir, g_state.game_dir);
 }
 
 static DWORD WINAPI install_worker(void *unused)
@@ -722,6 +700,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous,
         int argument_count = 0;
         wchar_t **arguments = CommandLineToArgvW(GetCommandLineW(),
                                                   &argument_count);
+        if (arguments && argument_count >= 3 && !_wcsicmp(arguments[1],L"--preview-mod-ui")) {
+            BOOL ok=mercenaries_mod_preview(arguments[2]);LocalFree(arguments);return ok?0:5;
+        }
         if (arguments && argument_count >= 3 && !_wcsicmp(arguments[1],L"--preview-ui")) {
             wchar_t path[PATH_CAPACITY];int i;BOOL ok=setup_art_init(instance);
             const setup_view views[]={

@@ -1,8 +1,8 @@
 """Compare near-far-plane depth with an independent double-precision oracle.
 
-The clip-Z round trip and unguarded clipped varyings are negative controls.
-Unclipped production guest depth remains exact; invalid clipped interpolation
-falls back to hardware raster depth, within three ULPs in these test planes.
+The legacy noperspective path and clip-Z round trip are negative controls.
+Homogeneous depth transport must stay within one float ULP of the oracle through
+camera-plane clipping and on unclipped triangles, across resolutions/AA layouts.
 """
 from pathlib import Path
 import subprocess,tempfile
@@ -34,29 +34,34 @@ static ID3DBlob *compile(const char *src,const char *profile){
  if(errors)ID3D10Blob_Release(errors);assert(SUCCEEDED(hr));return code;
 }
 int main(void){
- unsigned negative_control_errors=0, clipped_invalid_control=0;
+ setvbuf(stdout,NULL,_IONBF,0);
+ unsigned negative_control_errors=0, clipped_invalid_control=0, clipped_legacy_errors=0;
  ID3D11Device *device=NULL;ID3D11DeviceContext *ctx=NULL;
- ID3D11VertexShader *vs[4];ID3D11PixelShader *ps[8];ID3D11Buffer *cb=NULL;
+ ID3D11VertexShader *vs[8];ID3D11PixelShader *ps[10];ID3D11Buffer *cb=NULL;
  ID3D11DepthStencilState *ds=NULL;ID3D11RasterizerState *rs=NULL;
  D3D11_BUFFER_DESC bd={0};D3D11_DEPTH_STENCIL_DESC dd={0};D3D11_RASTERIZER_DESC rd={0};
  NV2ACombinerState state={0};NV2APSConstants constants={0};char hlsl[16384];
  assert(SUCCEEDED(D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_WARP,NULL,0,NULL,0,D3D11_SDK_VERSION,&device,NULL,&ctx)));
- for(unsigned mode=0;mode<8;mode++){
+ for(unsigned mode=0;mode<10;mode++){
   state.polygon_offset=mode&1;state.guest_depth=mode>=6?1:mode>>1;assert(d3d8_combiners_generate_hlsl(&state,hlsl,sizeof(hlsl))>0);
   assert((strstr(hlsl,"SV_Depth")!=NULL)==(mode!=0));
   if(mode>=6){
-   /* Negative control: actual production shader without the invalid-depth guard. */
+   char *varying=strstr(hlsl,"float4 guestDepth");assert(varying);
+   memmove(varying+14,varying,strlen(varying)+1);memcpy(varying,"noperspective ",14);
+  }
+  if(mode==6 || mode==7){
+   /* Negative control: legacy interpolation without the invalid-depth guard. */
    const char *guard="if (!isfinite(z) || z < 0.0 || z > 1.0) z = input.pos.z;";
    char *found=strstr(hlsl,guard);assert(found);memset(found,' ',strlen(guard));
   }
   ID3DBlob *b=compile(hlsl,"ps_5_0");
   assert(SUCCEEDED(ID3D11Device_CreatePixelShader(device,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&ps[mode])));ID3D10Blob_Release(b);
  }
- for(unsigned clipped=0;clipped<2;clipped++)for(unsigned axis=0;axis<2;axis++){
+ for(unsigned legacy=0;legacy<2;legacy++)for(unsigned clipped=0;clipped<2;clipped++)for(unsigned axis=0;axis<2;axis++){
   snprintf(hlsl,sizeof(hlsl),
-   "struct V{float4 pos:SV_POSITION;float4 c0:COLOR0;float4 c1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float f:FOG;float size:PSIZE;float4 b0:TEXCOORD4;float4 b1:TEXCOORD5;noperspective float4 guestDepth:TEXCOORD6;};"
-   "V main(uint id:SV_VertexID){V o=(V)0;float2 p=%s;float gz=16770000.0+128.0*p.%s;float z=gz/16777215.0;float w=id==0?0.75:(id==1?17.0:%s);o.guestDepth=float4(gz-16777215.0,16777215.0,(p.x+1)*32,(1-p.y)*32);o.pos=float4(p*w,z*w,w);return o;}",clipped?"id==0?float2(-0.5,-0.5):(id==1?float2(-0.5,0.5):float2(0.5,-0.5))":"id==0?float2(-1,-1):(id==1?float2(-1,3):float2(3,-1))",axis?"y":"x",clipped?"-187.5":"187.5");
-  ID3DBlob *b=compile(hlsl,"vs_5_0");assert(SUCCEEDED(ID3D11Device_CreateVertexShader(device,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&vs[clipped*2+axis])));ID3D10Blob_Release(b);
+   "struct V{float4 pos:SV_POSITION;float4 c0:COLOR0;float4 c1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float f:FOG;float size:PSIZE;float4 b0:TEXCOORD4;float4 b1:TEXCOORD5;%sfloat4 guestDepth:TEXCOORD6;};"
+   "V main(uint id:SV_VertexID){V o=(V)0;float2 p=%s;float gz=16770000.0+128.0*p.%s;float z=gz/16777215.0;float w=id==0?0.75:(id==1?17.0:%s);float weight=%s;o.guestDepth=float4((gz-16777215.0)*weight,16777215.0*weight,(p.x+1)*32,(1-p.y)*32);o.pos=float4(p*w,z*w,w);return o;}",legacy?"noperspective ":"",clipped?"id==0?float2(-0.5,-0.5):(id==1?float2(-0.5,0.5):float2(0.5,-0.5))":"id==0?float2(-1,-1):(id==1?float2(-1,3):float2(3,-1))",axis?"y":"x",clipped?"-187.5":"187.5",legacy?"1.0":"w");
+  ID3DBlob *b=compile(hlsl,"vs_5_0");assert(SUCCEEDED(ID3D11Device_CreateVertexShader(device,ID3D10Blob_GetBufferPointer(b),ID3D10Blob_GetBufferSize(b),NULL,&vs[legacy*4+clipped*2+axis])));ID3D10Blob_Release(b);
  }
  bd.ByteWidth=sizeof(constants);bd.Usage=D3D11_USAGE_DEFAULT;bd.BindFlags=D3D11_BIND_CONSTANT_BUFFER;
  assert(SUCCEEDED(ID3D11Device_CreateBuffer(device,&bd,NULL,&cb)));
@@ -79,12 +84,12 @@ int main(void){
   assert(SUCCEEDED(ID3D11Device_CreateTexture2D(device,&td,NULL,&readback)));
   vp.Width=(float)w;vp.Height=(float)h;vp.MaxDepth=1;
   ID3D11DeviceContext_RSSetViewports(ctx,1,&vp);ID3D11DeviceContext_OMSetRenderTargets(ctx,0,NULL,dsv);
-  for(unsigned clipped=0;clipped<2;clipped++)for(unsigned axis=0;axis<2;axis++)for(unsigned enabled=0;enabled<8;enabled+=2)for(int sign=1;sign<=1;sign+=2){
+  for(unsigned clipped=0;clipped<2;clipped++)for(unsigned axis=0;axis<2;axis++)for(unsigned enabled=0;enabled<10;enabled+=2)for(int sign=1;sign<=1;sign+=2){
    constants.polygon_offset[0]=sign*0.01f;constants.polygon_offset[1]=sign*1.0f;
    constants.polygon_offset[2]=(float)w/64;constants.polygon_offset[3]=(float)h/64;
    ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)cb,0,NULL,&constants,0,0);
    ID3D11DeviceContext_ClearDepthStencilView(ctx,dsv,D3D11_CLEAR_DEPTH,1,0);
-   ID3D11DeviceContext_VSSetShader(ctx,vs[clipped*2+axis],NULL,0);ID3D11DeviceContext_PSSetShader(ctx,ps[enabled],NULL,0);
+   ID3D11DeviceContext_VSSetShader(ctx,vs[(enabled>=6?4:0)+clipped*2+axis],NULL,0);ID3D11DeviceContext_PSSetShader(ctx,ps[enabled],NULL,0);
    D3D8TriangleDepthScope scope={0};
    if(enabled==4){d3d8_triangle_depth_begin(device,ctx,64,64,&scope);assert(scope.active);}
    ID3D11DeviceContext_Draw(ctx,3,0);
@@ -105,18 +110,21 @@ int main(void){
    assert(covered>0);
    if(enabled==0)negative_control_errors+=wrong;
    else if(enabled==6 && clipped){clipped_invalid_control+=max_ulp>1000.0;}
-   else if(enabled==2 && clipped){assert(max_ulp<=3.0);}
+   else if(enabled==8 && clipped){assert(max_ulp<=3.0);clipped_legacy_errors+=wrong;}
+   /* Homogeneous products can round across a float midpoint by one ULP.
+    * The legacy unclipped and triangle-plane controls remain exact. */
+   else if(enabled==2)assert(max_ulp<=1.0);
    else assert(wrong==0);
    ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)readback,0);
   }
   ID3D11DeviceContext_OMSetRenderTargets(ctx,0,NULL,NULL);
   ID3D11DepthStencilView_Release(dsv);ID3D11Texture2D_Release(target);ID3D11Texture2D_Release(readback);
  }
- assert(negative_control_errors>0 && clipped_invalid_control>0);
+ assert(negative_control_errors>0 && clipped_invalid_control>0 && clipped_legacy_errors>0);
  d3d8_triangle_depth_shutdown();
- ID3D11DeviceContext_ClearState(ctx);for(unsigned i=0;i<4;i++){ID3D11VertexShader_Release(vs[i]);}for(unsigned i=0;i<8;i++){ID3D11PixelShader_Release(ps[i]);}
+ ID3D11DeviceContext_ClearState(ctx);for(unsigned i=0;i<8;i++){ID3D11VertexShader_Release(vs[i]);}for(unsigned i=0;i<10;i++){ID3D11PixelShader_Release(ps[i]);}
  ID3D11Buffer_Release(cb);ID3D11DepthStencilState_Release(ds);ID3D11RasterizerState_Release(rs);ID3D11DeviceContext_Release(ctx);ID3D11Device_Release(device);
- puts("PASS: unclipped guest depth remains exact; camera-plane clipping stays within three ULPs instead of becoming a near-plane occluder; geometry-plane mode remains exact");return 0;
+ puts("PASS: homogeneous guest depth stays within one ULP on clipped and unclipped triangles; legacy interpolation and clip-Z controls expose errors; triangle-depth mode remains exact");return 0;
 }
 '''
 with tempfile.TemporaryDirectory(prefix='nv2a-polygon-offset-') as tmp:

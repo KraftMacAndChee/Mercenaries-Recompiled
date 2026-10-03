@@ -8,7 +8,8 @@ cc=shutil.which('gcc') or 'C:/MinGW/bin/gcc.exe'
 options=r"""
 #include <assert.h>
 static unsigned calls;
-static void changed(uint32_t flags){assert(flags==RECOMP_OPTIONS_CHANGE_FPS);calls++;}
+static uint32_t expected_flags=RECOMP_OPTIONS_CHANGE_FPS;
+static void changed(uint32_t flags){assert(flags==expected_flags);calls++;}
 int main(int argc,char **argv){
  assert(argc==3);char path[MAX_PATH];build_config_path(path);
  WritePrivateProfileStringA("RecompOptions","60FPS",argv[1],path);
@@ -18,6 +19,25 @@ int main(int argc,char **argv){
  int expected=atoi(argv[1])?60:30;
  if(!strcmp(argv[2],"0")||!strcmp(argv[2],"30")||!strcmp(argv[2],"60")||!strcmp(argv[2],"90")||!strcmp(argv[2],"120"))expected=atoi(argv[2]);
  assert(recomp_options_fps_cap()==expected);assert(recomp_options_apply()==0 && calls==0);
+
+ /* V-Sync is opt-in, independently persisted, and respects Apply/Cancel. */
+ assert(recomp_options_vsync()==0);
+ assert(!strcmp(recomp_options_label(RECOMP_OPTIONS_VSYNC_HASH),"V-SYNC: OFF"));
+ assert(recomp_options_localization_hash(RECOMP_OPTIONS_VSYNC_HASH)==0x941EE5E8u);
+ recomp_options_adjust(RECOMP_OPTIONS_VSYNC_HASH,1);
+ assert(!recomp_options_vsync());recomp_options_cancel_edit();assert(!recomp_options_apply());
+ expected_flags=RECOMP_OPTIONS_CHANGE_VSYNC;
+ for(int enabled=1;enabled>=0;--enabled){
+  recomp_options_begin_edit();assert(recomp_options_adjust(RECOMP_OPTIONS_VSYNC_HASH,-1));
+  assert(!strcmp(recomp_options_label(RECOMP_OPTIONS_VSYNC_HASH),enabled?"V-SYNC: ON":"V-SYNC: OFF"));
+  assert(recomp_options_apply()==RECOMP_OPTIONS_CHANGE_VSYNC);
+  assert(GetPrivateProfileIntA("RecompOptions","VSync",9,path)==enabled);
+  memset(&g_options,0,sizeof(g_options));recomp_options_init();
+  assert(recomp_options_vsync()==enabled&&recomp_options_fps_cap()==expected);
+  assert(GetPrivateProfileIntA("Keyboard.5","Action15",0,path)==75);
+  recomp_options_set_apply_callback(changed);
+ }
+ expected_flags=RECOMP_OPTIONS_CHANGE_FPS;
  /* Pending changes do not affect the renderer or INI until Apply; Back cancels. */
  recomp_options_adjust(RECOMP_OPTIONS_FPS_HASH,1);assert(recomp_options_fps_cap()==expected);
  recomp_options_cancel_edit();assert(!recomp_options_apply());
@@ -46,6 +66,8 @@ pre=r"""
 #include <stdio.h>
 typedef unsigned UINT;typedef unsigned long DWORD;typedef int64_t LONGLONG;
 typedef struct {LONGLONG QuadPart;} LARGE_INTEGER;
+typedef int BOOL;
+static BOOL g_vsync_enabled;
 static UINT g_frame_cap_fps=30;
 static LONGLONG g_next_frame_slot,g_frame_pacing_late_ticks,ticks=9000000000LL;
 static unsigned sleeps,yields;static int disable;
@@ -70,6 +92,14 @@ int main(void){
  d3d8_SetFrameCap(0);before=ticks;d3d8_WaitForGuestFrameSlot();assert(ticks==before && !g_next_frame_slot);
  d3d8_SetFrameCap(60);disable=1;before=ticks;d3d8_WaitForGuestFrameSlot();assert(ticks==before && !g_next_frame_slot);disable=0;
  d3d8_SetFrameCap(999);assert(g_frame_cap_fps==30);
+
+ /* V-Sync changes clear stale deadlines without changing the FPS cap. */
+ g_next_frame_slot=123;d3d8_SetVSync(1);assert(g_vsync_enabled&&g_next_frame_slot==0&&g_frame_cap_fps==30);
+ g_next_frame_slot=456;d3d8_SetVSync(7);assert(g_next_frame_slot==456);
+ d3d8_SetVSync(0);assert(!g_vsync_enabled&&!g_next_frame_slot);
+ /* A blocking 60 Hz Present consumes half of a 30 FPS frame, not an extra frame. */
+ d3d8_WaitForGuestFrameSlot();ticks+=15000;before=ticks;
+ d3d8_WaitForGuestFrameSlot();assert(ticks-before==15000);
  /* Variable high-FPS deltas conserve elapsed time to less than one retail tick. */
  const unsigned rates[]={30,60,90,120,144,240,1000};
  for(unsigned j=0;j<sizeof(rates)/sizeof(rates[0]);j++){
@@ -103,9 +133,9 @@ def main():
   for legacy in ['0','1']:
    for setting in ['missing','30','60','90','120','0','junk','90junk','-1','240','9999999999999999999999999999999999999999999999']:
     subprocess.run([str(exe),legacy,setting],check=True)
-  print('PASS: 22 INI migrations, exact labels, bidirectional cycling, Apply/Cancel, restart, preserved bindings')
+  print('PASS: 22 INI migrations, exact labels, bidirectional cycling, Apply/Cancel, restart, preserved bindings, V-Sync persistence/Apply/Cancel')
   p=d/'pacing.c';exe=p.with_suffix('.exe')
-  p.write_text(pre+function(source,'d3d8_SetFrameCap')+function(source,'d3d8_WaitForGuestFrameSlot')+clock+post,encoding='utf-8')
+  p.write_text(pre+function(source,'d3d8_SetVSync')+function(source,'d3d8_SetFrameCap')+function(source,'d3d8_WaitForGuestFrameSlot')+clock+post,encoding='utf-8')
   subprocess.run([cc,'-std=c11','-O2','-Wall','-Wextra','-Werror',str(p),'-o',str(exe)],check=True)
   subprocess.run([str(exe)],check=True,timeout=30)
 if __name__=='__main__':main()

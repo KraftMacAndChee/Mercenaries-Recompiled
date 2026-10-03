@@ -3334,8 +3334,60 @@ void recomp_controls_paint_binding_icons(uint32_t brush,float start_y,float row_
     recomp_restore_guest_cpu_context(&saved);
 }
 
+/* Use the retail untextured quad path so the slider shares menu transforms,
+ * clipping and fade. The thumb's entire width stays inside the track. */
+void recomp_options_paint_fov_slider(uint32_t brush, float start_y, float row_height)
+{
+    if (brush < 0x10000u || brush > 0x03FFFF00u || !(row_height > 0.f)) return;
+    unsigned count = guest_u32(brush + 0x3Cu);
+    if (count > 16u) return;
+    recomp_func_t begin = recomp_lookup(0x0020A0D0u);
+    recomp_func_t box = recomp_lookup(0x0020A1C0u);
+    if (!begin || !box) return;
+    for (unsigned row = 0; row < count; ++row) {
+        if (guest_u32(brush + 0x40u + row * 4u) != RECOMP_OPTIONS_FOV_HASH) continue;
+        float per = *(float *)guest_ptr(brush + 0xC8u);
+        float fade = per > 0.f ? (*(float *)guest_ptr(brush + 0xC4u) -
+                     *(float *)guest_ptr(brush + 0x80u + row * 4u)) / per : 1.f;
+        if (!(fade > 0.f)) return;
+        if (fade > 1.f) fade = 1.f;
+        const float left = 190.f, width = 110.f, thumb = 4.f;
+        const float y = start_y + row_height * row + *(float *)guest_ptr(0x351F58u);
+        const float position = recomp_options_fov_slider_position();
+        recomp_saved_guest_cpu_context saved;
+        recomp_save_guest_cpu_context(&saved);
+        for (unsigned part = 0; part < 2u; ++part) {
+            const float x = part ? left + (width - thumb) * position : left;
+            const float w = part ? thumb : width;
+            const float h = part ? row_height * .65f : 1.f;
+            g_esp = saved.esp;
+            recomp_guest_push_u32(0); recomp_guest_push_u32(0); recomp_guest_push_u32(0);
+            recomp_guest_push_u32(((uint32_t)(128.f * fade) << 24) | 0x00FFFFFFu);
+            recomp_guest_push_u32(0); /* no texture */
+            recomp_guest_push_u32(0); g_ecx = brush; begin();
+            recomp_guest_push_u32(0x3F800000u); recomp_guest_push_u32(0x3F800000u);
+            recomp_guest_push_u32(0); recomp_guest_push_u32(0);
+            recomp_guest_push_u32(recomp_float_bits(h)); recomp_guest_push_u32(recomp_float_bits(w));
+            recomp_guest_push_u32(recomp_float_bits(y - h * .5f)); recomp_guest_push_u32(recomp_float_bits(x));
+            recomp_guest_push_u32(0); g_ecx = brush; box();
+        }
+        recomp_restore_guest_cpu_context(&saved);
+        return;
+    }
+}
+
+/* Other cameras (including offscreen rendering) retain their authored FOV. */
+float recomp_options_camera_fov(uint32_t camera, float fov)
+{
+    if (camera >= 0x10000u && camera <= 0x03FFFF00u &&
+        guest_u32(camera) == 0x00300DC4u)
+        return recomp_options_scale_fov(fov);
+    return fov;
+}
+
 #include "dev_spawn.h"
 #include "dev_battle_guest.h"
+#include "dev_factions_guest.h"
 #include "dev_mission_guest.h"
 #include "boids_guest.h"
 #include "freecam_streaming.h"
@@ -3566,6 +3618,48 @@ void recomp_extraction_use_probe(uint32_t stage, uint32_t actor,
             stage < 2u ? 0u : guest_u8(data + 0x18u),
             guest_u32(user + 0x79Cu));
     fflush(stderr);
+}
+
+/* The retail money counter advances its digits every update and plays a cue
+ * on alternate updates. Batch only that counter at the original 30 Hz; its
+ * fade/scale still use every frame's unmodified game-plus-UI delta. This HUD
+ * is a singleton updated on the game thread. A reset guest frame serial also
+ * resets the sidecar, including when the widget is reconstructed in place. */
+float recomp_money_counter_dt(uint32_t widget, uint32_t frame,
+                             float real_dt, float animation_dt, int *play_cue)
+{
+    static uint32_t owner, next_frame;
+    static double cadence_time, counter_time;
+    static unsigned odd_tick;
+    const double period = 1.0 / 30.0;
+    double ticks;
+    float elapsed;
+
+    *play_cue = 0;
+    if (owner != widget || frame != next_frame) {
+        cadence_time = counter_time = 0.0;
+        odd_tick = 0u;
+        owner = widget;
+    }
+    next_frame = frame + 1u;
+    if (!isfinite(real_dt) || !isfinite(animation_dt) ||
+        real_dt < 0.0f || animation_dt < 0.0f) {
+        cadence_time = counter_time = 0.0;
+        return 0.0f;
+    }
+    cadence_time += real_dt;
+    counter_time += animation_dt;
+    /* Allow float delta rounding at an exact 30 Hz boundary. */
+    ticks = floor(cadence_time / period + 0.000001);
+    if (ticks < 1.0)
+        return 0.0f;
+    cadence_time = fmax(0.0, cadence_time - ticks * period);
+    elapsed = (float)counter_time;
+    counter_time = 0.0;
+    /* A stalled frame catches up the number without a burst of queued cues. */
+    *play_cue = ticks >= 2.0 || !odd_tick;
+    odd_tick ^= (unsigned)fmod(ticks, 2.0);
+    return elapsed;
 }
 
 /* The main loop truncates every QPC delta to 1/3000-second ticks. Carry the

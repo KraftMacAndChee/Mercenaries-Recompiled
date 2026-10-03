@@ -49,6 +49,8 @@ ptrdiff_t g_xbox_mem_offset;
 double g_fp_stack[8];
 float g_xmm0[4],g_xmm1[4],g_xmm2[4],g_xmm3[4],g_xmm4[4],g_xmm5[4],g_xmm6[4],g_xmm7[4];
 static unsigned char memory[0x400000];
+/* Supplier mappings are disabled in this retail pickup regression. */
+int recomp_mod_weapon_allowed(uint32_t weapon, uint32_t actor) { (void)weapon; (void)actor; return 1; }
 enum { USER=0x10000, ITEM=0x12000, AI=0x14000, VEHICLE=0x16000, WEAPON=0x18000, HUD=0x1a000, TURRET=0x1c000, ROPE=0x20000, VT=0x30000 };
 static unsigned user_type,cache_type,render_calls,complete_calls,has_turret;
 static unsigned search_calls,attachment_calls,detach_calls,cargo_present;

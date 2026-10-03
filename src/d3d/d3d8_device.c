@@ -152,6 +152,7 @@ static D3D8DeviceState g_device_state;
 #include "d3d8_frame_timing.h"
 
 static BOOL g_pending_scanout_present;
+static BOOL g_vsync_enabled = FALSE;
 static uint64_t g_frame_submissions, g_frame_interval_serial;
 static uint32_t g_frame_intervals_us[512], g_frame_interval_count, g_frame_interval_next;
 static LARGE_INTEGER g_frame_frequency, g_frame_previous;
@@ -225,8 +226,10 @@ uint32_t d3d8_GetFrameIntervalHistory(uint64_t after_serial, uint32_t *out,
 static void (*g_host_overlay_callback)(void);
 void d3d8_SetHostOverlayCallback(void (*callback)(void)){g_host_overlay_callback=callback;}
 /* Preserve Present's result; querying removal reason is failure-only. */
-static HRESULT preview_present(IDXGISwapChain *chain, UINT sync, UINT flags)
+static HRESULT preview_present(IDXGISwapChain *chain, UINT flags)
 {
+    const UINT sync = g_vsync_enabled ? 1u : 0u;
+    flags &= ~DXGI_PRESENT_ALLOW_TEARING;
     if (g_device_state.flip_model && sync == 0u &&
         (g_device_state.swap_chain_flags & DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING)) {
         BOOL fullscreen = FALSE;
@@ -274,6 +277,15 @@ void d3d8_SetFrameCap(UINT fps)
     if (g_frame_cap_fps != fps) {
         g_frame_cap_fps = fps;
         g_next_frame_slot = 0; /* Do not inherit a deadline from the old cap. */
+    }
+}
+
+void d3d8_SetVSync(BOOL enabled)
+{
+    enabled = !!enabled;
+    if (g_vsync_enabled != enabled) {
+        g_vsync_enabled = enabled;
+        g_next_frame_slot = 0; /* Presentation can now block for a different interval. */
     }
 }
 
@@ -444,16 +456,16 @@ void d3d8_PresentFrame(void)
     d3d8_debug_capture_display_refresh(start_ms);
 
     /* Direct FLIP_STALL completion uses the shared guest-frame clock.  A
-     * deferred AA resolve uses the same clock from the scanout service.  Keep
-     * DXGI itself immediate: SyncInterval=1 adds a second compositor throttle
-     * and made 30 fps XMV frames freeze and then catch up to their audio. */
+     * deferred AA resolve uses the same clock from the scanout service. V-Sync
+     * is opt-in: forcing it previously stalled XMV playback. Keep the limiter
+     * before Present so any presentation wait counts toward its next deadline. */
     if (trace_timing)
         QueryPerformanceCounter(&trace_prepared);
     d3d8_WaitForGuestFrameSlot();
     if (trace_timing)
         QueryPerformanceCounter(&trace_waited);
     if (g_device_state.swap_chain)
-        preview_present(g_device_state.swap_chain, 0, 0);
+        preview_present(g_device_state.swap_chain, 0);
     if (trace_timing) {
         double prepare_ms, wait_ms, present_ms, duration_ms;
         uint32_t submitted_interval_us;
@@ -666,7 +678,7 @@ BOOL d3d8_ServiceDisplayRefresh(BOOL present_pending_scanout)
         d3d8_DebugSetSubmissionSource(5u);
         now_ms = GetTickCount64();
         d3d8_debug_capture_display_refresh(now_ms);
-        preview_present(g_device_state.swap_chain, 0, 0);
+        preview_present(g_device_state.swap_chain, 0);
         g_pending_scanout_present = FALSE;
     }
     return TRUE;
@@ -3347,7 +3359,7 @@ static HRESULT __stdcall dev_Present(IDirect3DDevice8 *self, const RECT *src, co
         DispatchMessageA(&msg);
     }
 
-    return preview_present(g_device_state.swap_chain, 1, 0);
+    return preview_present(g_device_state.swap_chain, 0);
 }
 
 static HRESULT __stdcall dev_GetBackBuffer(IDirect3DDevice8 *self, INT iBackBuffer, DWORD Type, IDirect3DSurface8 **ppSurface)
@@ -4268,7 +4280,7 @@ static HRESULT __stdcall dev_Swap(IDirect3DDevice8 *self, DWORD Flags)
         DispatchMessageA(&msg);
     }
 
-    return preview_present(g_device_state.swap_chain, 1, 0);
+    return preview_present(g_device_state.swap_chain, 0);
 }
 
 /* ================================================================

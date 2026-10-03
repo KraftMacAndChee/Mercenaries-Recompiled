@@ -24,14 +24,22 @@ changing aspect ratio, resolution, frame rate or other options. High internal re
 To enable the developer menu, set developer_menu=1 under [Developer] in developer.ini and restart.
 Logging is off by default. Set logging=1 in the same section and restart when collecting diagnostics.
 Set logging=0 and restart to disable it again.
-To enable support for more ambitious mods please change the values in modcompatibility from 0 to 1
+Create a mods folder beside the launcher and extract each mod into its own subfolder.
+The launcher then opens the mod selector: enable mods, set their order, and launch
+Vanilla or Modded. Later mods win conflicts. Optional separate saves use mod-saves.
+Modded disk caches are isolated from vanilla, and installed game files are not overwritten.
+Read MODDING.md for supported layouts, DSK merging, native DLL compatibility, and save/cache details.
+DSK mods automatically enable expanded pools within their mod profile unless overridden.
+For manual capacity configuration, change the relevant values in modcompatibility.ini from 0 to 1.
 Merchant of Menace mods can use up to 128 total shop entries across all categories.
 The shop configuration parser now handles files beyond the stock 63 items without
 overwriting engine memory. This fix is automatic; no compatibility toggle is needed.
 Items still need valid support templates and their normal script unlocks.
 
 [Recomp Options]
-60fps - toggles the game between the original fps and 60fps limits
+FPS Cap - Select 30, 60, 90, 120, or Uncapped. Higher limits depend on hardware and scene complexity.
+V-Sync - Synchronizes presentation to the display refresh rate. Defaults off.
+FOV - Adjust gameplay field of view from 40 to 100 degrees in one-degree steps (default 55). The value is the horizontal FOV at 4:3; widescreen correction and relative zoom are retained.
 Aspect Ratio - Changes the aspect ratio of game display with support for a variety of aspect ratios
 NPC Wake Distance - Changes how close the player must be to NPCs in order to activate their AI. 150 = 1.5x, 200 = 2x, 300 = 3x (Fixes T-posing)
 NPC LOD - Allows you to toggle whether lower level of detail models are ever displayed during gameplay
@@ -40,7 +48,7 @@ Anisotropic Filtering - Allows Anisotropic filtering to be toggled on and off
 Display - Allows you to switch between Exclusive Fullscreen, Borderless Fullscreen, and Windowed mode
 Haze - Allows for the toggling of Original Xbox Bloom. Authentic preserves the same look at all resolutions, unfiltered becomes more exagerrated at higher res. (Off will break Radiation graphical effects)
 Fixed Xbox Prompts - Forces the game to display the original Xbox Prompts according to the bindings of the original game, regardless of player control method or bindings
-OG Bugs - A number of bugs were patched from the original game. This allows you keep those bugs if you prefer a more faithful version of the game. Includes NPC boarding of airborne helicopters, such as the journalist in Embedded. Off requires the boarding point to be within vertical reach; On restores original horizontal-only boarding.
+OG Bugs - A number of bugs were patched from the original game. This allows you keep those bugs if you prefer a more faithful version of the game. Includes NPC boarding of airborne helicopters, such as the journalist in Embedded. Off requires the boarding point to be within vertical reach; On restores original horizontal-only boarding. Off also corrects the missing NW_mafia2 music cue, repeated dateline typing sounds, flat-cloud transitions, and alternate-costume Jennifer backpack reappearance after scope/vehicle visibility changes.
 PS2 Upgrades - Uses the supplied PS2 player Dragunov and 20 mm autocannon firing sounds and Allied M1 tank texture. Defaults off; turn it off to restore the Xbox assets.
 
 Apply - Applies any changes made in Recomp Options

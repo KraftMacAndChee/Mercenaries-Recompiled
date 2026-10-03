@@ -80,6 +80,7 @@ static const path_rule s_rules[] = {
 /* ======================================================================== */
 
 #include <shlobj.h>
+#include "mod_overlay.h"
 
 static WCHAR s_game_dir[MAX_PATH];
 static WCHAR s_save_dir[MAX_PATH];
@@ -171,7 +172,7 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
         LARGE_INTEGER size;
         LARGE_INTEGER minimum_size;
 
-        swprintf_s(system_dir, MAX_PATH, L"%s\\System", s_save_dir);
+        swprintf_s(system_dir, MAX_PATH, L"%s\\System", xbox_mod_cache_root() ? xbox_mod_cache_root() : s_save_dir);
         SHCreateDirectoryExW(NULL, system_dir, NULL);
         swprintf_s(s_partition0_path, MAX_PATH,
                    L"%s\\partition0.bin", system_dir);
@@ -221,6 +222,9 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
             remainder = xbox_path + skip;
             base_dir  = s_rules[i].to_save ? s_save_dir : s_game_dir;
             sub_dir   = s_rules[i].sub_win;
+            if (xbox_mod_cache_root() && sub_dir &&
+                (!strncmp(sub_dir, "\\Cache", 6) || !strncmp(sub_dir, "\\System", 7)))
+                base_dir = xbox_mod_cache_root();
             goto translate;
         }
     }
@@ -238,6 +242,8 @@ translate:
             if (*p == L'/') *p = L'\\';
         }
 
+        if (base_dir == s_game_dir && xbox_mod_overlay_path(remainder_wide, host_path_buf, buf_size))
+            return TRUE;
         if (sub_dir) {
             WCHAR sub_wide[MAX_PATH];
             MultiByteToWideChar(CP_ACP, 0, sub_dir, -1, sub_wide, MAX_PATH);

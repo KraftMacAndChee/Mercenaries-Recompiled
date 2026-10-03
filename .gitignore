@@ -81,3 +81,12 @@ SYSTEM.CNF
 DATAPS2/
 DATAxbox/
 GameFiles/
+
+# Local mod packages, player progress and derived overlays
+/mods/
+/mod-saves/
+/mod-cache/
+/mod-loader.ini
+
+/mod-settings/
+/mod-loader.lock

@@ -23,7 +23,7 @@ set(KERNEL_SOURCES
 )
 
 if(WIN32)
-    list(APPEND KERNEL_SOURCES preview_log.c)
+    list(APPEND KERNEL_SOURCES preview_log.c mod_overlay.c)
 endif()
 
 add_library(xbox_kernel STATIC ${KERNEL_SOURCES})

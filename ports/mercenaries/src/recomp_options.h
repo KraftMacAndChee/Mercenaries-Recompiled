@@ -7,6 +7,11 @@
 #define RECOMP_ACK_ROWS 16u
 int recomp_acknowledgements_active(void);
 #define RECOMP_OPTIONS_MENU_HASH       0x52434F50u
+#define RECOMP_OPTIONS_FOV_HASH        0x52430011u
+#define RECOMP_OPTIONS_FOV_MIN 40
+#define RECOMP_OPTIONS_FOV_MAX 100
+#define RECOMP_OPTIONS_FOV_DEFAULT 55
+#define RECOMP_OPTIONS_VSYNC_HASH      0x52430010u
 #define RECOMP_OPTIONS_FPS_HASH        0x52430001u
 #define RECOMP_OPTIONS_ASPECT_HASH     0x52430002u
 #define RECOMP_OPTIONS_DISTANCE_HASH   0x52430003u
@@ -36,7 +41,9 @@ enum recomp_options_change {
     RECOMP_OPTIONS_CHANGE_FIXED_XBOX   = 1u << 10,
     RECOMP_OPTIONS_CHANGE_OBJECT_DISTANCE = 1u << 11,
     RECOMP_OPTIONS_CHANGE_OG_BUGS = 1u << 12,
-    RECOMP_OPTIONS_CHANGE_PS2_UPGRADES = 1u << 13
+    RECOMP_OPTIONS_CHANGE_PS2_UPGRADES = 1u << 13,
+    RECOMP_OPTIONS_CHANGE_VSYNC = 1u << 14,
+    RECOMP_OPTIONS_CHANGE_FOV = 1u << 15
 };
 typedef void (*recomp_options_apply_callback)(uint32_t changes);
 typedef enum recomp_display_mode {
@@ -57,6 +64,9 @@ const char *recomp_options_label(uint32_t hash);
 uint32_t recomp_options_localization_hash(uint32_t hash);
 int recomp_options_adjust(uint32_t hash, int direction);
 int recomp_options_fps_cap(void); /* 30, 60, 90, 120, or 0 (uncapped). */
+int recomp_options_vsync(void);
+float recomp_options_fov_slider_position(void);
+float recomp_options_scale_fov(float horizontal_fov);
 int recomp_options_aspect_ratio(void);
 int recomp_options_draw_distance(void);
 int recomp_options_resolution(void);

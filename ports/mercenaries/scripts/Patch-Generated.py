@@ -111,6 +111,46 @@ def patch_apu_voice_parameter_mmio(text: str) -> str:
     return text[:match.start()] + body + text[match.end():]
 
 
+def patch_apu_voice_update_mmio(text: str) -> str:
+    """Route the retail voice update through the existing ordered APU bridge."""
+    match = re.search(r'void sub_002A4473\(void\)\n\{.*?\n\}', text, re.S)
+    if match is None:
+        return text
+    body = match[0]
+    replacements = {
+        'edx = MEM32(-25034736);':
+            'edx = recomp_apu_read32((uint32_t)-25034736);',
+        'MEM32(-25033992) = edx;':
+            'recomp_apu_write32((uint32_t)-25033992, edx);',
+        'MEM32(-25033988) = 1;':
+            'recomp_apu_write32((uint32_t)-25033988, 1);',
+        'MEM32(-25033888) = edx;':
+            'recomp_apu_write32((uint32_t)-25033888, edx);',
+        'MEM32(-25033884) = edx;':
+            'recomp_apu_write32((uint32_t)-25033884, edx);',
+        'MEM32(-25033880) = edx;':
+            'recomp_apu_write32((uint32_t)-25033880, edx);',
+        'MEM32(-25033988) = 0;':
+            'recomp_apu_write32((uint32_t)-25033988, 0);',
+    }
+    # Keep the FIFO poll, voice lock/unlock, and all guest arithmetic intact.
+    # Reject partially patched or changed lifts instead of accepting a subset.
+    fresh = all(body.count(before) == 1 and after not in body
+                for before, after in replacements.items())
+    applied = all(body.count(after) == 1 and before not in body
+                  for before, after in replacements.items())
+    declarations = ('    extern uint32_t recomp_apu_read32(uint32_t);\n'
+                    '    extern void recomp_apu_write32(uint32_t, uint32_t);\n')
+    if applied and body.count(declarations) == 1:
+        return text
+    if not fresh or 'recomp_apu_' in body:
+        raise RuntimeError('APU voice update MMIO shape changed')
+    for before, after in replacements.items():
+        body = body.replace(before, after)
+    body = body.replace('{\n', '{\n' + declarations, 1)
+    return text[:match.start()] + body + text[match.end():]
+
+
 def patch_hud_brush_proportions(text: str) -> str:
     for address in ('00209BD0', '0020B810'):
         match = re.search(r'void sub_'+address+r'\(void\)\n\{.*?\n\}', text, re.S)
@@ -13873,6 +13913,7 @@ def patch_generated(    generated_root: Path, *, allow_missing: bool = False
         ))
     for path, (text, newline) in list(documents.items()):
         fixed = patch_traffic_vehicle_teardown(patch_apu_voice_parameter_mmio(patch_crt_memmove_entry(text)))
+        fixed = patch_apu_voice_update_mmio(fixed)
         # Migrate older generated snapshots too; fresh translation emits the
         # same width-aware helper. Apply after function/patch matching above.
         for width, length in ((1, "ecx"), (2, "ecx * 2"), (4, "ecx * 4")):
@@ -14834,6 +14875,53 @@ PATCHES += (
 PATCHES += (GeneratedPatch("Carry fractional main-loop clock ticks",
     '    fp_top() *= MEMD(0x30ECC0); /* fmul memory */\n    PUSH32(esp, 0); sub_002375B4(); /* call 0x002375B4 */',
     '    fp_top() *= MEMD(0x30ECC0); /* fmul memory */\n    { double recomp_frame_ticks_with_remainder(double);\n      fp_top() = recomp_frame_ticks_with_remainder(fp_top()); }\n    PUSH32(esp, 0); sub_002375B4(); /* call 0x002375B4 */'),)
+
+
+PATCHES += (
+    GeneratedPatch('Recomp FOV on gameplay camera only',
+        '    fp_push(MEMF(esp + 0x1C)); /* fld float */\n    recomp_xmm_loadss(xmm0v, esp + 0x14);',
+        '    { float recomp_options_camera_fov(uint32_t,float);\n      MEMF(esp + 0x1Cu) = recomp_options_camera_fov(ecx, MEMF(esp + 0x1Cu)); }\n    fp_push(MEMF(esp + 0x1C)); /* fld float */\n    recomp_xmm_loadss(xmm0v, esp + 0x14);'),
+    GeneratedPatch('Recomp FOV slider after menu highlight',
+        '     recomp_controls_paint_binding_icons(esi,binding_start_y,binding_row_height);}\n    ecx = esi;',
+        '     recomp_controls_paint_binding_icons(esi,binding_start_y,binding_row_height);}\n    { void recomp_options_paint_fov_slider(uint32_t,float,float);\n      recomp_options_paint_fov_slider(esi,binding_start_y,binding_row_height); }\n    ecx = esi;'),
+)
+
+
+PATCHES += (
+    GeneratedPatch('Preserve alternate Jennifer backpack visibility 00057626',
+        'loc_00057626: ;\n    eax = MEM32(ecx);\n    { uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(eax + 0x1D0), _icall_esp); /* indirect call */\n    }\n',
+        'loc_00057626: ;\n    eax = MEM32(ecx);\n    { uint32_t recomp_original_bug_accessory_show_slot(uint32_t,uint32_t);\n      uint32_t show_slot = recomp_original_bug_accessory_show_slot(MEM32(ebp + 0x58u), MEM32(ecx + 0x58u));\n      uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(eax + show_slot), _icall_esp); /* indirect call */\n    }\n'),
+    GeneratedPatch('Preserve alternate Jennifer backpack visibility 00057B0D',
+        'loc_00057B0D: ;\n    ecx = eax;\n    eax = MEM32(ecx);\n    { uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(eax + 0x1D0), _icall_esp); /* indirect call */\n    }\n',
+        'loc_00057B0D: ;\n    ecx = eax;\n    eax = MEM32(ecx);\n    { uint32_t recomp_original_bug_accessory_show_slot(uint32_t,uint32_t);\n      uint32_t show_slot = recomp_original_bug_accessory_show_slot(MEM32(ebx + 0x58u), MEM32(ecx + 0x58u));\n      uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(eax + show_slot), _icall_esp); /* indirect call */\n    }\n'),
+    GeneratedPatch('Preserve alternate Jennifer backpack visibility 00059D98',
+        'loc_00059D98: ;\n    edx = MEM32(edi);\n    ecx = edi;\n    { uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(edx + 0x1D0), _icall_esp); /* indirect call */\n    }\n',
+        'loc_00059D98: ;\n    edx = MEM32(edi);\n    ecx = edi;\n    { uint32_t recomp_original_bug_accessory_show_slot(uint32_t,uint32_t);\n      uint32_t show_slot = recomp_original_bug_accessory_show_slot(MEM32(esi + 0x58u), MEM32(edi + 0x58u));\n      uint32_t _icall_esp = g_esp;\n    PUSH32(esp, 0); RECOMP_ICALL_SAFE(MEM32(edx + show_slot), _icall_esp); /* indirect call */\n    }\n'),
+)
+
+
+PATCHES += (
+    GeneratedPatch('Money HUD counter cadence locals',
+        'void sub_000F5300(void)\n{\n    int _flags = 0;',
+        'void sub_000F5300(void)\n{\n    float money_counter_dt;\n    int money_counter_cue;\n    int _flags = 0;'),
+    GeneratedPatch('Money HUD counter cadence gate',
+        '    eax = MEM32(esi + 0x44);\n    esp = esp + 4;\n    if (CMP_EQ(eax, edi)) goto loc_000F5381;',
+        '    eax = MEM32(esi + 0x44);\n    esp = esp + 4;\n    { float recomp_money_counter_dt(uint32_t, uint32_t, float, float, int *);\n      money_counter_dt = recomp_money_counter_dt(esi, MEM32(esi + 0x58),\n          MEMF(0x413F98), MEMF(esp + 0x14), &money_counter_cue); }\n    if (money_counter_dt <= 0.0f) goto loc_000F5435;\n    if (CMP_EQ(eax, edi)) goto loc_000F5381;'),
+    GeneratedPatch('Money HUD accumulated counter delta',
+        '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    xmm0 = xmm0 * MEMF(esp + 0x14); /* mulss */',
+        '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    xmm0 = xmm0 * money_counter_dt; /* accumulated counter delta */'),
+    GeneratedPatch('Money HUD timed cue 000F53AE',
+        'loc_000F53AE: ;\n    edx = MEM32(esi + 0x58);\n    edx = edx & 0x80000001u;\n    if (((int32_t)edx >= 0)) goto loc_000F53BE; /* jns: not sign (positive) */\n\nloc_000F53B9: ;\n    edx--;\n    edx = edx | 0xFFFFFFFEu;\n    edx++;\n\nloc_000F53BE: ;\n    if ((edx != 0)) goto loc_000F53CF; /* jne: not equal / not zero */\n\n',
+        'loc_000F53AE: ;\n    if (!money_counter_cue) goto loc_000F53CF;\n\n'),
+    GeneratedPatch('Money HUD timed cue 000F53FB',
+        'loc_000F53FB: ;\n    eax = MEM32(esi + 0x58);\n    eax = eax & 0x80000001u;\n    if (((int32_t)eax >= 0)) goto loc_000F540A; /* jns: not sign (positive) */\n\nloc_000F5405: ;\n    eax--;\n    eax = eax | 0xFFFFFFFEu;\n    eax++;\n\nloc_000F540A: ;\n    if ((eax != 0)) goto loc_000F541B; /* jne: not equal / not zero */\n\n',
+        'loc_000F53FB: ;\n    if (!money_counter_cue) goto loc_000F541B;\n\n'),
+)
+
+# Keep opt-in mod extensions together; the common patcher validates each site.
+import runpy as _runpy
+PATCHES += tuple(GeneratedPatch(*entry) for entry in _runpy.run_path(
+    str(Path(__file__).with_name("Mod-Extensions-Patches.py")))["PATCHES"])
 
 if __name__ == "__main__":
     main()

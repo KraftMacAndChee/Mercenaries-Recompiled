@@ -53,8 +53,8 @@ int main(int argc,char **argv){
  SendMessageA(faction,CB_SELECTSTRING,(WPARAM)-1,(LPARAM)"mafia");filter_changed();assert(shown_count==3);
  switch_view(0);assert(shown_count==13);switch_view(2);assert(shown_count==3);
  SendMessageA(faction,CB_SETCURSEL,0,0);filter_changed();
- SendMessageA(quantity,CB_SETCURSEL,2,0);request_spawn();unsigned request;
- assert(recomp_dev_take_spawn(&request) && (request&DEV_SPAWN_TROOP) && (request>>DEV_SPAWN_COUNT_SHIFT)==7u);assert(!recomp_dev_take_spawn(&request));
+ SendMessageA(quantity,CB_SETCURSEL,2,0);SendMessageA(weapon,CB_SETCURSEL,8,0);request_spawn();unsigned request;
+ assert(recomp_dev_take_spawn(&request) && (request&DEV_SPAWN_TROOP) && ((request>>DEV_SPAWN_COUNT_SHIFT)&15u)==7u && ((request>>DEV_SPAWN_WEAPON_SHIFT)&31u)==8u);assert(!recomp_dev_take_spawn(&request));
  recomp_dev_spawn_result(1,"test");switch_view(0);SendMessageA(crew_mode,CB_SETCURSEL,2,0);SendMessageA(crew_faction,CB_SETCURSEL,4,0);request_spawn();
  assert(recomp_dev_take_spawn(&request) && ((request>>DEV_SPAWN_CREW_SHIFT)&3)==2 && ((request>>DEV_SPAWN_FACTION_SHIFT)&7)==4);
  SendDlgItemMessageA(panel,ID_PASSIVE,BM_SETCHECK,BST_CHECKED,0);SendMessageA(panel,WM_COMMAND,ID_PASSIVE,0);assert(recomp_dev_battle_flags()==2);
@@ -74,5 +74,16 @@ int main(int argc,char **argv){
  preview_focus=faction;assert(!recomp_dev_menu_camera_input(1));
  preview_focus=spawn;assert(recomp_dev_menu_camera_input(1));
  preview_foreground=NULL;assert(!recomp_dev_menu_camera_input(0) && !recomp_dev_menu_camera_input(1));
+ recomp_dev_spawn_result(1,"test");switch_view(3);
+ assert(IsWindowVisible(relation_first) && !IsWindowVisible(list) && !IsWindowVisible(weapon));
+ request_relation();assert(busy);unsigned relation=recomp_dev_take_relation();
+ assert(relation==dev_relation_command(0,5,3) && !recomp_dev_take_relation());
+ recomp_dev_relation_result(1,"test");assert(!busy && IsWindowEnabled(relation_apply));
+ SendMessageA(relation_second,CB_SETCURSEL,0,0);request_relation();assert(!busy && !recomp_dev_take_relation());
+ assert(!recomp_dev_request_relation(7,0,0) && !recomp_dev_request_relation(0,1,4));
+ assert(recomp_dev_request_relation(0,1,0));assert(!recomp_dev_request_relation(2,3,1));
+ assert(recomp_dev_take_relation()==dev_relation_command(0,1,0));
+ SendMessageA(relation_second,CB_SETCURSEL,5,0);recomp_dev_relation_result(1,"Select two factions and a relationship, then Apply.");
+ char relation_capture[MAX_PATH];snprintf(relation_capture,sizeof(relation_capture),"%s.relations.bmp",argv[2]);capture(relation_capture);
  DestroyWindow(panel);DestroyWindow(window);puts("PASS: real panel categories, troop/crew request encoding, atomic consume, and checkbox on/off");return 0;
 }
