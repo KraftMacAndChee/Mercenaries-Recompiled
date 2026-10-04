@@ -49,15 +49,21 @@ int recomp_static_light_refresh_needed(uint32_t light);
 #include <math.h>
 #include <setjmp.h>
 
-/* MSVC's __forceinline -> gcc/clang equivalent on POSIX. */
-#if !defined(_MSC_VER) && !defined(__forceinline)
+/* MSVC's __forceinline -> gcc/clang equivalent on POSIX. On Windows the
+ * MinGW headers define __forceinline as "extern __inline__ ...", which
+ * conflicts with the "static __forceinline" used below, so override it. */
+#if !defined(_MSC_VER)
+#undef __forceinline
 #define __forceinline inline __attribute__((always_inline))
 #endif
 
 /* MSVC's __debugbreak() intrinsic -> gcc/clang equivalent.
- * The auto-generated code emits __debugbreak for x86 INT 3 instructions. */
-#if !defined(_MSC_VER) && !defined(__debugbreak)
+ * The auto-generated code emits __debugbreak for x86 INT 3 instructions.
+ * On Windows the SDK/MinGW already provides __debugbreak. */
+#if !defined(_WIN32)
+#if !defined(__debugbreak)
 #define __debugbreak() __builtin_trap()
+#endif
 #endif
 
 /* ================================================================

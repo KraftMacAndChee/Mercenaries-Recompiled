@@ -19,6 +19,10 @@ target_include_directories(xbox_apu PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../nv2a
 )
 
+# The bundled DSP56300 runtime is an MSVC-ABI Rust archive that requires the
+# MSVC C++ runtime (__chkstk, _fltused, type_info RTTI), so it is only linked
+# for the supported MSVC build. The MinGW cross build uses the portable
+# fallback in apu_dsp.c, which still drives the VP audio path.
 if(MSVC)
     if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
         message(FATAL_ERROR "The bundled DSP56300 runtime currently requires an x64 build")
@@ -34,7 +38,9 @@ if(MSVC)
     endif()
     target_include_directories(xbox_apu PRIVATE "${DSP56300_ROOT}/include")
     target_compile_definitions(xbox_apu PRIVATE XBOX_APU_DSP56300=1)
+endif()
 
+if(MSVC)
     target_compile_options(xbox_apu PRIVATE
         /W3
         /wd4244  # conversion warnings (float/double/int)
@@ -52,6 +58,11 @@ if(WIN32)
         platform kernel32 winmm
         "${DSP56300_LIBRARY}"
         ws2_32 ntdll userenv bcrypt advapi32
+        # XAudio2 runtime backend (apu_xaudio2.c). The import library is
+        # xaudio2_9.lib on modern SDKs; the MSVC build pulls it in via
+        # #pragma comment, which MinGW's lld honours only if libxaudio2.a
+        # exists, so link the versioned library explicitly for MinGW.
+        xaudio2_9
     )
 else()
     # Linux: platform layer (Win32 primitives on POSIX) + SDL2 audio + libm
