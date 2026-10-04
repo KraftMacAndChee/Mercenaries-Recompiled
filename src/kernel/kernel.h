@@ -36,9 +36,13 @@ typedef UCHAR KIRQL, *PKIRQL;
 typedef CCHAR KPROCESSOR_MODE;
 typedef LONG KPRIORITY;
 
-/* Processor modes */
+/* Processor modes. The Windows SDK declares these as enumerators in winnt.h
+ * (and RPC headers use KernelMode as a struct member), so only provide the
+ * POSIX fallback here to avoid replacing the SDK spelling. */
+#ifndef _WIN32
 #define KernelMode  0
 #define UserMode    1
+#endif
 
 /* IRQL levels (Xbox uses same NT IRQL model) */
 #define PASSIVE_LEVEL   0

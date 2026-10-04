@@ -40,8 +40,10 @@ static inline void xbox_path_normalize(char *p)
 #endif
 }
 
-/* MSVC's __debugbreak() intrinsic -> gcc/clang equivalent on POSIX. */
-#if !defined(_MSC_VER)
+/* MSVC's __debugbreak() intrinsic -> gcc/clang equivalent on POSIX.
+ * On Windows the SDK (MSVC), MinGW (_mingw.h), or clang's builtin already
+ * provides __debugbreak, so only define the trap fallback off-Windows. */
+#if !defined(_WIN32)
 #define __debugbreak() __builtin_trap()
 #endif
 

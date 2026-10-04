@@ -20,6 +20,20 @@ if(MSVC)
     # Do not let the host Windows locale change how source bytes are parsed.
     # This applies to the port and runtime subdirectories added below.
     add_compile_options(/utf-8)
+elseif(MINGW)
+    # Clang via MinGW-w64 accepts MSVC extensions but diagnoses some
+    # Microsoft-specific idioms more strictly than MSVC does. Keep behaviour
+    # equivalent to the supported MSVC build rather than changing the source:
+    #   -Wincompatible-pointer-types : DWORD is `unsigned long` in MinGW but
+    #     `uint32_t` is `unsigned int`; MSVC only warns on the mix.
+    #   -Wimplicit-function-declaration : MSVC accepts C89-style implicit
+    #     declarations the shared headers rely on.
+    add_compile_options(
+        -fms-extensions
+        -Wno-incompatible-pointer-types
+        -Wno-incompatible-function-pointer-types
+        -Wno-implicit-function-declaration
+    )
 endif()
 
 # ── xboxrecomp toolkit ──────────────────────────────────────────
@@ -127,6 +141,13 @@ if(MSVC)
     target_link_options(${PROJECT_NAME} PRIVATE /LARGEADDRESSAWARE /MAP /STACK:67108864,65536 /Brepro)
     # The generated code files can be very large. Increase object file section limit.
     target_compile_options(${PROJECT_NAME} PRIVATE /bigobj /MP)
+elseif(MINGW)
+    # Same native-frame contract as the MSVC build: a 64 MiB stack for the
+    # translated title initialization and a 64-bit address-aware image.
+    target_link_options(${PROJECT_NAME} PRIVATE
+        -Wl,--stack,67108864
+        -Wl,--large-address-aware
+    )
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -169,6 +190,11 @@ target_compile_definitions(mercenaries_launcher PRIVATE
 )
 if(MSVC)
     target_link_options(mercenaries_launcher PRIVATE /Brepro /STACK:8388608,65536)
+elseif(MINGW)
+    # setup_launcher.c defines wWinMain. MinGW defaults a WIN32 subsystem
+    # executable to WinMain unless -municode selects the wWinMain entry point,
+    # which is what MSVC does under UNICODE.
+    target_link_options(mercenaries_launcher PRIVATE -municode)
 endif()
 set_target_properties(mercenaries_launcher PROPERTIES
     MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
@@ -201,6 +227,26 @@ add_custom_command(TARGET mercenaries_launcher POST_BUILD
         "$<TARGET_FILE_DIR:mercenaries_launcher>/SDL2-LICENSE.txt"
     VERBATIM
 )
+
+# MinGW's launcher links the LLVM C++ runtime dynamically. Copy those DLLs
+# beside the launcher so the build output is self-contained (the MSVC build
+# links the CRT statically and needs no equivalent step).
+if(MINGW)
+    # LLVM-MinGW keeps the target C++ runtime DLLs under the sysroot bin/,
+    # not the host wrapper bin/ that CMAKE_CXX_COMPILER points at.
+    get_filename_component(MERCENARIES_MINGW_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    get_filename_component(MERCENARIES_MINGW_ROOT "${MERCENARIES_MINGW_BIN}" DIRECTORY)
+    set(MERCENARIES_MINGW_RUNTIME "${MERCENARIES_MINGW_ROOT}/x86_64-w64-mingw32/bin")
+    add_custom_command(TARGET mercenaries_launcher POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${MERCENARIES_MINGW_RUNTIME}/libc++.dll"
+            "$<TARGET_FILE_DIR:mercenaries_launcher>/libc++.dll"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${MERCENARIES_MINGW_RUNTIME}/libunwind.dll"
+            "$<TARGET_FILE_DIR:mercenaries_launcher>/libunwind.dll"
+        VERBATIM
+    )
+endif()
 
 # Wine-only compiler dependency, kept off the native Windows DLL search path.
 add_custom_command(TARGET mercenaries_recomp POST_BUILD

@@ -855,7 +855,8 @@ static void host_apply_recomp_options(uint32_t changes)
         recomp_options_refresh_retail_camera_projection();
 
     if (changes & (RECOMP_OPTIONS_CHANGE_ASPECT |
-                   RECOMP_OPTIONS_CHANGE_RESOLUTION)) {
+                   RECOMP_OPTIONS_CHANGE_RESOLUTION |
+                   RECOMP_OPTIONS_CHANGE_SSAA)) {
         recomp_options_internal_resolution_size(&internal_width,
                                                 &internal_height);
         pgraph_d3d11_set_internal_resolution(internal_width,
