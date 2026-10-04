@@ -11,6 +11,12 @@ int recomp_acknowledgements_active(void);
 #define RECOMP_OPTIONS_FOV_MIN 40
 #define RECOMP_OPTIONS_FOV_MAX 100
 #define RECOMP_OPTIONS_FOV_DEFAULT 55
+/* Supersampling render scale. Independent of the output "resolution scale":
+ * it multiplies only the internal render target so the fixed resolve pass
+ * downsamples to the unchanged output size (true SSAA). */
+#define RECOMP_OPTIONS_SSAA_HASH       0x52430012u
+#define RECOMP_OPTIONS_SSAA_DEFAULT    0
+#define RECOMP_OPTIONS_SSAA_MAX        3
 #define RECOMP_OPTIONS_VSYNC_HASH      0x52430010u
 #define RECOMP_OPTIONS_FPS_HASH        0x52430001u
 #define RECOMP_OPTIONS_ASPECT_HASH     0x52430002u
@@ -43,7 +49,8 @@ enum recomp_options_change {
     RECOMP_OPTIONS_CHANGE_OG_BUGS = 1u << 12,
     RECOMP_OPTIONS_CHANGE_PS2_UPGRADES = 1u << 13,
     RECOMP_OPTIONS_CHANGE_VSYNC = 1u << 14,
-    RECOMP_OPTIONS_CHANGE_FOV = 1u << 15
+    RECOMP_OPTIONS_CHANGE_FOV = 1u << 15,
+    RECOMP_OPTIONS_CHANGE_SSAA = 1u << 16
 };
 typedef void (*recomp_options_apply_callback)(uint32_t changes);
 typedef enum recomp_display_mode {
@@ -70,6 +77,7 @@ float recomp_options_scale_fov(float horizontal_fov);
 int recomp_options_aspect_ratio(void);
 int recomp_options_draw_distance(void);
 int recomp_options_resolution(void);
+int recomp_options_supersampling(void);
 int recomp_options_anisotropic_16x(void);
 int recomp_options_authentic_haze(void); /* 0 off, 1 native filter, 2 unfiltered */
 int recomp_options_object_draw_distance(void);
