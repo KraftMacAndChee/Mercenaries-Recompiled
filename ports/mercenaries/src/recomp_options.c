@@ -11,7 +11,8 @@
 
 typedef struct recomp_option_values {
     int fps_cap, vsync, fov, aspect, resolution, anisotropic, display, haze,
-        wake_distance, npc_draw_distance, npc_lod, fixed_xbox_prompts, object_distance, og_bugs, ps2_upgrades;
+        wake_distance, npc_draw_distance, npc_lod, fixed_xbox_prompts, object_distance, og_bugs, ps2_upgrades,
+        ssaa;
 } recomp_option_values;
 
 typedef struct recomp_options_state {
@@ -52,6 +53,7 @@ static void write_all_settings(void) {
     write_setting("AspectRatio", g_options.applied.aspect);
     write_setting("DrawDistance", 0); /* Clear legacy overrides when settings are saved. */
     write_setting("ResolutionScale", g_options.applied.resolution);
+    write_setting("Supersampling", g_options.applied.ssaa);
     write_setting("Anisotropic16x", g_options.applied.anisotropic);
     write_setting("DisplayMode", g_options.applied.display);
     write_setting("AuthenticHaze", g_options.applied.haze != 0); /* older-build rollback */
@@ -106,6 +108,7 @@ void recomp_options_init(void) {
     /* Legacy DrawDistance is deliberately ignored: the retail terrain cache
      * has a fixed budget and extending camera distance can exhaust it. */
     loaded.resolution = clamp_setting(GetPrivateProfileIntA("RecompOptions", "ResolutionScale", 0, g_options.path), 5);
+    loaded.ssaa = clamp_setting(GetPrivateProfileIntA("RecompOptions", "Supersampling", RECOMP_OPTIONS_SSAA_DEFAULT, g_options.path), RECOMP_OPTIONS_SSAA_MAX);
     loaded.anisotropic = clamp_setting(GetPrivateProfileIntA("RecompOptions", "Anisotropic16x", 0, g_options.path), 1);
     loaded.display = clamp_setting(GetPrivateProfileIntA("RecompOptions", "DisplayMode", 0, g_options.path), 2);
     /* Preserve existing enabled haze as Unfiltered; new installations use
@@ -159,6 +162,7 @@ static uint32_t changed_options(void) {
     if (g_options.pending.vsync != g_options.applied.vsync) changes |= RECOMP_OPTIONS_CHANGE_VSYNC;
     if (g_options.pending.aspect != g_options.applied.aspect) changes |= RECOMP_OPTIONS_CHANGE_ASPECT;
     if (g_options.pending.resolution != g_options.applied.resolution) changes |= RECOMP_OPTIONS_CHANGE_RESOLUTION;
+    if (g_options.pending.ssaa != g_options.applied.ssaa) changes |= RECOMP_OPTIONS_CHANGE_SSAA;
     if (g_options.pending.anisotropic != g_options.applied.anisotropic) changes |= RECOMP_OPTIONS_CHANGE_AF;
     if (g_options.pending.display != g_options.applied.display) changes |= RECOMP_OPTIONS_CHANGE_DISPLAY;
     if (g_options.pending.haze != g_options.applied.haze) changes |= RECOMP_OPTIONS_CHANGE_HAZE;
@@ -197,6 +201,7 @@ int recomp_options_adjust(uint32_t hash, int direction) {
     case RECOMP_OPTIONS_FPS_HASH: g_options.pending.fps_cap = cycle(g_options.pending.fps_cap, 4, direction); return 1;
     case RECOMP_OPTIONS_ASPECT_HASH: g_options.pending.aspect = cycle(g_options.pending.aspect, 3, direction); return 1;
     case RECOMP_OPTIONS_RESOLUTION_HASH: g_options.pending.resolution = cycle(g_options.pending.resolution, 5, direction); return 1;
+    case RECOMP_OPTIONS_SSAA_HASH: g_options.pending.ssaa = cycle(g_options.pending.ssaa, RECOMP_OPTIONS_SSAA_MAX, direction); return 1;
     case RECOMP_OPTIONS_VSYNC_HASH: g_options.pending.vsync ^= 1; return 1;
     case RECOMP_OPTIONS_AF_HASH: g_options.pending.anisotropic ^= 1; return 1;
     case RECOMP_OPTIONS_DISPLAY_HASH: g_options.pending.display = cycle(g_options.pending.display, 2, direction); return 1;
@@ -216,6 +221,7 @@ const char *recomp_options_label(uint32_t hash) {
     static const char *aspects[] = { "ORIGINAL (4:3)", "16:9", "16:10", "21:9" };
     static const char *distances[] = { "ORIGINAL", "125%", "150%", "200%" };
     static const char *resolutions[] = { "NATIVE (640 X 480)", "1280 X 720", "1600 X 900", "1920 X 1080", "2560 X 1440", "3840 X 2160" };
+    static const char *ssaa_modes[] = { "OFF", "1.5X (2.25X PIXELS)", "2X (4X PIXELS)", "3X (9X PIXELS)" };
     static const char *displays[] = { "WINDOWED", "BORDERLESS", "FULLSCREEN" };
     static const char *wake_distances[] = { "ORIGINAL", "150%", "200%", "300%" };
     recomp_options_init();
@@ -241,6 +247,7 @@ const char *recomp_options_label(uint32_t hash) {
     case RECOMP_OPTIONS_VSYNC_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "V-SYNC: %s", g_options.pending.vsync ? "ON" : "OFF"); break;
     case RECOMP_OPTIONS_ASPECT_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "ASPECT RATIO: %s", aspects[g_options.pending.aspect]); break;
     case RECOMP_OPTIONS_RESOLUTION_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "RESOLUTION SCALE: %s", resolutions[g_options.pending.resolution]); break;
+    case RECOMP_OPTIONS_SSAA_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "SUPERSAMPLING: %s", ssaa_modes[g_options.pending.ssaa]); break;
     case RECOMP_OPTIONS_AF_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "ANISOTROPIC FILTERING: %s", g_options.pending.anisotropic ? "16X" : "OFF"); break;
     case RECOMP_OPTIONS_DISPLAY_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "DISPLAY: %s", displays[g_options.pending.display]); break;
     case RECOMP_OPTIONS_HAZE_HASH: _snprintf_s(label, sizeof(label), _TRUNCATE, "HAZE: %s", haze_modes[g_options.pending.haze]); break;
@@ -267,6 +274,7 @@ uint32_t recomp_options_localization_hash(uint32_t hash) {
     case RECOMP_OPTIONS_VSYNC_HASH:
     case RECOMP_OPTIONS_ASPECT_HASH:
     case RECOMP_OPTIONS_RESOLUTION_HASH:
+    case RECOMP_OPTIONS_SSAA_HASH:
     case RECOMP_OPTIONS_AF_HASH:
     case RECOMP_OPTIONS_DISPLAY_HASH:
     case RECOMP_OPTIONS_HAZE_HASH:
@@ -287,6 +295,7 @@ int recomp_options_vsync(void) { recomp_options_init(); return g_options.applied
 int recomp_options_aspect_ratio(void) { recomp_options_init(); return g_options.applied.aspect; }
 int recomp_options_draw_distance(void) { return 0; }
 int recomp_options_resolution(void) { recomp_options_init(); return g_options.applied.resolution; }
+int recomp_options_supersampling(void) { recomp_options_init(); return g_options.applied.ssaa; }
 int recomp_options_anisotropic_16x(void) { recomp_options_init(); return g_options.applied.anisotropic; }
 int recomp_options_authentic_haze(void) { recomp_options_init(); return g_options.applied.haze; }
 int recomp_options_npc_wake_distance(void) { recomp_options_init(); return g_options.applied.wake_distance; }
@@ -302,13 +311,23 @@ void recomp_options_resolution_size(uint32_t *width, uint32_t *height) {
 }
 void recomp_options_internal_resolution_size(uint32_t *width, uint32_t *height) {
     static const uint32_t heights[] = { 480u, 720u, 900u, 1080u, 1440u, 2160u };
-    uint32_t h, w;
+    /* Supersampling multiples, as numerator/denominator, for the internal
+     * render target only. The guest keeps rendering logical 4:3 surfaces; the
+     * fixed resolve pass downsamples this larger target to the unchanged
+     * output size, so the presentation and every option dependent on the
+     * output "resolution scale" are unaffected. */
+    static const uint32_t ssaa_numerators[] = { 1u, 3u, 2u, 3u };
+    static const uint32_t ssaa_denominators[] = { 1u, 2u, 1u, 1u };
+    uint32_t h, w, ssaa;
     recomp_options_init();
     h = heights[g_options.applied.resolution];
     /* Xbox render targets are 4:3 even when the title advertises anamorphic
      * widescreen. Scale both axes uniformly; presentation aspect and the
      * camera hook handle widescreen. */
     w = (uint32_t)(((uint64_t)h * 4u + 1u) / 3u);
+    ssaa = (uint32_t)clamp_setting(g_options.applied.ssaa, RECOMP_OPTIONS_SSAA_MAX);
+    h = (uint32_t)(((uint64_t)h * ssaa_numerators[ssaa] + ssaa_denominators[ssaa] - 1u) / ssaa_denominators[ssaa]);
+    w = (uint32_t)(((uint64_t)w * ssaa_numerators[ssaa] + ssaa_denominators[ssaa] - 1u) / ssaa_denominators[ssaa]);
     if (width) *width = w;
     if (height) *height = h;
 }

@@ -257,10 +257,21 @@ static int decode_modrm_len(const uint8_t *ip, int has_rex_b)
  * Instruction decoder shared by the APU and AC97 MMIO ranges
  * ============================================================ */
 
+#define MMIO_DECODE_PREFIX apu
+#include "../nv2a/mmio_decode_util.h"
+
 static bool mmio_decode_and_handle(PCONTEXT ctx, uint32_t mmio_offset,
                                    void *opaque, mmio_read_fn read_fn,
                                    mmio_write_fn write_fn, const char *tag)
 {
+    /* The shared decoder covers the same MOV/TEST/CMP forms plus the ALU and
+     * group-immediate encodings Clang emits that the original MSVC-focused
+     * body did not. Fall through to the legacy body only for what it rejects,
+     * so the diagnostic message and failure accounting are preserved. */
+    if (apu_decode_and_handle(ctx, mmio_offset, opaque, read_fn, write_fn) >= 0) {
+        return true;
+    }
+
     const uint8_t *ip = (const uint8_t *)ctx->Rip;
 
     int prefix_len = 0;

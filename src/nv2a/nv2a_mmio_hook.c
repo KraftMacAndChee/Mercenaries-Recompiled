@@ -146,6 +146,11 @@ static bool decode_and_handle(PCONTEXT ctx, uint32_t mmio_offset, int is_write)
         } else if (b == 0xF2 || b == 0xF3) {
             /* REP/REPNE prefix - skip */
             prefix_len++;
+        } else if (b == 0x26 || b == 0x2E || b == 0x36 || b == 0x3E ||
+                   b == 0x64 || b == 0x65) {
+            /* Segment overrides (and FS/GS). The fault address already
+             * accounts for the effective address, so only the length matters. */
+            prefix_len++;
         } else if (b >= 0x40 && b <= 0x4F) {
             /* REX prefix */
             rex = b;
@@ -164,6 +169,85 @@ static bool decode_and_handle(PCONTEXT ctx, uint32_t mmio_offset, int is_write)
     int access_size = 4; /* default 32-bit */
     if (has_66) access_size = 2;
     if (rex_w) access_size = 8;
+
+    /* ── ALU with a memory operand (ADD/OR/ADC/SBB/AND/SUB/XOR/CMP) ──
+     * Covers all eight operations in both operand directions and both
+     * widths. Clang chooses these encodings freely; MSVC's patterns are
+     * only a subset, so emulate the family generically. */
+    {
+        const uint8_t op0 = opcode[0];
+        const int group = op0 & 0xF8;
+        const int is_alu =
+            (group == 0x00 || group == 0x08 || group == 0x10 || group == 0x18 ||
+             group == 0x20 || group == 0x28 || group == 0x30 || group == 0x38) &&
+            (op0 & 0x04) == 0;
+        if (is_alu) {
+            const int size8 = !(op0 & 0x01);
+            const int reg_dest = (op0 & 0x02) != 0;
+            const int subop = (op0 >> 3) & 7;
+            const int modrm_len = decode_modrm_len(opcode + 1, rex_b);
+            const int reg = ((opcode[1] >> 3) & 7) | (rex_r ? 8 : 0);
+            const int acs = size8 ? 1 : access_size;
+            const int bits = acs * 8;
+            const uint64_t mask = (bits >= 64) ? ~0ULL : ((1ULL << bits) - 1);
+            const uint64_t sign_bit = 1ULL << (bits - 1);
+            const uint64_t mem =
+                nv2a_mmio_read(nv2a, mmio_offset, acs) & mask;
+            uint64_t *regp = ctx_reg64(ctx, reg);
+            const uint64_t rv = regp ? (*regp & mask) : 0;
+            const uint64_t a = reg_dest ? rv : mem;
+            const uint64_t b = reg_dest ? mem : rv;
+            const uint64_t carry_in = (ctx->EFlags & 0x0001u) ? 1u : 0u;
+            uint64_t result;
+            int is_arith = 1, is_sub = 0, is_cmp = 0;
+
+            switch (subop) {
+            case 0: result = a + b; break;                 /* ADD */
+            case 1: result = a | b; is_arith = 0; break;   /* OR  */
+            case 2: result = a + b + carry_in; break;      /* ADC */
+            case 3: result = a - b - carry_in; is_sub = 1; break; /* SBB */
+            case 4: result = a & b; is_arith = 0; break;   /* AND */
+            case 5: result = a - b; is_sub = 1; break;     /* SUB */
+            case 6: result = a ^ b; is_arith = 0; break;   /* XOR */
+            default: result = a - b; is_sub = 1; is_cmp = 1; break; /* CMP */
+            }
+            result &= mask;
+
+            uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0881u);
+            if (is_arith) {
+                int cf = is_sub ? ((a < b + carry_in) ? 1 : 0)
+                                : (int)(((a + b + carry_in) > mask) ? 1 : 0);
+                int of = is_sub ? (int)(((a ^ b) & (a ^ result) & sign_bit) != 0)
+                                : (int)(((a ^ result) & (b ^ result) & sign_bit) != 0);
+                if (cf) flags |= 0x0001;
+                if (of) flags |= 0x0800;
+            }
+            if (result == 0) flags |= 0x0040;
+            if (result & sign_bit) flags |= 0x0080;
+            {
+                uint32_t low = (uint32_t)(result & 0xFF);
+                low ^= low >> 4; low ^= low >> 2; low ^= low >> 1;
+                if (!(low & 1)) flags |= 0x0004;
+            }
+            ctx->EFlags = flags;
+
+            if (!is_cmp) {
+                if (reg_dest && regp) {
+                    if (acs == 1)       *regp = (*regp & ~0xFFULL) | result;
+                    else if (acs == 2)  *regp = (*regp & ~0xFFFFULL) | result;
+                    else                *regp = result; /* 32-bit zero-extends */
+                    g_mmio_read_count++;
+                } else {
+                    nv2a_mmio_write(nv2a, mmio_offset, result, acs);
+                    g_mmio_write_count++;
+                }
+            } else {
+                g_mmio_read_count++;
+            }
+            ctx->Rip += prefix_len + 1 + modrm_len;
+            return true;
+        }
+    }
 
     /* ── MOV r/m, r (write: 88/89) ── */
     if (opcode[0] == 0x89 || opcode[0] == 0x88) {
@@ -368,6 +452,172 @@ static bool decode_and_handle(PCONTEXT ctx, uint32_t mmio_offset, int is_write)
         ctx->Rip += prefix_len + 1 + modrm_len;
         g_mmio_write_count++;
         return true;
+    }
+
+    /* ── Group 1 immediate: ADD/OR/ADC/SBB/AND/SUB/XOR/CMP r/m, imm ──
+     * Clang folds a constant operand into a memory-immediate form (a guest
+     * "or dword ptr [mmio], imm" becomes 83 /1 ib), where MSVC instead
+     * loads the constant into a register and emits 09 /r. Handle the 8-bit
+     * (0x80), 32/64-bit imm32 (0x81), and sign-extended imm8 (0x83) forms
+     * so the MMIO read-modify-write is emulated rather than faulting. */
+    if (opcode[0] == 0x80 || opcode[0] == 0x81 || opcode[0] == 0x83) {
+        int modrm_len = decode_modrm_len(opcode + 1, rex_b);
+        int subop = (opcode[1] >> 3) & 7;
+        const uint8_t *imm_ptr = opcode + 1 + modrm_len;
+        uint64_t imm;
+        int imm_len;
+
+        if (opcode[0] == 0x80) {
+            access_size = 1;
+            imm = (uint64_t)*imm_ptr;
+            imm_len = 1;
+        } else if (opcode[0] == 0x83) {
+            imm = (uint64_t)(int64_t)(int8_t)*imm_ptr;
+            imm_len = 1;
+        } else {
+            imm = (uint64_t)(*(const uint32_t *)imm_ptr);
+            imm_len = 4;
+            if (rex_w) imm = (uint64_t)(int64_t)(int32_t)imm;
+        }
+
+        const int bits = access_size * 8;
+        const uint64_t mask = (bits >= 64) ? ~0ULL : ((1ULL << bits) - 1);
+        const uint64_t sign_bit = 1ULL << (bits - 1);
+        const uint64_t a = nv2a_mmio_read(nv2a, mmio_offset, access_size) & mask;
+        const uint64_t b = imm & mask;
+        const uint64_t carry_in = (ctx->EFlags & 0x0001u) ? 1u : 0u;
+        uint64_t result;
+        int is_arith = 1;
+        int is_sub = 0;
+        int is_cmp = 0;
+
+        switch (subop) {
+        case 0: result = a + b; break;                 /* ADD */
+        case 1: result = a | b; is_arith = 0; break;   /* OR  */
+        case 2: result = a + b + carry_in; break;      /* ADC */
+        case 3: result = a - b - carry_in; is_sub = 1; break; /* SBB */
+        case 4: result = a & b; is_arith = 0; break;   /* AND */
+        case 5: result = a - b; is_sub = 1; break;     /* SUB */
+        case 6: result = a ^ b; is_arith = 0; break;   /* XOR */
+        default: result = a - b; is_sub = 1; is_cmp = 1; break; /* CMP */
+        }
+        result &= mask;
+
+        uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0881u); /* CF|ZF|SF|OF */
+        if (is_arith) {
+            int cf = is_sub ? ((a < b + carry_in) ? 1 : 0)
+                            : (int)(((a + b + carry_in) > mask) ? 1 : 0);
+            int of = is_sub ? (int)(((a ^ b) & (a ^ result) & sign_bit) != 0)
+                            : (int)(((a ^ result) & (b ^ result) & sign_bit) != 0);
+            if (cf) flags |= 0x0001;
+            if (of) flags |= 0x0800;
+        }
+        if (result == 0) flags |= 0x0040;
+        if (result & sign_bit) flags |= 0x0080;
+        ctx->EFlags = flags;
+        if ((flags & 0x0040) == 0) {
+            uint32_t low = (uint32_t)(result & 0xFF);
+            low ^= low >> 4;
+            low ^= low >> 2;
+            low ^= low >> 1;
+            if (!(low & 1)) ctx->EFlags |= 0x0004; /* PF */
+        }
+
+        if (!is_cmp) {
+            nv2a_mmio_write(nv2a, mmio_offset, result, access_size);
+            g_mmio_write_count++;
+        } else {
+            g_mmio_read_count++;
+        }
+        ctx->Rip += prefix_len + 1 + modrm_len + imm_len;
+        return true;
+    }
+
+    /* ── Group 3: TEST/NOT/NEG/MUL/IMUL/DIV/IDIV r/m (F6/F7) ──
+     * TEST with an immediate (F7 /0) is the other constant-folded form
+     * Clang emits for volatile MMIO that MSVC expresses through a
+     * register. NOT/NEG/INC/DEC cover the remaining read-modify-writes. */
+    if (opcode[0] == 0xF6 || opcode[0] == 0xF7) {
+        int modrm_len = decode_modrm_len(opcode + 1, rex_b);
+        int subop = (opcode[1] >> 3) & 7;
+        const uint8_t *imm_ptr = opcode + 1 + modrm_len;
+        if (opcode[0] == 0xF6) access_size = 1;
+
+        const int bits = access_size * 8;
+        const uint64_t mask = (bits >= 64) ? ~0ULL : ((1ULL << bits) - 1);
+        const uint64_t sign_bit = 1ULL << (bits - 1);
+
+        if (subop == 0) { /* TEST r/m, imm */
+            int imm_len = (opcode[0] == 0xF6) ? 1 : 4;
+            uint64_t imm = (opcode[0] == 0xF6)
+                               ? (uint64_t)*imm_ptr
+                               : (uint64_t)(*(const uint32_t *)imm_ptr);
+            uint64_t v = nv2a_mmio_read(nv2a, mmio_offset, access_size) & mask;
+            uint64_t r = v & (imm & mask);
+            uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0881u);
+            if (r == 0) flags |= 0x0040;
+            if (r & sign_bit) flags |= 0x0080;
+            ctx->EFlags = flags;
+            uint32_t low = (uint32_t)(r & 0xFF);
+            low ^= low >> 4; low ^= low >> 2; low ^= low >> 1;
+            if (!(low & 1)) ctx->EFlags |= 0x0004;
+            ctx->Rip += prefix_len + 1 + modrm_len + imm_len;
+            g_mmio_read_count++;
+            return true;
+        }
+        if (subop == 2 || subop == 3) { /* NOT / NEG */
+            uint64_t v = nv2a_mmio_read(nv2a, mmio_offset, access_size) & mask;
+            uint64_t r = (subop == 2) ? ((~v) & mask) : ((0 - v) & mask);
+            if (subop == 3) {
+                uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0881u);
+                if (v != 0) flags |= 0x0001;
+                if (v == sign_bit) flags |= 0x0800;
+                if (r == 0) flags |= 0x0040;
+                if (r & sign_bit) flags |= 0x0080;
+                ctx->EFlags = flags;
+            }
+            nv2a_mmio_write(nv2a, mmio_offset, r, access_size);
+            ctx->Rip += prefix_len + 1 + modrm_len;
+            g_mmio_write_count++;
+            return true;
+        }
+        if (subop == 4 || subop == 5) { /* MUL / IMUL r/m */
+            uint64_t v = nv2a_mmio_read(nv2a, mmio_offset, access_size) & mask;
+            uint64_t a = *ctx_reg64(ctx, 0) & mask;
+            uint64_t full = (subop == 4) ? (a * v)
+                                         : (uint64_t)((int64_t)a * (int64_t)v);
+            uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0881u);
+            if ((full >> bits) != 0) flags |= 0x0001;
+            ctx->Rax = full & mask;
+            *ctx_reg64(ctx, 2) = (full >> bits) & mask;
+            ctx->EFlags = flags;
+            ctx->Rip += prefix_len + 1 + modrm_len;
+            g_mmio_read_count++;
+            return true;
+        }
+        /* DIV/IDIV on MMIO are not expected; fall through as unrecognized. */
+    }
+
+    /* ── Group 5: INC/DEC r/m (FF /0, FF /1) ── */
+    if (opcode[0] == 0xFF) {
+        int modrm_len = decode_modrm_len(opcode + 1, rex_b);
+        int subop = (opcode[1] >> 3) & 7;
+        if (subop == 0 || subop == 1) {
+            const int bits = access_size * 8;
+            const uint64_t mask = (bits >= 64) ? ~0ULL : ((1ULL << bits) - 1);
+            const uint64_t sign_bit = 1ULL << (bits - 1);
+            uint64_t v = nv2a_mmio_read(nv2a, mmio_offset, access_size) & mask;
+            uint64_t r = ((subop == 0) ? (v + 1) : (v - 1)) & mask;
+            uint32_t flags = (uint32_t)(ctx->EFlags & ~0x0840u); /* ZF|SF|OF */
+            if (r == 0) flags |= 0x0040;
+            if (r & sign_bit) flags |= 0x0080;
+            if ((r & sign_bit) != (v & sign_bit)) flags |= 0x0800;
+            ctx->EFlags = flags;
+            nv2a_mmio_write(nv2a, mmio_offset, r, access_size);
+            ctx->Rip += prefix_len + 1 + modrm_len;
+            g_mmio_write_count++;
+            return true;
+        }
     }
 
     /* Unrecognized instruction */
