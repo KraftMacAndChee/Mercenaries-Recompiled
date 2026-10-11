@@ -101,6 +101,10 @@ def main():
         skin=prepare('separate','Skin');assert 'new-folder\\addition.bin' not in manifest(Path(skin[1]))
         assert 4 not in read_dsk(manifest(Path(skin[1]))['dataxbox\\assets.dsk'])
         assert prepare('separate','JE3','Skin')[1]==first[1]
+        # Two mods add the same new DSK name; their records should merge into one archive.
+        dsk(root/'mods/JE3/extra.dsk',[(10,b'je3 new')]);dsk(root/'mods/Skin/extra.dsk',[(11,b'skin new')])
+        newdsk=prepare('separate','JE3','Skin');entries=manifest(Path(newdsk[1]))
+        assert read_dsk(entries['dataxbox\\extra.dsk'])=={10:b'je3 new',11:b'skin new'}
         for p,digest in snapshots.items():assert hashlib.sha256(p.read_bytes()).digest()==digest,p
         dsk(root/'mods/Skin/assets.dsk',[(1,b'updated skin'),*original[1:]])
         (root/'mods/JE3/untouched.cfg').write_bytes(b'new default')
