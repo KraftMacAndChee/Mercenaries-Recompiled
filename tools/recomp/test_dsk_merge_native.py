@@ -65,7 +65,7 @@ def main():
         second=[(1,1,b'second longer'),*original[1:]]
         def run(base,layers,ok=True,reason=None):
             if out.exists():out.unlink()
-            result=subprocess.run([str(exe),str(out),str(base),*[str(p) for p in layers]],capture_output=True,text=True)
+            result=subprocess.run([str(exe),str(out),'' if base is None else str(base),*[str(p) for p in layers]],capture_output=True,text=True)
             assert (result.returncode==0)==ok,result.stderr
             if not ok:
                 assert reason in result.stderr,result.stderr
@@ -74,7 +74,7 @@ def main():
                 return
             header,records,tail=inspect(out)
             assert header==0
-            assert records==expected(inspect(base)[1],[inspect(p)[1] for p in layers])
+            assert records==expected({} if base is None else inspect(base)[1],[inspect(p)[1] for p in layers])
             assert not any(tail)
         # Differing header words are not asset edits or compatibility versions.
         for header in (0,0x0D07FAEC,0xFFFFFFFF):
@@ -99,6 +99,21 @@ def main():
         b.write_bytes(b'1234');run(base,[a,b],False,'Truncated')
         write_archive(b,[(1,1,b'payload')]);b.write_bytes(b.read_bytes()[:21]);run(base,[a,b],False,'bounds')
         write_archive(base,[],offset=5,tail=b'');write_archive(b,[],offset=6,tail=b'');run(base,[b])
+        # New archives (no retail base) are unioned; later layers win shared asset IDs.
+        new_first=[(1,1,b'new first'),(4,1,b'addition')]
+        new_second=[(1,1,b'new second'),(5,1,b'other')]
+        write_archive(a,new_first,tail=bytes(2048));write_archive(b,new_second,tail=b'')
+        run(None,[a,b])
+        assert inspect(out)[1]==expected({},[inspect(a)[1],inspect(b)[1]])
+        assert inspect(out)[1][1,1][1]==hashlib.sha256(b'new second').hexdigest()
+        assert len(inspect(out)[2])==2048
+        # Without padding in any layer, a new archive has no trailer.
+        write_archive(a,new_first,tail=b'');run(None,[a,b])
+        assert len(inspect(out)[2])==0
+        # Grid-indexed layers are rejected for new archives as well.
+        write_archive(b,new_second,tail=struct.pack('<I',0x00FF8040)+bytes(2044))
+        run(None,[a,b],False,'Grid-indexed archives')
+        write_archive(b,new_second,tail=b'')
         report['synthetic']='passed: unequal offsets, normalized output, byte-level precedence, additions/deletions, asset types, signature padding, real-grid rejection, malformed inputs'
         if args.retail_data:
             for name in ('assets.dsk','english.dsk','locked.dsk','streamed.dsk'):
