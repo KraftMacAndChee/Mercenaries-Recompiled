@@ -205,7 +205,9 @@ bool same_record(const Record &a, const Record &b)
 }
 void merge_dsk(const fs::path &base, const std::vector<fs::path> &layers, const fs::path &out)
 {
-    Archive original = read_dsk(base);
+    // An empty base means the archive is new to the game. Its layers are then unioned
+    // together, with later layers replacing earlier ones that share an asset ID.
+    Archive original = base.empty() ? Archive{false, {}} : read_dsk(base);
     std::map<uint64_t, Record> baseline, current;
     std::vector<uint64_t> order;
     for (auto &r : original.records)
@@ -215,9 +217,12 @@ void merge_dsk(const fs::path &base, const std::vector<fs::path> &layers, const 
         current.emplace(id, r);
         order.push_back(id);
     }
+    bool trailer = !base.empty() && original.trailer;
     for (auto &path : layers)
     {
         Archive mod = read_dsk(path);
+        if (base.empty())
+            trailer = trailer || mod.trailer;
         std::map<uint64_t, Record> entries;
         for (auto &r : mod.records)
             entries.emplace((uint64_t(r.key) << 32) | r.kind, r);
@@ -269,7 +274,7 @@ void merge_dsk(const fs::path &base, const std::vector<fs::path> &layers, const 
             left -= (uint32_t)n;
         }
     }
-    if (original.trailer)
+    if (trailer)
     {
         std::array<char, 2048> zero{};
         f.write(zero.data(), zero.size());
@@ -571,8 +576,7 @@ Launch prepare(const fs::path &installation, const fs::path &game, const Selecti
                     if (fs::path(key).extension() == L".dsk")
                     {
                         read_dsk(e.second);
-                        if (retail.count(key))
-                            archives[key].push_back(e.second);
+                        archives[key].push_back(e.second);
                     }
                 }
                 else
@@ -614,12 +618,13 @@ Launch prepare(const fs::path &installation, const fs::path &game, const Selecti
     {
         for (auto &a : archives)
         {
-            // One archive needs no transformation. Multiple archives are merged as
-            // changes from vanilla.
+            // One archive needs no transformation. Multiple archives are merged:
+            // retail archives as changes from vanilla, new archives as a union.
             if (a.second.size() > 1)
             {
                 auto output = cache / L"merged" / a.first;
-                merge_dsk(retail.at(a.first), a.second, output);
+                auto base = retail.find(a.first);
+                merge_dsk(base == retail.end() ? fs::path() : base->second, a.second, output);
                 merged[a.first] = output;
             }
         }
