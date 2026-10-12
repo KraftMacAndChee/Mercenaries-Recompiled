@@ -818,6 +818,18 @@ extern "C" BOOL mercenaries_mod_launch(HWND owner, const wchar_t *installation, 
     try
     {
         auto s = mercmods::discover(installation);
+        // Per-process opt-in for shortcuts. Reuse normal preparation so saved
+        // order, plugin validation, save isolation and the cache lease apply.
+        wchar_t automatic[16] = {};
+        DWORD count = GetEnvironmentVariableW(L"MERCENARIES_AUTOLAUNCH_MODE", automatic,
+                                               static_cast<DWORD>(std::size(automatic)));
+        if (count > 0 && count < std::size(automatic) &&
+            (!_wcsicmp(automatic, L"modded") || !_wcsicmp(automatic, L"vanilla")))
+        {
+            mercmods::start(mercmods::prepare(installation, game, s,
+                                             !_wcsicmp(automatic, L"vanilla")));
+            return TRUE;
+        }
         if (!s.mods.empty())
             return mercmods::selector(owner, installation, game, std::move(s));
         mercmods::start(mercmods::prepare(installation, game, s, true));

@@ -6,6 +6,33 @@ Check the mods to enable, use the arrows to change their order, and choose **Lau
 
 Mouse-wheel and scrollbar navigation accommodate long lists. Keyboard controls: Up/Down selects a row; Ctrl+Up/Down moves it; Space enables/disables it; Tab moves between the list, launch buttons, and separate-save checkbox; Enter activates the focused item; Escape closes the selector.
 
+## Optional direct-launch shortcuts
+
+After choosing mods in the selector, a shortcut can set
+`MERCENARIES_AUTOLAUNCH_MODE=modded` for that launcher process to reuse the saved
+selection without opening the selector. `vanilla` launches the original game
+and normal saves. Both routes use the existing preparation, compatibility
+checks and lifetime lock; the variable does not enable newly discovered mods.
+An empty mod selection still launches vanilla.
+
+For a `PLAY.cmd` beside `Mercenaries Recompiled.exe`:
+
+```bat
+@echo off
+setlocal
+set "MERCENARIES_AUTOLAUNCH_MODE=modded"
+if /i "%~1"=="vanilla" set "MERCENARIES_AUTOLAUNCH_MODE=vanilla"
+if /i "%~1"=="selector" set "MERCENARIES_AUTOLAUNCH_MODE="
+start "" /d "%~dp0" "%~dp0Mercenaries Recompiled.exe"
+endlocal
+```
+
+Run `PLAY.cmd selector` to change the selection and `PLAY.cmd vanilla` to play
+without mods. The values are case-insensitive. An unset, empty, unrecognized or
+oversized value retains the normal selector behavior. Prefer `setlocal` over a
+system-wide environment variable so ordinary launches keep their existing UI.
+No selection or save is rewritten by the shortcut itself.
+
 ## Folder layouts
 
 A pack of Xbox DSK files can use this layout:
