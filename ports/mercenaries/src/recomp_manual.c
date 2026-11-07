@@ -8100,6 +8100,7 @@ void recomp_human_collision_checkpoint(uint32_t stage, uint32_t actor,
 #include "winch_camera_preview.h"
 #include "faction_preview.h"
 #include "turret_camera_roll.h"
+#include "decoupled_turret_guest.h"
 float recomp_turret_camera_roll(uint32_t state, float target, float old_pitch,
                                float dt)
 {

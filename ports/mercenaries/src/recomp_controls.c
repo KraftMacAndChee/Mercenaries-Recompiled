@@ -3,6 +3,7 @@
 #include "recomp/recomp_types.h"
 #include "dev_menu.h"
 #include "free_cam.h"
+#include "decoupled_turret.h"
 #include "xinput_xbox.h"
 #include <stdio.h>
 #include <string.h>
@@ -592,6 +593,7 @@ void recomp_controls_init(HWND window) {
     g_invert=GetPrivateProfileIntA("Controls","InvertMouseY",0,g_path)==1;
     g_aim_assist=GetPrivateProfileIntA("Controls","AimAssist",1,g_path)!=0;
     g_shared_inputs=GetPrivateProfileIntA("Controls","AllowSharedInputs",1,g_path)!=0;
+    decoupled_turret_load(g_path);
     for(int device=0;device<2;++device)for(int context=0;context<CONTROL_CONTEXTS;++context){
         char section[48];snprintf(section,sizeof(section),"%s.%d",device?"Gamepad":"Keyboard",context+1);
         for(unsigned i=0;i<CONTROL_ACTIONS;++i){
@@ -785,7 +787,7 @@ int recomp_controls_message(HWND hwnd,UINT message,WPARAM wp,LPARAM lp) {
 }
 void recomp_controls_open(void){g_menu=1;g_page=0;g_listen=-1;g_release=0;release_mouse();}
 void recomp_controls_close(void){g_menu=0;g_listen=-1;g_release=0;}
-unsigned recomp_controls_count(void){return g_menu==2?visible_actions()+5:7;}
+unsigned recomp_controls_count(void){return g_menu==2?visible_actions()+5:9;}
 int recomp_controls_is_binding(void){return g_listen>=0 || g_release;}
 /* Resolve a virtual retail button using the exact same maps as input. */
 static int prompt_binding_context(unsigned *action_inout,int device,int context) {
@@ -856,7 +858,9 @@ const char *recomp_controls_label(uint32_t hash) {
         case 2:snprintf(label,sizeof(label),"INVERT MOUSE Y: %s",g_invert?"ON":"OFF");break;
         case 3:snprintf(label,sizeof(label),"AIM ASSIST: %s",g_aim_assist?"ON":"OFF");break;
         case 4:snprintf(label,sizeof(label),"ALLOW SHARED INPUTS: %s",g_shared_inputs?"ON":"OFF");break;
-        case 5:return "REBIND CONTROLS";default:return "BACK";}
+        case 5:snprintf(label,sizeof(label),"DECOUPLED TURRETS: %s",decoupled_turret_enabled()?"ON":"OFF");break;
+        case 6:snprintf(label,sizeof(label),"DECOUPLED HELICOPTERS: %s",decoupled_heli_enabled()?"ON":"OFF");break;
+        case 7:return "REBIND CONTROLS";default:return "BACK";}
     }else{
         if(row==0)snprintf(label,sizeof(label),"DEVICE: %s",g_device?"GAMEPAD":"KEYBOARD / MOUSE");
         else if(row==1)snprintf(label,sizeof(label),"CONTEXT: %s",contexts[g_edit_context]);
@@ -880,8 +884,10 @@ uint32_t recomp_controls_input(unsigned row,unsigned input,unsigned event) {
         if(row==2){g_invert=!g_invert;write_value("Controls","InvertMouseY",g_invert);}
         if(row==3){g_aim_assist=!g_aim_assist;write_value("Controls","AimAssist",g_aim_assist);}
         if(row==4){g_shared_inputs=!g_shared_inputs;write_value("Controls","AllowSharedInputs",g_shared_inputs);}
-        if(row==5 && input==5){g_menu=2;g_page=0;}
-        if(row==6 && input==5)return 2;
+        if(row==5){decoupled_turret_set_enabled(!decoupled_turret_enabled());decoupled_turret_save(g_path);}
+        if(row==6){decoupled_heli_set_enabled(!decoupled_heli_enabled());decoupled_turret_save(g_path);}
+        if(row==7 && input==5){g_menu=2;g_page=0;}
+        if(row==8 && input==5)return 2;
     }else{
         if(row==0)g_device=!g_device;
         else if(row==1){
@@ -964,6 +970,26 @@ float recomp_controls_mouse_axis(uint32_t hash,float original,float dt) {
     int axis=hash==0xEAA0CE27u?0:hash==0xE9A0CC94u?1:-1;
     if(axis<0)return original;
     if(!(g_joystick_context==2 || g_joystick_context==10 || g_joystick_context==4 || g_joystick_context==9 || (g_joystick_context==0 && !axis)))return original;
+    /* Decoupled helicopter: mouse X turns the free chase camera and the
+     * helicopter turns toward it. A deflected stick or turn key keeps retail. */
+    if(g_joystick_context==0 && !axis && decoupled_heli_enabled()){
+        if(original!=0){decoupled_heli_controller_input();return original;}
+        LONG heli_counts=g_test_mouse_path ? g_test_dx : InterlockedExchange(&g_dx,0);
+        if(g_test_mouse_path)g_test_dx=0;
+        decoupled_heli_mouse((float)heli_counts*(.0004f*g_sensitivity));
+        return decoupled_heli_steer();
+    }
+    /* Decoupled turrets: the mouse turns the free camera; the turret follows
+     * it on its own. A deflected stick or turret key keeps retail control. */
+    if((g_joystick_context==2 || g_joystick_context==10) && decoupled_turret_enabled()){
+        if(original!=0){decoupled_turret_controller_input();return original;}
+        LONG turret_counts=g_test_mouse_path ? (axis?g_test_dy:g_test_dx) : InterlockedExchange(axis?&g_dy:&g_dx,0);
+        if(g_test_mouse_path){if(axis)g_test_dy=0;else g_test_dx=0;}
+        float angle=(float)turret_counts*(.0004f*g_sensitivity);
+        if(axis)decoupled_turret_mouse(0.f,angle*(g_invert?1.f:-1.f));
+        else decoupled_turret_mouse(angle,0.f);
+        return 0.f;
+    }
     LONG counts=g_test_mouse_path ? (axis?g_test_dy:g_test_dx) : InterlockedExchange(axis?&g_dy:&g_dx,0);
     if(g_test_mouse_path){if(axis)g_test_dy=0;else g_test_dx=0;
         if(counts)fprintf(stderr,"[CONTROLS-TEST] consume axis=%u counts=%ld\n",axis,counts);}
