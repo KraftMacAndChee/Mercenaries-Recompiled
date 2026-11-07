@@ -4,6 +4,7 @@
 #include "dev_menu.h"
 #include "free_cam.h"
 #include "decoupled_turret.h"
+#include "plugin_hooks.h"
 #include "xinput_xbox.h"
 #include <stdio.h>
 #include <string.h>
@@ -970,6 +971,21 @@ float recomp_controls_mouse_axis(uint32_t hash,float original,float dt) {
     int axis=hash==0xEAA0CE27u?0:hash==0xE9A0CC94u?1:-1;
     if(axis<0)return original;
     if(!(g_joystick_context==2 || g_joystick_context==10 || g_joystick_context==4 || g_joystick_context==9 || (g_joystick_context==0 && !axis)))return original;
+    /* Plugin hook "input.vehicle_look": a plugin may claim the mouse for
+     * this logical look axis and return the axis value to use. */
+    if(merc_plugins_hook_active(MERC_HOOK_INPUT_VEHICLE_LOOK)){
+        LONG pending=g_test_mouse_path ? (axis?g_test_dy:g_test_dx) : InterlockedCompareExchange(axis?&g_dy:&g_dx,0,0);
+        float radians=.0004f*g_sensitivity;uint32_t original_bits,radian_bits;
+        memcpy(&original_bits,&original,4);memcpy(&radian_bits,&radians,4);
+        MercPluginHookEvent e=merc_hook_event(6u,(uint32_t)g_joystick_context,(uint32_t)axis,original_bits,(uint32_t)pending,radian_bits);
+        e.args[5]=(uint32_t)g_invert;
+        if(merc_plugins_hook(MERC_HOOK_INPUT_VEHICLE_LOOK,&e)){
+            if(g_test_mouse_path){if(axis)g_test_dy=0;else g_test_dx=0;}
+            else InterlockedExchangeAdd(axis?&g_dy:&g_dx,-pending);
+            float value;memcpy(&value,&e.result,4);
+            return isfinite(value)?value:original;
+        }
+    }
     /* Decoupled helicopter: mouse X turns the free chase camera and the
      * helicopter turns toward it. A deflected stick or turn key keeps retail. */
     if(g_joystick_context==0 && !axis && decoupled_heli_enabled()){

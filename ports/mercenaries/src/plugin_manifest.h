@@ -57,6 +57,7 @@ inline bool relative_file(const std::string &s) {
 }
 struct Manifest {
     std::string id,name,library;
+    uint32_t api_version=MERCENARIES_PLUGIN_API_VERSION_1;
     std::vector<std::string> requires,conflicts,exclusive;
     fs::path root;
 };
@@ -88,7 +89,9 @@ inline std::optional<Manifest> read_manifest(const fs::path &root) {
     Manifest m;m.root=fs::absolute(root);m.id=fields["id"];m.library=fields["library"];
     if(!identifier(m.id))throw std::runtime_error("Plugin Id must be 1-64 lowercase letters, digits, underscores or hyphens (no Windows device names).");
     m.name=fields["name"].empty()?m.id:fields["name"];
-    if(fields["apiversion"]!="1")throw std::runtime_error(m.name+": requires unsupported Plugin Interface "+fields["apiversion"]+"; this build provides 1.");
+    if(fields["apiversion"]=="1")m.api_version=MERCENARIES_PLUGIN_API_VERSION_1;
+    else if(fields["apiversion"]=="2")m.api_version=MERCENARIES_PLUGIN_API_VERSION_2;
+    else throw std::runtime_error(m.name+": requires unsupported Plugin Interface "+fields["apiversion"]+"; this build provides 1 and 2.");
     if(!relative_file(m.library)||lower(fs::path(wide(m.library)).extension().string())!=".dll")throw std::runtime_error(m.name+": Library must be a relative .dll path without traversal.");
     auto library=m.root/fs::path(wide(m.library));
     if(!fs::is_regular_file(library))throw std::runtime_error(m.name+": missing DLL "+m.library);

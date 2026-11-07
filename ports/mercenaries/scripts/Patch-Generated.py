@@ -243,97 +243,100 @@ def patch_homing_reticle_proportions(text: str) -> str:
     return text[:match.start()] + body + text[match.end():]
 
 
-DECOUPLED_TURRET_MARKER = '/* decoupled turret */'
-DECOUPLED_TURRET_EXTERNS = (
-    '    extern int recomp_decoupled_turret_live(void);\n'
-    '    extern uint32_t decoupled_turret_camera_turret(void);\n'
-    '    extern void recomp_decoupled_turret_camera_matrix(uint32_t turret, uint32_t matrix, uint32_t kind);\n'
-    '    extern void recomp_decoupled_turret_camera_final(uint32_t matrix);\n'
-    '    extern void recomp_decoupled_turret_drive(uint32_t turret, float dt);\n'
-    '    extern float recomp_decoupled_turret_gun_hud(uint32_t axis, float hud_size);\n'
-    '    extern float recomp_decoupled_turret_aim_hud(uint32_t axis);\n'
-    '    extern int recomp_decoupled_turret_skip_drop(void);\n'
-    '    extern int recomp_decoupled_vehicle_live(void);\n'
-    '    extern int recomp_decoupled_heli_camera(uint32_t state, uint32_t vehicle);\n'
-    '    extern void decoupled_heli_note_turret(uint32_t turret);\n'
-    '    extern void recomp_decoupled_turret_hud_turret(uint32_t turret);\n'
-    '    extern void recomp_decoupled_heli_final_yaw(uint32_t state);\n')
+HOOK_POINT_MARKER = '/* plugin hook point */'
+HOOK_POINT_EXTERNS = (
+    '    extern void recomp_hook_turret_camera_pivot(uint32_t turret, uint32_t matrix);\n'
+    '    extern void recomp_hook_turret_camera_view(uint32_t matrix);\n'
+    '    extern int recomp_hook_chase_camera_snap(uint32_t state, uint32_t vehicle);\n'
+    '    extern void recomp_hook_chase_camera_yaw(uint32_t state, uint32_t vehicle);\n'
+    '    extern void recomp_hook_turret_update(uint32_t turret, float dt);\n'
+    '    extern void recomp_hook_turret_player_aim(uint32_t turret);\n'
+    '    extern int recomp_hook_turret_ballistic_arc_skip(uint32_t turret);\n'
+    '    extern int recomp_hook_player_fire_along_barrel(uint32_t site);\n'
+    '    extern int recomp_hook_crosshair_dumb_target(uint32_t crosshair, uint32_t mode);\n'
+    '    extern uint32_t recomp_hook_dumb_target_turret(uint32_t turret);\n'
+    '    extern float recomp_hook_dumb_target_point(uint32_t axis, float hud_size, float retail);\n'
+    '    extern void recomp_hook_dumb_target_bracket(uint32_t crosshair);\n')
 
 
-def patch_decoupled_turret(text: str) -> str:
-    """Free turret camera; the turret slews to the camera aim point.
+def patch_plugin_hook_points(text: str) -> str:
+    """Camera, turret, fire and reticle hook points (Plugin Interface 2).
 
-    RsCameraStateTurret::Update (0xA1000) builds its view from the barrel's
-    node/tip matrices; rotate each returned matrix toward the free camera.
-    RsActorTurret::Update (0x3CDF0) consumes the traverse settings; drive them
-    toward the aim point through GetYawPitchDiffs (0x3C830) without its
-    ballistic arc, leaving drop to the player. Player tank (0x41620) and
-    gunner (0x90470) fire at
-    the screen pick while it is ahead of the barrel; fire along the barrel
-    instead so the turret's lag matters. The HUD reuses the retail dumb-target
-    reticle: static bracket at the aim point, dynamic marker where the barrel
-    will hit. Helicopter pilots: the chase camera (0x9D840) keeps the free
-    yaw instead of snapping behind the helicopter, the helicopter turns
-    toward it, and the turrets RsAiPlayer aims for the player
-    (AimTurretAtTarget 0x8D4E0 / RecenterTurret 0x8D560) slew to the aim
-    point. Everything is gated on the decoupled live checks.
+    Each site calls a recomp_hook_* dispatcher (plugin_hook_points.h): plugins
+    subscribed to the named hook point decide first, then the built-in
+    Decoupled Aim option, and otherwise the retail value is returned.
+
+    - RsCameraStateTurret::Update (0xA1000): barrel-node pivot, and the
+      finished view matrix before it is stored ("turret_camera.view").
+    - RsActorTurret::Update (0x3CDF0): before the traverse settings are
+      consumed ("turret.update").
+    - RsActorTurret::GetYawPitchDiffs (0x3C830): the ballistic-arc branch
+      ("turret.ballistic_arc").
+    - Helicopter chase camera (0x9D840): the behind snap ("chase_camera.snap")
+      and the final yaw after UpdateAutoReset ("chase_camera.yaw").
+    - RsAiPlayer AimTurretAtTarget (0x8D4E0) / RecenterTurret (0x8D560): the
+      turrets aimed for the player ("turret.player_aim").
+    - Vehicle (0x41620) and gunner (0x90470) player fire: crosshair snap or
+      fire along the barrel ("weapon.player_fire").
+    - RsHud crosshair update caller (0x3628C0 after 0x10B310) and
+      _UpdateDumbTarget (0x108A00): reticle mode, tracked turret, marker and
+      bracket ("hud.*"). Retail computed the barrel projection and then
+      overwrote it with the fixed aim point, so it was compiled out.
     """
     def function(address):
         return re.search(r'void sub_' + address + r'\(void\)\n\{.*?\n\}', text, re.S)
 
     def replace_once(body, old, new, what):
         if body.count(old) != 1:
-            raise RuntimeError(f'Decoupled turret anchor changed ({what}): {body.count(old)}')
+            raise RuntimeError(f'Plugin hook point anchor changed ({what}): {body.count(old)}')
         return body.replace(old, new, 1)
 
     def edit(address, edits):
         nonlocal text
         match = function(address)
-        if match is None or DECOUPLED_TURRET_MARKER in match[0]:
+        if match is None or HOOK_POINT_MARKER in match[0]:
             return
         body = match[0]
         for old, new, what in edits:
             body = replace_once(body, old, new, f'{address} {what}')
-        body = body.replace('{\n', '{\n' + DECOUPLED_TURRET_EXTERNS, 1)
+        body = body.replace('{\n', '{\n' + HOOK_POINT_EXTERNS, 1)
         text = text[:match.start()] + body + text[match.end():]
 
-    m = DECOUPLED_TURRET_MARKER
-    camera = lambda kind: f'    {m} recomp_decoupled_turret_camera_matrix(esi, eax, {kind}u);\n'
+    m = HOOK_POINT_MARKER
     edit('000A1000', (
-        ('loc_000A13FC: ;\n', 'loc_000A13FC: ;\n' + camera(0), 'pivot node'),
+        ('loc_000A13FC: ;\n', f'loc_000A13FC: ;\n    {m} recomp_hook_turret_camera_pivot(esi, eax);\n', 'pivot node'),
         # The finished, collided, rolled view is copied to the state here.
         ('loc_000A199E: ;\n    edx = esp + 0x50;\n',
-         f'loc_000A199E: ;\n    {m} recomp_decoupled_turret_camera_final(esp + 0x50);\n    edx = esp + 0x50;\n',
+         f'loc_000A199E: ;\n    {m} recomp_hook_turret_camera_view(esp + 0x50);\n    edx = esp + 0x50;\n',
          'final view'),
     ))
     edit('0003C830', (
         ('    if ((_fpu_cmp <= 0) /* fcompi */) goto loc_0003CA41; /* jbe: below or equal (unsigned <=) */',
-         f'    {m}\n    if ((_fpu_cmp <= 0) /* fcompi */ || recomp_decoupled_turret_skip_drop()) goto loc_0003CA41; /* no ballistic arc */',
-         'no drop compensation'),
+         f'    {m}\n    if ((_fpu_cmp <= 0) /* fcompi */ || recomp_hook_turret_ballistic_arc_skip(esi)) goto loc_0003CA41; /* ballistic arc */',
+         'ballistic arc'),
     ))
     edit('0009D840', (
         ('loc_0009DAF9: ;\n    PUSH32(esp, 0x7F7FFFFF);\n',
-         f'loc_0009DAF9: ;\n    {m} if (recomp_decoupled_heli_camera(esi, edi)) goto loc_0009DB06;\n'
-         '    PUSH32(esp, 0x7F7FFFFF);\n', 'heli free yaw'),
+         f'loc_0009DAF9: ;\n    {m} if (recomp_hook_chase_camera_snap(esi, edi)) goto loc_0009DB06;\n'
+         '    PUSH32(esp, 0x7F7FFFFF);\n', 'chase snap'),
         # After UpdateAutoReset/DoSoftReset, just before mRot.SetRotateY(_fYaw).
         ('loc_0009DBBD: ;\n    PUSH32(esp, 0x6438E0);\n',
-         f'loc_0009DBBD: ;\n    {m} recomp_decoupled_heli_final_yaw(esi);\n    PUSH32(esp, 0x6438E0);\n',
-         'heli final yaw'),
+         f'loc_0009DBBD: ;\n    {m} recomp_hook_chase_camera_yaw(esi, edi);\n    PUSH32(esp, 0x6438E0);\n',
+         'chase yaw'),
     ))
-    edit('0008D4E0', (('loc_0008D4FC: ;\n', f'loc_0008D4FC: ;\n    {m} decoupled_heli_note_turret(esi);\n', 'heli aim turret'),))
-    edit('0008D560', (('loc_0008D57B: ;\n', f'loc_0008D57B: ;\n    {m} decoupled_heli_note_turret(esi);\n', 'heli recenter turret'),))
+    edit('0008D4E0', (('loc_0008D4FC: ;\n', f'loc_0008D4FC: ;\n    {m} recomp_hook_turret_player_aim(esi);\n', 'player aim'),))
+    edit('0008D560', (('loc_0008D57B: ;\n', f'loc_0008D57B: ;\n    {m} recomp_hook_turret_player_aim(esi);\n', 'player recenter'),))
     edit('0003CDF0', (
         ('loc_0003CE6D: ;\n',
-         f'loc_0003CE6D: ;\n    {m} recomp_decoupled_turret_drive(esi, MEMF(ebp + 8));\n', 'drive'),
+         f'loc_0003CE6D: ;\n    {m} recomp_hook_turret_update(esi, MEMF(ebp + 8));\n', 'turret update'),
     ))
     ahead = 'if (((isnan((double)(xmm3)) || isnan((double)(MEMF(0x2DC098)))) || (xmm3 <= MEMF(0x2DC098)))) goto '
-    for address, target in (('00041620', 'loc_000417C3'), ('00090470', 'loc_00091222')):
+    for address, target, site in (('00041620', 'loc_000417C3', 0), ('00090470', 'loc_00091222', 1)):
         edit(address, ((ahead + target + ';',
-                        f'{m}\n    if (recomp_decoupled_vehicle_live() || ((isnan((double)(xmm3)) || '
+                        f'{m}\n    if (recomp_hook_player_fire_along_barrel({site}u) || ((isnan((double)(xmm3)) || '
                         'isnan((double)(MEMF(0x2DC098)))) || (xmm3 <= MEMF(0x2DC098)))) goto ' + target + ';',
-                        'fire along barrel'),))
-    # Tank (mode 6) and gunner (mode 1) reticles become the dumb-target pair,
-    # right after RsHud updates the main crosshair (0x10B310, this=0x3628C0).
+                        'player fire'),))
+    # Right after RsHud updates the main crosshair (0x10B310, this=0x3628C0).
     hud_call = 'loc_0010BFF0: ;\n    PUSH32(esp, esi);\n    ecx = 0x362990;\n'
     at = text.find(hud_call)
     owner = re.findall(r'void sub_([0-9A-F]{8})\(void\)\n\{', text[:at]) if at >= 0 else []
@@ -341,35 +344,27 @@ def patch_decoupled_turret(text: str) -> str:
         edit(owner[-1], ((hud_call,
             'loc_0010BFF0: ;\n'
             f'    {m}\n'
-            '    if (recomp_decoupled_turret_live() && (MEM32(0x3628C0u + 0x30u) == 6u || MEM32(0x3628C0u + 0x30u) == 1u)) {\n'
+            '    if (recomp_hook_crosshair_dumb_target(0x3628C0u, MEM32(0x3628C0u + 0x30u))) {\n'
             '        PUSH32(esp, esi);\n        ecx = 0x3628C0;\n        PUSH32(esp, 0); sub_00108A00();\n    }\n'
             '    PUSH32(esp, esi);\n    ecx = 0x362990;\n', 'reticle mode'),))
     edit('00108A00', (
         ('loc_00108B62: ;\n    ecx = MEM32(esp + 0x10);',
          'loc_00108B62: ;\n'
          f'    {m}\n'
-         '    if (recomp_decoupled_turret_live()) {\n'
-         '        MEM32(esp + 0x10) = decoupled_turret_camera_turret();\n'
-         '        if (!MEM32(esp + 0x4C)) MEM32(esp + 0x4C) = MEM32(MEM32(esp + 0x10) + 0x27C);\n'
-         '    }\n'
-         '    recomp_decoupled_turret_hud_turret(MEM32(esp + 0x10));\n'
-         '    ecx = MEM32(esp + 0x10);', 'turret'),
+         '    MEM32(esp + 0x10) = recomp_hook_dumb_target_turret(MEM32(esp + 0x10));\n'
+         '    if (!MEM32(esp + 0x4C) && MEM32(esp + 0x10)) MEM32(esp + 0x4C) = MEM32(MEM32(esp + 0x10) + 0x27C);\n'
+         '    ecx = MEM32(esp + 0x10);', 'tracked turret'),
         ('    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    xmm0 = xmm0 * MEMF(0x2DDA48); /* mulss */\n',
          '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n'
-         '    xmm0 = recomp_decoupled_vehicle_live() ? recomp_decoupled_turret_gun_hud(1u, xmm0) : xmm0 * MEMF(0x2DDA48);\n',
-         'gun y'),
+         '    xmm0 = recomp_hook_dumb_target_point(1u, xmm0, xmm0 * MEMF(0x2DDA48));\n',
+         'marker y'),
         ('    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    MEMF(esp + 0x48) = xmm2; /* movss */\n',
          '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n'
-         '    if (recomp_decoupled_vehicle_live()) xmm0 = recomp_decoupled_turret_gun_hud(0u, 2.f * xmm0);\n'
-         '    MEMF(esp + 0x48) = xmm2; /* movss */\n', 'gun x'),
+         '    xmm0 = recomp_hook_dumb_target_point(0u, 2.f * xmm0, xmm0);\n'
+         '    MEMF(esp + 0x48) = xmm2; /* movss */\n', 'marker x'),
         ('    MEM32(esi + 0x50) = edx;\n',
          '    MEM32(esi + 0x50) = edx;\n'
-         '    if (recomp_decoupled_vehicle_live()) {\n'
-         '        MEMF(esi + 0x4C) = recomp_decoupled_turret_aim_hud(0u);\n'
-         '        MEMF(esi + 0x50) = recomp_decoupled_turret_aim_hud(1u);\n'
-         '        MEMF(esi + 0x54) = 50.f; MEMF(esi + 0x58) = 50.f;\n'
-         '        MEM32(esi + 0x5C) = MEM32(esi + 0x40); MEM8(esi + 0x48) = 1;\n'
-         '    }\n', 'aim bracket'),
+         '    recomp_hook_dumb_target_bracket(esi);\n', 'bracket'),
     ))
     return text
 
@@ -14054,7 +14049,7 @@ def patch_generated(    generated_root: Path, *, allow_missing: bool = False
         fixed = remove_experimental_traffic_admission(fixed)
         fixed = patch_reticle_proportions(fixed)
         fixed = patch_homing_reticle_proportions(fixed)
-        fixed = patch_decoupled_turret(fixed)
+        fixed = patch_plugin_hook_points(fixed)
         fixed = patch_simple_scalar_delete_flags(fixed)
         if fixed != text:
             applied.append(("simple scalar-delete stack flags", path))

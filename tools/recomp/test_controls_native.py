@@ -80,6 +80,8 @@ void decoupled_turret_controller_input(void){}
 void decoupled_heli_mouse(float yaw){(void)yaw;}
 void decoupled_heli_controller_input(void){}
 float decoupled_heli_steer(void){return 0.f;}
+int merc_plugins_hook_active(unsigned id){(void)id;return 0;}
+int merc_plugins_hook(unsigned id,MercPluginHookEvent *event){(void)id;(void)event;return 0;}
 #include "free_cam.c"
 /*DEVELOPER_HOTKEY*/
 ptrdiff_t g_xbox_mem_offset;

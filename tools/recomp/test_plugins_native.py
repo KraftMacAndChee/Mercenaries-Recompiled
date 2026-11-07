@@ -9,7 +9,14 @@ HARNESS=r'''
 #include <cassert>
 #include "mod_loader.cpp"
 #include "plugin_host.h"
+#include "plugin_hooks.h"
 namespace mercmods {BOOL selector(HWND,const fs::path&,const fs::path&,Selection){return FALSE;}}
+/* Guest-call bridge stand-in: function 0x1234 returns this_ptr + args[0]. */
+static unsigned guest_depth;
+extern "C" int recomp_plugin_guest_call_begin(uint32_t bytes,uint32_t *scratch){(void)bytes;*scratch=0x50000;++guest_depth;return 1;}
+extern "C" int recomp_plugin_guest_call(uint32_t f,uint32_t self,const uint32_t *a,uint32_t n,uint32_t *eax){
+    if(f!=0x1234||!guest_depth)return 0;if(eax)*eax=self+(n?a[0]:0);return 1;}
+extern "C" void recomp_plugin_guest_call_end(void){assert(guest_depth);--guest_depth;}
 static DWORD WINAPI worker(void*) { assert(merc_plugins_update());return 0; }
 int wmain(int argc,wchar_t**argv) {
  try {
@@ -30,6 +37,23 @@ int wmain(int argc,wchar_t**argv) {
     assert(VirtualProtect(ram+0x40000,4096,PAGE_NOACCESS,&old));
     if(!merc_plugins_initialize(ram,0x4000000)) {
         fprintf(stderr,"%s\n",merc_plugins_error());VirtualFree(ram,0,MEM_RELEASE);return 3;
+    }
+    if(mode==L"hooks") {
+        /* Interface 2: subscription, dispatch, writable args, guest calls. */
+        assert(merc_plugins_hook_active(MERC_HOOK_TURRET_UPDATE));
+        assert(!merc_plugins_hook_active(MERC_HOOK_TURRET_CAMERA_VIEW));
+        MercPluginHookEvent e=merc_hook_event(2u,0x1000u,5u,0u,0u,0u);
+        assert(merc_plugins_hook(MERC_HOOK_TURRET_UPDATE,&e));
+        assert(e.args[1]==99&&e.result==42&&!strcmp(e.name,"turret.update")&&guest_depth==0);
+        MercPluginHookEvent idle=merc_hook_event(0u,0u,0u,0u,0u,0u);
+        assert(!merc_plugins_hook(MERC_HOOK_TURRET_CAMERA_VIEW,&idle));
+        auto manifest=mercplugins::read_manifest(root/L"mods"/argv[3]);
+        auto p=launch.working/L"plugins"/mercplugins::wide(manifest->id)/L"fixture.dll";
+        HMODULE dll=GetModuleHandleW(p.c_str());assert(dll);
+        auto outside=(int(*)())GetProcAddress(dll,"outside_guest_call");assert(outside&&outside()==0);
+        merc_plugins_shutdown();assert(!merc_plugins_hook_active(MERC_HOOK_TURRET_UPDATE));
+        std::ofstream results(root/L"result.txt");results<<"hooks ok";results.close();
+        VirtualFree(ram,0,MEM_RELEASE);return 0;
     }
     auto thread=CreateThread(nullptr,0,worker,nullptr,0,nullptr);
     assert(thread);WaitForSingleObject(thread,INFINITE);CloseHandle(thread);
@@ -95,6 +119,33 @@ MERC_PLUGIN_EXPORT int __cdecl MercenariesPlugin_Init(const MercPluginHost *host
     return 1;
 }
 '''
+PLUGIN_V2=r'''
+#define MERC_PLUGIN_IMPLEMENTATION
+#include "mercenaries_plugin.h"
+#include <windows.h>
+#include <string.h>
+static const MercPluginHost *h;
+static void __cdecl on_hook(void *u,MercPluginHookEvent *e) {
+    uint32_t scratch=0,eax=0,args[1]={41};
+    if((uintptr_t)u!=7||e->struct_size!=sizeof(*e)||e->api_version!=2||strcmp(e->name,"turret.update")||e->args[0]!=0x1000)return;
+    if(!h->guest_call_begin(h->context,64,&scratch)||scratch!=0x50000)return;
+    int ok=h->guest_call(h->context,0x1234,1,args,1,&eax);
+    int bad=h->guest_call(h->context,0x9999,0,NULL,0,&eax);
+    h->guest_call_end(h->context);
+    if(!ok||bad||eax!=42)return;
+    e->args[1]=99;e->result=42;e->handled=1;
+}
+__declspec(dllexport) int outside_guest_call(void) {uint32_t s;return h->guest_call_begin(h->context,16,&s);}
+static void __cdecl done(void *u) {(void)u;h->log(h->context,"shutdown");}
+MERC_PLUGIN_EXPORT int __cdecl MercenariesPlugin_Init(const MercPluginHost *host,MercPlugin *p,char *error,uint32_t capacity) {
+    (void)error;(void)capacity;h=host;p->on_shutdown=done;
+    if(host->api_version!=MERCENARIES_PLUGIN_API_VERSION_2||host->struct_size<sizeof(*host))return 0;
+    if(p->api_version!=2)return 0;
+    if(host->register_hook(host->context,"no.such.hook",on_hook,NULL))return 0;
+    if(!host->register_hook(host->context,"turret.update",on_hook,(void*)7))return 0;
+    return 1;
+}
+'''
 def main():
  CASE.mkdir(parents=True,exist_ok=True)
  spec=importlib.util.spec_from_file_location('loader_tests',ROOT/'tools/recomp/test_mod_loader_native.py')
@@ -109,6 +160,8 @@ def main():
  (CASE/'fixture.c').write_text(PLUGIN,encoding='utf-8')
  for value in [1,2,3]:
   build(['/LD','/I'+str(sdk),'/DVALUE='+str(value),str(CASE/'fixture.c'),str(CASE/'unique_fixture_dependency.lib'),'/Fo'+str(CASE/f'fixture{value}.obj'),'/Fe'+str(CASE/f'fixture{value}.dll')])
+ (CASE/'fixture_v2.c').write_text(PLUGIN_V2,encoding='utf-8')
+ build(['/LD','/I'+str(sdk),str(CASE/'fixture_v2.c'),'/Fo'+str(CASE/'fixture_v2.obj'),'/Fe'+str(CASE/'fixture_v2.dll')])
  (CASE/'harness.cpp').write_text(HARNESS,encoding='utf-8')
  build(['/EHsc','/std:c++17','/I'+str(src),str(CASE/'harness.cpp'),str(src/'plugin_host.cpp'),'/Fo'+str(CASE)+'\\','/Fe'+str(CASE/'harness.exe'),'/link','bcrypt.lib','user32.lib'])
  checks=[]
@@ -118,11 +171,11 @@ def main():
    p=base/name;game=p/'game_files/mercenaries-retail';game.mkdir(parents=True)
    (p/'mercenaries_recomp.exe').write_bytes(b'fixture not executed');(game/'default.xbe').write_bytes(b'fixture')
    return p
-  def plugin(p,folder,id,value=1,extra=''):
+  def plugin(p,folder,id,value=1,extra='',api=1):
    path=p/'mods'/folder;path.mkdir(parents=True)
    shutil.copyfile(CASE/f'fixture{value}.dll',path/'fixture.dll')
    shutil.copyfile(CASE/'unique_fixture_dependency.dll',path/'unique_fixture_dependency.dll')
-   (path/'mod.ini').write_text(f'[Plugin]\nId={id}\nName={folder}\nApiVersion=1\nLibrary=fixture.dll\n'+extra,encoding='utf-8')
+   (path/'mod.ini').write_text(f'[Plugin]\nId={id}\nName={folder}\nApiVersion={api}\nLibrary=fixture.dll\n'+extra,encoding='utf-8')
    (path/'same.ini').write_text('[Settings]\nValue=default\n')
    return path
   def run(p,mode,*mods,code=0,contains='',overrides=None):
@@ -148,6 +201,11 @@ def main():
   run(p,'vanilla','Alpha','Beta');assert (p/'paths.txt').read_text().splitlines()[1:]==['']
   assert (p/'plugin-settings/alpha/same.ini').read_text()=='saved alpha'
   checks+=['real DLL init/update/reverse cleanup','same DLL filenames in private folders','dependency DLL loading','checked reads/writes, overflow, protections, callback/thread restrictions','load order and independent persistent settings','vanilla isolation']
+  p=fixture('hooks');plugin(p,'Hooks','hooks','_v2',api=2)
+  run(p,'hooks','Hooks');assert (p/'result.txt').read_text()=='hooks ok'
+  log=(p/'plugin-settings/plugins.log').read_text()
+  assert 'initialized (interface 2)' in log and 'hooked turret.update' in log and 'unknown hook point no.such.hook' in log
+  checks+=['interface 2 hooks: subscribe, reject unknown, dispatch, writable args/result','interface 2 guest calls inside callbacks only, unknown function rejected','shutdown clears hook subscriptions']
   p=fixture('failure');plugin(p,'Alpha','alpha',1);plugin(p,'Beta','beta',2,'Requires=alpha\n');plugin(p,'Gamma','gamma',3);plugin(p,'Delta','delta',2,'Requires=beta\n')
   run(p,'run','Alpha','Beta','Delta','Gamma',overrides={'PLUGIN_FAIL_UPDATE':'alpha'})
   assert (p/'result.txt').read_text()=='0 1 33'
@@ -157,7 +215,7 @@ def main():
   checks+=['update failure stops transitive dependents, unrelated plugins continue','failed init rollback']
   run(p,'stage','Beta',code=2,contains='Requires enabled plugin')
   run(p,'stage','Beta','Alpha',code=2,contains='Move required plugin')
-  for name,extra,needle in [('api','ApiVersion=2\n','unsupported Plugin Interface'),('duplicate','Id=alpha\n','Duplicate [Plugin] key'),('unknown','Mystery=1\n','Unknown [Plugin] key'),('traversal','Library=../fixture.dll\n','relative .dll path'),('missing','Library=missing.dll\n','missing DLL')]:
+  for name,extra,needle in [('api','ApiVersion=3\n','unsupported Plugin Interface'),('duplicate','Id=alpha\n','Duplicate [Plugin] key'),('unknown','Mystery=1\n','Unknown [Plugin] key'),('traversal','Library=../fixture.dll\n','relative .dll path'),('missing','Library=missing.dll\n','missing DLL')]:
    q=fixture(name);path=plugin(q,'Alpha','alpha')
    text=(path/'mod.ini').read_text()
    if name in ['api','traversal','missing']:
