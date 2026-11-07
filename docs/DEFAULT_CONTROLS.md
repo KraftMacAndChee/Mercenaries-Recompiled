@@ -4,6 +4,12 @@ New profiles use these QWERTY bindings. Existing players keep their saved rebind
 
 Mouse Aim starts enabled for new profiles. Existing Mouse Aim settings are preserved; changing bindings with Reset These Binds does not toggle Mouse Aim.
 
+Controls > Decoupled Turrets (off by default, `DecoupledTurrets`) separates the mouse camera from tank guns, vehicle turrets, gunner seats and emplacements: the turret turns toward the camera's aim point at its authored traverse speed and fires along its barrel, without shell-drop compensation. A bracket marks the aim point and a second marker shows where the barrel points.
+
+Controls > Decoupled Helicopters (off by default, `DecoupledHelicopters`) applies the same idea to flying: the mouse turns the camera and the helicopter turns toward it while its guns slew to the aim point; vertical look is unchanged.
+
+For both, a deflected controller stick or turret/turn key returns retail control until the mouse moves again.
+
 ## On foot
 
 | Action | Input |

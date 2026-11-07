@@ -35,6 +35,10 @@ OG Bugs - A number of bugs were patched from the original game. This allows you 
 PS2 Upgrades - Utilizes certain sounds and textures from the PS2 version which are superior to the Xbox version
 Apply - Applies any changes made in Recomp Options
 
+[Controls]
+Decoupled Turrets - In tanks, vehicle turrets, gunner seats and emplacements the mouse moves a free camera and the turret turns toward your aim at its normal traverse speed. A bracket marks your aim and a second marker shows where the gun is pointing; shell drop is not compensated. Using a controller stick or turret keys returns normal control. Off by default
+Decoupled Helicopters - When flying a helicopter the mouse moves the camera and the helicopter turns toward your aim, with its guns following. Using a controller stick or turn keys returns normal control. Off by default
+
 [Keybinds]
 THE DEFAULT KEYBINDS FOR A,B,X,Y ON KEYBOARD ARE Z,X,C,V. YOU CAN REBIND IN CONTROLS IN THE MAIN MENU
 Press F9 to use developer menu when enabled
