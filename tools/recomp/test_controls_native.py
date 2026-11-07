@@ -68,6 +68,20 @@ static UINT test_mapkey(UINT key,UINT mode){
 #define RegisterRawInputDevices test_raw
 #define GetModuleFileNameA test_module
 #include "recomp_controls.c"
+/* Decoupled turrets are exercised separately; keep the controls fixture retail. */
+int decoupled_turret_enabled(void){return 0;}
+void decoupled_turret_load(const char *path){(void)path;}
+void decoupled_turret_save(const char *path){(void)path;}
+void decoupled_turret_set_enabled(int enabled){(void)enabled;}
+int decoupled_heli_enabled(void){return 0;}
+void decoupled_heli_set_enabled(int enabled){(void)enabled;}
+void decoupled_turret_mouse(float yaw,float pitch){(void)yaw;(void)pitch;}
+void decoupled_turret_controller_input(void){}
+void decoupled_heli_mouse(float yaw){(void)yaw;}
+void decoupled_heli_controller_input(void){}
+float decoupled_heli_steer(void){return 0.f;}
+int merc_plugins_hook_active(unsigned id){(void)id;return 0;}
+int merc_plugins_hook(unsigned id,MercPluginHookEvent *event){(void)id;(void)event;return 0;}
 #include "free_cam.c"
 /*DEVELOPER_HOTKEY*/
 ptrdiff_t g_xbox_mem_offset;
@@ -342,8 +356,8 @@ int main(int argc,char**argv){
  assert(controls_context(0)==-1 && controls_context(15)==-1);play(4);reset_input();
  /* Every channel appears exactly once in the paged action list. */
  unsigned seen=0;for(unsigned i=0;i<24;++i){assert(order[i]<24);seen|=1u<<order[i];}assert(seen==0xffffff);
- recomp_controls_open();assert(recomp_controls_count()==7);
- recomp_controls_input(5,5,1);assert(recomp_controls_count()==9);
+ recomp_controls_open();assert(recomp_controls_count()==9);
+ recomp_controls_input(7,5,1);assert(recomp_controls_count()==9);
  for(int i=0;i<6;++i){g_page=i;for(unsigned row=0;row<9;++row)assert(recomp_controls_label(RECOMP_CONTROLS_ROW+row));}
  g_page=5;recomp_controls_input(6,3,1);assert(g_page==0);recomp_controls_input(6,2,1);assert(g_page==5);
  /* Merged modes are skipped in both directions without renumbering saves. */

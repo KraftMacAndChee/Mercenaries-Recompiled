@@ -1,7 +1,9 @@
 # DLL plugins for Mercenaries Recompiled
 
-Plugin Interface 1 is available in builds containing the plugin host. The original
-public v1.1 executable does **not** implement it. Ship a plugin only to users with
+Plugin Interfaces 1 and 2 are available in builds containing the plugin host.
+Interface 2 adds named hook points and guest-function calls; see
+[Interface 2](#interface-2-hook-points-and-guest-calls). The original
+public v1.1 executable does **not** implement either. Ship a plugin only to users with
 an updated runtime **and launcher**.
 
 Asset-only mods need no manifest. Legacy proxy DLLs still use their existing
@@ -73,7 +75,7 @@ Library=example.dll
 | --- | --- |
 | Id | Required, stable 1–64 lowercase ASCII letters/digits/underscores/hyphens; no Windows device names. Changing it creates a different settings folder. |
 | Name | Optional display name; defaults to Id. The selector's main list retains the folder name. |
-| ApiVersion | Required, exactly 1 for this SDK. Unknown versions are rejected before initialization. |
+| ApiVersion | Required, 1 or 2. The host passes this value in every `api_version` it gives the plugin. Unknown versions are rejected before initialization. |
 | Library | Required relative .dll path. No absolute paths, traversal, links or device names. Directory/filename stems use letters, digits, underscores or hyphens. |
 | Requires | Optional plugin IDs that must be enabled **earlier** in load order. No automatic reorder or DLL function sharing is implied. Cyclic requirements cannot satisfy this rule. |
 | Conflicts | Optional IDs that must not be enabled together; checked in either direction. Declare only known incompatibilities. |
@@ -107,6 +109,14 @@ It checks the retail XBE header through read_guest; it does not change gameplay.
 The log is plugin-settings/plugins.log. LogIntervalMs is configurable in the
 persistent example.ini (250–60000 ms).
 
+`example_hooks` is the Interface 2 example (`ApiVersion=2`). Build it the same
+way (`cmake -S ports/mercenaries/sdk/example_hooks -B build/plugin-hooks-example
+-A x64`) and copy its output directory into mods/Hooks Example. It subscribes to
+`weapon.player_fire` and `turret.update`, and every 10 seconds reads the HUD
+resolution through guest calls to the game's own functions, logging to
+plugins.log. `FireAlongBarrel=1` in hooks_example.ini makes player turrets fire
+along their barrels.
+
 The example builds as C with a static CRT and includes mercenaries_plugin.h.
 Third-party plugins may use C++ internally, but the entry point must have C
 linkage and export exactly **MercenariesPlugin_Init**. No decorated C++ export,
@@ -134,6 +144,8 @@ or a fatal native crash cannot guarantee cleanup.
 Version 1 supports one update and one shutdown callback per plugin; dispatch to
 your own internal modules if needed. It deliberately does not expose arbitrary
 guest-function calls, graphics-device objects, input replacement or native detours.
+Interface 2 adds documented hook points and guest-function calls (below); it still
+exposes no graphics-device objects or native detours.
 Future facilities need documented API versions, not guessed structure extensions.
 The legacy MercenariesMod_Init/MercModHost interface used by some proxy mods is
 different and is not invoked by this host.
@@ -167,6 +179,83 @@ plugins continue. Cleanup runs at game shutdown; DLLs are not unloaded mid-game.
 Use the host logger for a detailed cause before returning 0. Do not throw
 exceptions across the C ABI. Arbitrary DLL crashes cannot be safely recovered
 from or sandboxed by this interface.
+
+## Interface 2: hook points and guest calls
+
+Set `ApiVersion=2` in mod.ini. The host then fills the interface 2 members of
+`MercPluginHost` (`register_hook`, `guest_call_begin`, `guest_call`,
+`guest_call_end`) and passes 2 in every `api_version`. Interface 1 plugins are
+unaffected and keep receiving 1. `sdk/example_hooks` is a complete example.
+
+### Hook points
+
+A hook point is a named place inside the game where the host offers
+documented values to subscribed plugins. Subscribe from init:
+
+~~~c
+host->register_hook(host->context, "turret.update", on_turret_update, my_state);
+~~~
+
+`register_hook` returns 0 for a name this build does not provide, so a plugin
+can refuse to load or fall back. The callback receives a `MercPluginHookEvent`:
+`name`, `arg_count`, `args[]` (integers, guest addresses or float bits; use
+`merc_plugin_f32`/`merc_plugin_bits`), `result` and `handled`. Setting
+`handled = 1` replaces the retail behaviour as described per hook. Subscribers
+run in load order on the guest thread, and each sees earlier plugins' changes.
+`read_guest`, `write_guest` and guest calls are valid inside the callback.
+Keep callbacks short: most points run every frame.
+
+When no plugin handles a point, the built-in Decoupled Turrets and Decoupled Helicopters options decide,
+and with both off every value is the retail one. Declare
+`Exclusive=` resources (for example `turret-camera`) if your plugin must not
+share a point with another.
+
+| Name | args | handled / result |
+| --- | --- | --- |
+| `input.vehicle_look` | 0 joystick context (0 helicopter, 2 tank, 4/9 scope, 10 mounted gun), 1 axis (0 X, 1 Y), 2 retail axis value (float), 3 pending mouse counts, 4 radians per count at the player's sensitivity (float), 5 invert Y | handled: the host consumes the mouse counts and uses `result` (float, -1..1) as the logical axis value |
+| `turret_camera.view` | 0 camera matrix (guest address, PblMatrix rows X, Y, Z = -look, position), 1 turret, 2-4 barrel pivot x/y/z (float) | edit the matrix with `write_guest`; handled: skip the built-in camera change |
+| `chase_camera.snap` | 0 chase-camera state, 1 vehicle | handled: skip the helicopter's snap behind the vehicle this frame |
+| `chase_camera.yaw` | 0 state, 1 vehicle, 2 current yaw (float, after retail auto-reset) | handled: `result` (float) becomes the camera yaw and the pending soft reset is cancelled |
+| `turret.update` | 0 turret, 1 dt (float) | before the turret consumes its traverse settings (yaw setting +0x248, pitch setting +0x22C, each -1..1 of yaw speed +0x238 / pitch speed +0x21C); handled: skip the built-in drive |
+| `turret.player_aim` | 0 turret | notification: RsAiPlayer is aiming this helicopter turret for the player |
+| `turret.ballistic_arc` | 0 turret | handled: `GetYawPitchDiffs` aims straight, without the shell-drop arc |
+| `weapon.player_fire` | 0 site (0 vehicle weapon, 1 gunner seat) | handled: fire along the barrel instead of at the crosshair pick |
+| `hud.crosshair` | 0 crosshair object, 1 crosshair mode | handled: use the dumb-target reticle (static bracket and dynamic marker) this frame |
+| `hud.dumb_target_turret` | 0 turret the marker follows | handled: `result` is the turret to follow |
+| `hud.dumb_target_point` | 0 axis (1 Y first, then 0 X), 1 HUD size (float), 2 retail value (float), 3 value after the built-in option (float) | handled: `result` (float, HUD pixels) is the marker target |
+| `hud.dumb_target_bracket` | 0 crosshair object; 1, 2 bracket x/y in HUD pixels (float, writable) | handled: draw the bracket at args 1/2 |
+
+Guest addresses and object offsets above refer to the supported retail XBE.
+New hook points are added by the port at reviewed patch sites; names and
+arguments never change meaning once published.
+
+### Guest calls
+
+Plugins may call translated game functions from a hook or update callback:
+
+~~~c
+uint32_t scratch, width;
+if (host->guest_call_begin(host->context, 64, &scratch)) {   /* 64 bytes of guest scratch */
+    host->guest_call(host->context, 0x0020F920u, 0, NULL, 0, &width); /* EAX */
+    host->guest_call_end(host->context);
+}
+~~~
+
+`guest_call_begin` saves the complete translated CPU state and reserves up to
+4096 bytes of scratch memory below the live guest stack. Use it for sret and
+out parameters (pass its guest address in `args`, read results with
+`read_guest`). `guest_call` pushes `args` (args[0] is the first parameter),
+sets ECX to `this_ptr` for thiscall functions, runs the function and returns
+EAX. Stack cleanup by either convention is undone after each call.
+`guest_call_end` restores the CPU state so the interrupted game code resumes
+unchanged. Calls nest up to four deep (a hook can fire inside a call). A call
+outside a callback, from another thread, or to an address that is not a
+translated function is rejected. A call left open when the callback returns
+is closed by the host.
+
+Calling game code is at the plugin's risk: the host cannot know whether a
+function is safe at that moment. Prefer functions the hook's own code path
+already uses, and test paused, loading and menu states.
 
 ## Dependencies and troubleshooting
 

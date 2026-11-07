@@ -243,6 +243,132 @@ def patch_homing_reticle_proportions(text: str) -> str:
     return text[:match.start()] + body + text[match.end():]
 
 
+HOOK_POINT_MARKER = '/* plugin hook point */'
+HOOK_POINT_EXTERNS = (
+    '    extern void recomp_hook_turret_camera_pivot(uint32_t turret, uint32_t matrix);\n'
+    '    extern void recomp_hook_turret_camera_view(uint32_t matrix);\n'
+    '    extern int recomp_hook_chase_camera_snap(uint32_t state, uint32_t vehicle);\n'
+    '    extern void recomp_hook_chase_camera_yaw(uint32_t state, uint32_t vehicle);\n'
+    '    extern void recomp_hook_turret_update(uint32_t turret, float dt);\n'
+    '    extern void recomp_hook_turret_player_aim(uint32_t turret);\n'
+    '    extern int recomp_hook_turret_ballistic_arc_skip(uint32_t turret);\n'
+    '    extern int recomp_hook_player_fire_along_barrel(uint32_t site);\n'
+    '    extern int recomp_hook_crosshair_dumb_target(uint32_t crosshair, uint32_t mode);\n'
+    '    extern uint32_t recomp_hook_dumb_target_turret(uint32_t turret);\n'
+    '    extern float recomp_hook_dumb_target_point(uint32_t axis, float hud_size, float retail);\n'
+    '    extern void recomp_hook_dumb_target_bracket(uint32_t crosshair);\n')
+
+
+def patch_plugin_hook_points(text: str) -> str:
+    """Camera, turret, fire and reticle hook points (Plugin Interface 2).
+
+    Each site calls a recomp_hook_* dispatcher (plugin_hook_points.h): plugins
+    subscribed to the named hook point decide first, then the built-in
+    Decoupled Aim option, and otherwise the retail value is returned.
+
+    - RsCameraStateTurret::Update (0xA1000): barrel-node pivot, and the
+      finished view matrix before it is stored ("turret_camera.view").
+    - RsActorTurret::Update (0x3CDF0): before the traverse settings are
+      consumed ("turret.update").
+    - RsActorTurret::GetYawPitchDiffs (0x3C830): the ballistic-arc branch
+      ("turret.ballistic_arc").
+    - Helicopter chase camera (0x9D840): the behind snap ("chase_camera.snap")
+      and the final yaw after UpdateAutoReset ("chase_camera.yaw").
+    - RsAiPlayer AimTurretAtTarget (0x8D4E0) / RecenterTurret (0x8D560): the
+      turrets aimed for the player ("turret.player_aim").
+    - Vehicle (0x41620) and gunner (0x90470) player fire: crosshair snap or
+      fire along the barrel ("weapon.player_fire").
+    - RsHud crosshair update caller (0x3628C0 after 0x10B310) and
+      _UpdateDumbTarget (0x108A00): reticle mode, tracked turret, marker and
+      bracket ("hud.*"). Retail computed the barrel projection and then
+      overwrote it with the fixed aim point, so it was compiled out.
+    """
+    def function(address):
+        return re.search(r'void sub_' + address + r'\(void\)\n\{.*?\n\}', text, re.S)
+
+    def replace_once(body, old, new, what):
+        if body.count(old) != 1:
+            raise RuntimeError(f'Plugin hook point anchor changed ({what}): {body.count(old)}')
+        return body.replace(old, new, 1)
+
+    def edit(address, edits):
+        nonlocal text
+        match = function(address)
+        if match is None or HOOK_POINT_MARKER in match[0]:
+            return
+        body = match[0]
+        for old, new, what in edits:
+            body = replace_once(body, old, new, f'{address} {what}')
+        body = body.replace('{\n', '{\n' + HOOK_POINT_EXTERNS, 1)
+        text = text[:match.start()] + body + text[match.end():]
+
+    m = HOOK_POINT_MARKER
+    edit('000A1000', (
+        ('loc_000A13FC: ;\n', f'loc_000A13FC: ;\n    {m} recomp_hook_turret_camera_pivot(esi, eax);\n', 'pivot node'),
+        # The finished, collided, rolled view is copied to the state here.
+        ('loc_000A199E: ;\n    edx = esp + 0x50;\n',
+         f'loc_000A199E: ;\n    {m} recomp_hook_turret_camera_view(esp + 0x50);\n    edx = esp + 0x50;\n',
+         'final view'),
+    ))
+    edit('0003C830', (
+        ('    if ((_fpu_cmp <= 0) /* fcompi */) goto loc_0003CA41; /* jbe: below or equal (unsigned <=) */',
+         f'    {m}\n    if ((_fpu_cmp <= 0) /* fcompi */ || recomp_hook_turret_ballistic_arc_skip(esi)) goto loc_0003CA41; /* ballistic arc */',
+         'ballistic arc'),
+    ))
+    edit('0009D840', (
+        ('loc_0009DAF9: ;\n    PUSH32(esp, 0x7F7FFFFF);\n',
+         f'loc_0009DAF9: ;\n    {m} if (recomp_hook_chase_camera_snap(esi, edi)) goto loc_0009DB06;\n'
+         '    PUSH32(esp, 0x7F7FFFFF);\n', 'chase snap'),
+        # After UpdateAutoReset/DoSoftReset, just before mRot.SetRotateY(_fYaw).
+        ('loc_0009DBBD: ;\n    PUSH32(esp, 0x6438E0);\n',
+         f'loc_0009DBBD: ;\n    {m} recomp_hook_chase_camera_yaw(esi, edi);\n    PUSH32(esp, 0x6438E0);\n',
+         'chase yaw'),
+    ))
+    edit('0008D4E0', (('loc_0008D4FC: ;\n', f'loc_0008D4FC: ;\n    {m} recomp_hook_turret_player_aim(esi);\n', 'player aim'),))
+    edit('0008D560', (('loc_0008D57B: ;\n', f'loc_0008D57B: ;\n    {m} recomp_hook_turret_player_aim(esi);\n', 'player recenter'),))
+    edit('0003CDF0', (
+        ('loc_0003CE6D: ;\n',
+         f'loc_0003CE6D: ;\n    {m} recomp_hook_turret_update(esi, MEMF(ebp + 8));\n', 'turret update'),
+    ))
+    ahead = 'if (((isnan((double)(xmm3)) || isnan((double)(MEMF(0x2DC098)))) || (xmm3 <= MEMF(0x2DC098)))) goto '
+    for address, target, site in (('00041620', 'loc_000417C3', 0), ('00090470', 'loc_00091222', 1)):
+        edit(address, ((ahead + target + ';',
+                        f'{m}\n    if (recomp_hook_player_fire_along_barrel({site}u) || ((isnan((double)(xmm3)) || '
+                        'isnan((double)(MEMF(0x2DC098)))) || (xmm3 <= MEMF(0x2DC098)))) goto ' + target + ';',
+                        'player fire'),))
+    # Right after RsHud updates the main crosshair (0x10B310, this=0x3628C0).
+    hud_call = 'loc_0010BFF0: ;\n    PUSH32(esp, esi);\n    ecx = 0x362990;\n'
+    at = text.find(hud_call)
+    owner = re.findall(r'void sub_([0-9A-F]{8})\(void\)\n\{', text[:at]) if at >= 0 else []
+    if owner:
+        edit(owner[-1], ((hud_call,
+            'loc_0010BFF0: ;\n'
+            f'    {m}\n'
+            '    if (recomp_hook_crosshair_dumb_target(0x3628C0u, MEM32(0x3628C0u + 0x30u))) {\n'
+            '        PUSH32(esp, esi);\n        ecx = 0x3628C0;\n        PUSH32(esp, 0); sub_00108A00();\n    }\n'
+            '    PUSH32(esp, esi);\n    ecx = 0x362990;\n', 'reticle mode'),))
+    edit('00108A00', (
+        ('loc_00108B62: ;\n    ecx = MEM32(esp + 0x10);',
+         'loc_00108B62: ;\n'
+         f'    {m}\n'
+         '    MEM32(esp + 0x10) = recomp_hook_dumb_target_turret(MEM32(esp + 0x10));\n'
+         '    if (!MEM32(esp + 0x4C) && MEM32(esp + 0x10)) MEM32(esp + 0x4C) = MEM32(MEM32(esp + 0x10) + 0x27C);\n'
+         '    ecx = MEM32(esp + 0x10);', 'tracked turret'),
+        ('    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    xmm0 = xmm0 * MEMF(0x2DDA48); /* mulss */\n',
+         '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n'
+         '    xmm0 = recomp_hook_dumb_target_point(1u, xmm0, xmm0 * MEMF(0x2DDA48));\n',
+         'marker y'),
+        ('    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n    MEMF(esp + 0x48) = xmm2; /* movss */\n',
+         '    xmm0 = (float)(int32_t)eax; /* cvtsi2ss */\n'
+         '    xmm0 = recomp_hook_dumb_target_point(0u, 2.f * xmm0, xmm0);\n'
+         '    MEMF(esp + 0x48) = xmm2; /* movss */\n', 'marker x'),
+        ('    MEM32(esi + 0x50) = edx;\n',
+         '    MEM32(esi + 0x50) = edx;\n'
+         '    recomp_hook_dumb_target_bracket(esi);\n', 'bracket'),
+    ))
+    return text
+
+
 def patch_save_browser_stack_flags(text: str) -> str:
     """Keep button event type separate from button identity after PUSH ESI."""
     for address, target in (('00188690','001886DC'),('00188760','001887A6')):
@@ -13923,6 +14049,7 @@ def patch_generated(    generated_root: Path, *, allow_missing: bool = False
         fixed = remove_experimental_traffic_admission(fixed)
         fixed = patch_reticle_proportions(fixed)
         fixed = patch_homing_reticle_proportions(fixed)
+        fixed = patch_plugin_hook_points(fixed)
         fixed = patch_simple_scalar_delete_flags(fixed)
         if fixed != text:
             applied.append(("simple scalar-delete stack flags", path))

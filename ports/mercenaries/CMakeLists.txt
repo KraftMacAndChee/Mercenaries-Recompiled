@@ -68,6 +68,7 @@ set(GAME_SOURCES
     src/mission_script_fixes.c
     src/recomp_ui.c
     src/recomp_controls.c
+    src/decoupled_turret.c
     src/chapter_return.c
     src/recomp_prompts.c
     src/recomp_options_menu.c

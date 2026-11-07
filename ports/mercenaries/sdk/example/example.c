@@ -12,7 +12,7 @@ static int MERC_PLUGIN_CALL update(void *userdata,const MercPluginUpdate *event)
 {
     uint32_t magic=0;
     (void)userdata;
-    if(event->api_version!=MERCENARIES_PLUGIN_API_VERSION)return 0;
+    if(event->api_version!=MERCENARIES_PLUGIN_API_VERSION_1)return 0;
     if(!host_api->read_guest(host_api->context,0x10000,&magic,sizeof(magic)) ||
        magic!=0x48454258u) {
         host_api->log(host_api->context,"Could not read the expected retail XBE header.");
@@ -37,7 +37,7 @@ MERC_PLUGIN_EXPORT int MERC_PLUGIN_CALL MercenariesPlugin_Init(
     const MercPluginHost *host,MercPlugin *plugin,char *error,uint32_t capacity)
 {
     wchar_t settings[32768];
-    if(!host || host->api_version!=MERCENARIES_PLUGIN_API_VERSION ||
+    if(!host || host->api_version!=MERCENARIES_PLUGIN_API_VERSION_1 ||
        host->struct_size<sizeof(MercPluginHost) || !plugin ||
        plugin->struct_size<sizeof(MercPlugin)) {
         if(error && capacity)snprintf(error,capacity,"Unsupported plugin interface.");
