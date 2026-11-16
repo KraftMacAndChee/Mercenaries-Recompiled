@@ -21,8 +21,10 @@
 #include <share.h>
 #include "../kernel/preview_log.h"
 
+#ifdef _MSC_VER
 #pragma comment(lib, "xaudio2.lib")
 #pragma comment(lib, "ole32.lib")
+#endif
 
 #define XA2_SAMPLE_RATE   48000
 #define XA2_CHANNELS      2

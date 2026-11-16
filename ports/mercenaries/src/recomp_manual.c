@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <setjmp.h>
 #include <math.h>
 #include <float.h>
 

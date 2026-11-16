@@ -36,7 +36,7 @@ def test_requested_menu_shape_and_placement() -> None:
     assert "MENU_MAIN_HASH" in MENU and "MENU_PAUSE_HASH" in MENU
     assert "MENU_SHELL_OPTIONS_HASH" in MENU
     assert "insert_item_before(menu,RECOMP_OPTIONS_MENU_HASH,0x00DFD9ADu)" in MENU
-    assert "OPTIONS_ITEM_COUNT 15u" in MENU
+    assert "OPTIONS_ITEM_COUNT 16u" in MENU
     assert "RECOMP_OPTIONS_PS2_UPGRADES_HASH" in MENU
     assert "RECOMP_OPTIONS_BOIDS_HASH" not in MENU
     assert "RECOMP_OPTIONS_OBJECT_DISTANCE_HASH" not in MENU
@@ -164,6 +164,26 @@ def test_resolution_scale_is_true_internal_rendering() -> None:
     assert "strtol(text, &end, 10)" in override
     assert "clamp_setting((int)value, 5)" in override
     assert "write_setting" not in override
+
+
+def test_supersampling_scales_only_the_internal_render_target() -> None:
+    assert "RECOMP_OPTIONS_SSAA_HASH" in OPTIONS_HEADER
+    assert "RECOMP_OPTIONS_CHANGE_SSAA" in OPTIONS_HEADER
+    assert "RECOMP_OPTIONS_SSAA_HASH" in MENU
+    assert '"Supersampling", RECOMP_OPTIONS_SSAA_DEFAULT' in OPTIONS
+    assert "RECOMP_OPTIONS_SSAA_HASH: g_options.pending.ssaa = cycle" in OPTIONS
+    assert "static const char *ssaa_modes[]" in OPTIONS
+    assert "SUPERSAMPLING: %s" in OPTIONS
+    assert "int recomp_options_supersampling(void);" in OPTIONS_HEADER
+    internal = OPTIONS[
+        OPTIONS.index("void recomp_options_internal_resolution_size"):
+        OPTIONS.index("void recomp_options_presentation_aspect")
+    ]
+    assert "ssaa_numerators[]" in internal and "ssaa_denominators[]" in internal
+    assert "RECOMP_OPTIONS_SSAA_MAX" in internal
+    # Applied when the option changes, and it must not touch output size.
+    assert "RECOMP_OPTIONS_CHANGE_RESOLUTION |\n                   RECOMP_OPTIONS_CHANGE_SSAA" in MAIN
+    assert "recomp_options_resolution_size" not in internal
 
 
 def test_live_resolution_change_preserves_render_target_history() -> None:
@@ -349,6 +369,7 @@ if __name__ == "__main__":
     test_settings_persist_beside_the_executable()
     test_renderer_settings_have_real_backing_behavior()
     test_resolution_scale_is_true_internal_rendering()
+    test_supersampling_scales_only_the_internal_render_target()
     test_live_resolution_change_preserves_render_target_history()
     test_live_resolution_transition_regression_is_opt_in()
     test_aspect_and_draw_distance_use_deterministic_generated_hooks()
