@@ -7,11 +7,20 @@
 # extract-xiso or the bundled xdvdfs). This mirrors Build-From-Iso.ps1, which
 # only runs on Windows with Visual Studio 2022.
 #
-# Usage:
-#   LLVM_MINGW=/path/to/llvm-mingw \
-#     ./scripts/Build-Mercenaries-Linux.sh --game-dir "/path/to/Mercenaries (USA, Europe).xiso"
+# Prerequisites:
+#   LLVM-MinGW is not bundled. Download a UCRT release from
+#   https://github.com/mstorsjo/llvm-mingw/releases and set LLVM_MINGW to its
+#   root directory, for example:
+#     curl -LO https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-ubuntu-20.04-x86_64.tar.xz
+#     tar xJf llvm-mingw-20250305-ucrt-ubuntu-20.04-x86_64.tar.xz
 #
-# The extracted directory must contain default.xbe with SHA-256
+# Usage:
+#   LLVM_MINGW=$(pwd)/llvm-mingw-20250305-ucrt-ubuntu-20.04-x86_64 \
+#     ./scripts/Build-Mercenaries-Linux.sh \
+#       --game-dir game_files/mercenaries-retail
+#
+# --game-dir takes the extracted game tree, not the .xiso archive. The tree
+# must contain default.xbe with SHA-256
 # AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7.
 #
 # Output: <repo>/build/mercenaries-mingw/bin/mercenaries_recomp.exe
@@ -19,7 +28,7 @@
 #
 # Run the result with Wine, pointing the runtime directly at the game tree:
 #   cd <repo>/build/mercenaries-mingw/bin
-#   MERCENARIES_GAME_DIR='Z:\path\to\extracted\tree' wine mercenaries_recomp.exe
+#   MERCENARIES_GAME_DIR='Z:\path\to\game_files\mercenaries-retail' wine mercenaries_recomp.exe
 #
 # NOTE: The bundled DSP56300 backend is an MSVC-ABI Rust archive and is not
 # linked by this cross build; the portable apu_dsp.c fallback is used instead.
@@ -40,7 +49,7 @@ while [[ $# -gt 0 ]]; do
         --game-dir)  GAME_DIR="$2"; shift 2 ;;
         --build-dir) BUILD_DIR="$2"; shift 2 ;;
         --debug)     BUILD_TYPE="Debug"; shift ;;
-        -h|--help)   sed -n '2,30p' "$0"; exit 0 ;;
+        -h|--help)   awk 'NR>1 && /^#/ {print; next} NR>1 {exit}' "$0"; exit 0 ;;
         *) echo "Unknown argument: $1" >&2; exit 2 ;;
     esac
 done
