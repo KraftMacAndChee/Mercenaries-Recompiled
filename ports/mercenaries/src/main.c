@@ -99,11 +99,22 @@ static const char *g_game_dir = DEFAULT_GAME_DIR;
 static const char *g_save_dir = DEFAULT_SAVE_DIR;
 static char g_game_dir_storage[MAX_PATH];
 static char g_save_dir_storage[MAX_PATH];
-static const unsigned char g_required_retail_xbe_sha256[32] = {
+/* Supported retail XBE revisions. The EU/FR release carries the same code,
+ * section layout and entry point as the USA release; only its certificate
+ * (region, signature) differs, so both drive the same translated C. */
+static const unsigned char g_supported_retail_xbe_sha256[][32] = {
+    { /* USA */
     0xAA, 0x08, 0xEA, 0x21, 0xD9, 0x52, 0xAC, 0x35,
     0xF4, 0x9C, 0x02, 0xC7, 0xE2, 0xED, 0x08, 0xAA,
     0x25, 0xAD, 0x75, 0x35, 0xFB, 0xBB, 0xCC, 0xC9,
     0x56, 0x36, 0x77, 0x5F, 0x37, 0xBE, 0x99, 0xD7
+    },
+    { /* EU-FR */
+    0x9D, 0xD2, 0x6D, 0x6C, 0xE0, 0x30, 0xF4, 0x67,
+    0x46, 0x2A, 0x4A, 0x81, 0x32, 0xAC, 0x82, 0x21,
+    0x7E, 0xCE, 0xA6, 0x9E, 0xCF, 0xEF, 0x5F, 0xAB,
+    0x92, 0x38, 0x39, 0x26, 0x42, 0xFD, 0xC3, 0x56
+    }
 };
 static char g_xbe_path[MAX_PATH];
 static HANDLE g_kernel_tick_thread;
@@ -1885,6 +1896,38 @@ static BOOL find_default_game_dir(void)
     return FALSE;
 }
 
+/* The retail XBE picks DATAxbox/<language>.dsk from the console language.
+ * USA discs carry english.dsk; European single-language discs carry only
+ * their own pack, so report the language whose pack is actually installed. */
+static void select_console_language_for_disc(void)
+{
+    static const struct { const char *file; ULONG language; const char *name; }
+    packs[] = {
+        { "english.dsk", XC_LANGUAGE_ENGLISH, "English" },
+        { "french.dsk",  XC_LANGUAGE_FRENCH,  "French"  },
+        { "german.dsk",  XC_LANGUAGE_GERMAN,  "German"  },
+        { "italian.dsk", XC_LANGUAGE_ITALIAN, "Italian" },
+        { "spanish.dsk", XC_LANGUAGE_SPANISH, "Spanish" },
+    };
+    char path[MAX_PATH];
+    for (size_t index = 0; index < ARRAYSIZE(packs); ++index) {
+        DWORD attributes;
+        int written = snprintf(path, sizeof(path), "%s\\DATAxbox\\%s",
+                               g_game_dir, packs[index].file);
+        if (written < 0 || written >= (int)sizeof(path))
+            continue;
+        attributes = GetFileAttributesA(path);
+        if (attributes != INVALID_FILE_ATTRIBUTES &&
+            !(attributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            xbox_set_console_language(packs[index].language);
+            printf("Console language: %s (%s)\n", packs[index].name,
+                   packs[index].file);
+            return;
+        }
+    }
+    printf("Console language: English (no localized asset pack found)\n");
+}
+
 static BOOL verify_retail_xbe(const void *data, size_t size)
 {
     BCRYPT_ALG_HANDLE algorithm = NULL;
@@ -1919,8 +1962,11 @@ static BOOL verify_retail_xbe(const void *data, size_t size)
     if (status < 0) goto cleanup;
     status = BCryptFinishHash(hash, digest, sizeof(digest), 0);
     if (status < 0) goto cleanup;
-    matches = memcmp(digest, g_required_retail_xbe_sha256,
-                     sizeof(digest)) == 0;
+    for (size_t index = 0;
+         !matches && index < ARRAYSIZE(g_supported_retail_xbe_sha256);
+         ++index)
+        matches = memcmp(digest, g_supported_retail_xbe_sha256[index],
+                         sizeof(digest)) == 0;
 
 cleanup:
     if (hash) BCryptDestroyHash(hash);
@@ -2062,14 +2108,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     printf("XBE loaded: %zu bytes\n", xbe_size);
     if (!verify_retail_xbe(xbe_data, xbe_size)) {
         MessageBoxA(NULL,
-                    "default.xbe is not the supported retail Mercenaries XBE.\n"
-                    "Required SHA-256:\n"
-                    "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7",
+                    "default.xbe is not a supported retail Mercenaries XBE.\n"
+                    "Supported SHA-256:\n"
+                    "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7 (USA)\n"
+                    "9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356 (EU-FR)",
                     "Mercenaries Recomp", MB_ICONERROR);
         free(xbe_data);
         return 1;
     }
     printf("Retail XBE SHA-256 verified.\n");
+    select_console_language_for_disc();
     xbox_preview_log_event("session", "supported retail XBE SHA256 verified");
 
     recomp_mod_compatibility_init();

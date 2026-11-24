@@ -24,7 +24,7 @@ Three artifacts must be distinguished:
 2. Generated native program: disposable lifted C plus reviewed post-generation patches, compiled with the runtime.
 3. Player installation: launcher, native game executable, supporting libraries, and separately extracted user game data. The ISO/XBE is an installation/regeneration input, not a source archive payload.
 
-The supported XBE SHA-256 is `AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7`. Address-based hooks and layout assumptions are tied to it. Accepting another executable requires more than bypassing its hash check.
+The supported XBE SHA-256 values are `AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7` (USA) and `9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356` (EU-FR, same code and layout). Address-based hooks and layout assumptions are tied to it. Accepting another executable requires more than bypassing its hash check.
 
 ```mermaid
 flowchart TD

@@ -63,12 +63,21 @@ def test_normal_launch_checks_only_completion_marker() -> None:
 
 
 def test_one_time_install_is_fully_validated_and_transactional() -> None:
-    assert "#define EXPECTED_RETAIL_FILE_COUNT 434ULL" in LAUNCHER
-    assert "#define EXPECTED_RETAIL_TOTAL_BYTES 2506857692ULL" in LAUNCHER
+    # Each supported retail revision pins its XBE, language pack and inventory.
+    assert 'L"DATAxbox\\\\english.dsk", 434ULL, 2506857692ULL' in LAUNCHER
+    assert 'L"DATAxbox\\\\french.dsk", 405ULL, 2250550613ULL' in LAUNCHER
+    for xbe_sha256 in (
+        "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7",
+        "9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356",
+    ):
+        assert xbe_sha256 in LAUNCHER
     assert "scan_install_tree(game_dir, &file_count, &total_bytes)" in LAUNCHER
-    assert (
-        "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7"
-        in LAUNCHER
+    assert "file_count != profile->file_count" in LAUNCHER
+    assert "total_bytes != profile->total_bytes" in LAUNCHER
+    # The revision is identified from default.xbe before its inventory is
+    # checked, so a mismatched disc cannot pass with another profile's counts.
+    assert LAUNCHER.index("find_retail_profile(digest)))") < LAUNCHER.index(
+        "file_count != profile->file_count"
     )
     assert 'L"game_files\\\\.mercenaries-installing"' in LAUNCHER
     assert "MoveFileExW(g_state.staging_dir, g_state.game_dir" in LAUNCHER

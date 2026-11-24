@@ -13,7 +13,12 @@ Set-StrictMode -Version Latest
 $portRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $portRoot "..\.."))
 $xdvdfs = Join-Path $repoRoot ".tools\xdvdfs\xdvdfs.exe"
-$expectedXbeHash = "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7"
+# Supported retail XBE revisions. The EU/FR disc ships the same translated code
+# (identical section layout and entry point); only the certificate differs.
+$supportedXbeHashes = @{
+    "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7" = "USA"
+    "9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356" = "EU-FR"
+}
 
 if (-not (Test-Path -LiteralPath $IsoPath -PathType Leaf)) {
     throw "ISO not found: $IsoPath"
@@ -46,9 +51,10 @@ if (-not (Test-Path -LiteralPath $xbePath -PathType Leaf)) {
 }
 
 $actualHash = (Get-FileHash -LiteralPath $xbePath -Algorithm SHA256).Hash
-if ($actualHash -ne $expectedXbeHash) {
-    throw "Unsupported default.xbe revision. Expected $expectedXbeHash, got $actualHash."
+if (-not $supportedXbeHashes.ContainsKey($actualHash)) {
+    throw "Unsupported default.xbe revision. Expected one of $($supportedXbeHashes.Keys -join ', '), got $actualHash."
 }
+Write-Host "Retail default.xbe revision: $($supportedXbeHashes[$actualHash])"
 
 $files = Get-ChildItem -LiteralPath $destination -Recurse -File | Measure-Object Length -Sum
 Write-Host ("Extracted {0} files ({1:N3} GiB) to {2}" -f $files.Count, ($files.Sum / 1GB), $destination)

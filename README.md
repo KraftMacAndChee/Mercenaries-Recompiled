@@ -43,7 +43,7 @@ Install these prerequisites:
 - Visual Studio **2022**, with the C++ desktop build tools, MSVC
   **14.44.35207**, and Windows SDK **10.0.26100.0**.
 - PowerShell 7 or Windows PowerShell 5.1.
-- Your legally obtained **USA retail Xbox Mercenaries ISO**.
+- Your legally obtained **USA or EU-FR (France) retail Xbox Mercenaries ISO**.
 
 From the repository root in PowerShell:
 
@@ -59,11 +59,17 @@ installed.
 
 The script extracts and verifies the retail input, generates and patches the
 translated C, builds the runtime and launcher, and writes build provenance.
-The supported `default.xbe` SHA-256 is:
+The supported `default.xbe` SHA-256 values are:
 
 ```text
-AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7
+AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7  USA
+9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356  EU-FR (Redump "Mercenaries (France)")
 ```
+
+The EU-FR executable has the same code, section layout and entry point as the
+USA one; only its certificate differs. The French disc ships only
+`DATAxbox/french.dsk` (405 files instead of 434), so the runtime reports the
+console language matching the installed language pack.
 
 Default output:
 
