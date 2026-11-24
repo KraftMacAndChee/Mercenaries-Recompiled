@@ -25,12 +25,51 @@
 #define WM_INSTALL_FINISHED (WM_APP + 1)
 #define WM_INSTALL_PROGRESS (WM_APP + 2)
 
-static const unsigned char k_retail_xbe_sha256[32] = {
-    0xAA,0x08,0xEA,0x21,0xD9,0x52,0xAC,0x35,
-    0xF4,0x9C,0x02,0xC7,0xE2,0xED,0x08,0xAA,
-    0x25,0xAD,0x75,0x35,0xFB,0xBB,0xCC,0xC9,
-    0x56,0x36,0x77,0x5F,0x37,0xBE,0x99,0xD7
+/* Supported retail discs. Both share the same translated code; they differ in
+ * the XBE certificate and in which localized DATAxbox/<language>.dsk ships. */
+typedef struct retail_profile {
+    const char *name;
+    unsigned char xbe_sha256[32];
+    const char *xbe_sha256_text;
+    const wchar_t *language_pack;
+    unsigned long long file_count;
+    unsigned long long total_bytes;
+} retail_profile;
+
+static const retail_profile k_retail_profiles[] = {
+    {
+        "USA",
+        { 0xAA,0x08,0xEA,0x21,0xD9,0x52,0xAC,0x35,
+          0xF4,0x9C,0x02,0xC7,0xE2,0xED,0x08,0xAA,
+          0x25,0xAD,0x75,0x35,0xFB,0xBB,0xCC,0xC9,
+          0x56,0x36,0x77,0x5F,0x37,0xBE,0x99,0xD7 },
+        "AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7",
+        L"DATAxbox\\english.dsk", 434ULL, 2506857692ULL
+    },
+    {
+        "EU-FR",
+        { 0x9D,0xD2,0x6D,0x6C,0xE0,0x30,0xF4,0x67,
+          0x46,0x2A,0x4A,0x81,0x32,0xAC,0x82,0x21,
+          0x7E,0xCE,0xA6,0x9E,0xCF,0xEF,0x5F,0xAB,
+          0x92,0x38,0x39,0x26,0x42,0xFD,0xC3,0x56 },
+        "9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356",
+        L"DATAxbox\\french.dsk", 405ULL, 2250550613ULL
+    },
 };
+
+/* The disc revision is only known once default.xbe is extracted, so the
+ * extraction progress bar uses the smallest supported install size (it is
+ * capped at 90% before validation anyway). */
+#define PROGRESS_ESTIMATE_TOTAL_BYTES 2250550613ULL
+
+static const retail_profile *find_retail_profile(const unsigned char digest[32])
+{
+    size_t index;
+    for (index = 0; index < ARRAYSIZE(k_retail_profiles); ++index)
+        if (!memcmp(digest, k_retail_profiles[index].xbe_sha256, 32))
+            return &k_retail_profiles[index];
+    return NULL;
+}
 
 typedef struct launcher_state {
     HWND window, action_button, close_button;
@@ -123,8 +162,6 @@ cleanup:
 }
 
 
-#define EXPECTED_RETAIL_FILE_COUNT 434ULL
-#define EXPECTED_RETAIL_TOTAL_BYTES 2506857692ULL
 
 static BOOL scan_install_tree(const wchar_t *directory,
                               uint64_t *file_count, uint64_t *total_bytes)
@@ -170,10 +207,11 @@ static BOOL validate_install(const wchar_t *game_dir, BOOL require_marker,
                              wchar_t *reason, size_t reason_capacity)
 {
     static const wchar_t *required_files[] = {
-        L"default.xbe", L"DATAxbox\\assets.dsk", L"DATAxbox\\english.dsk",
+        L"default.xbe", L"DATAxbox\\assets.dsk",
         L"DATAxbox\\locked.dsk", L"DATAxbox\\streamed.dsk",
         L"DATAxbox\\MOVIES\\attract.xmv"
     };
+    const retail_profile *profile;
     static const wchar_t *required_directories[] = {
         L"DATAxbox\\SOUND", L"DATAxbox\\NW", L"DATAxbox\\HUD"
     };
@@ -216,18 +254,25 @@ static BOOL validate_install(const wchar_t *game_dir, BOOL require_marker,
             return FALSE;
         }
     }
-    if (!scan_install_tree(game_dir, &file_count, &total_bytes) ||
-        file_count != EXPECTED_RETAIL_FILE_COUNT ||
-        total_bytes != EXPECTED_RETAIL_TOTAL_BYTES) {
-        _snwprintf_s(reason, reason_capacity, _TRUNCATE,
-                     L"The installed game-file inventory is incomplete or damaged.");
-        return FALSE;
-    }
     if (!path_join(path, ARRAYSIZE(path), game_dir, L"default.xbe") ||
         !hash_file_sha256(path, digest) ||
-        memcmp(digest, k_retail_xbe_sha256, sizeof(digest))) {
+        !(profile = find_retail_profile(digest))) {
         _snwprintf_s(reason, reason_capacity, _TRUNCATE,
-                     L"default.xbe is not the supported retail Mercenaries release.");
+                     L"default.xbe is not a supported retail Mercenaries release (USA or EU-FR).");
+        return FALSE;
+    }
+    if (!path_join(path, ARRAYSIZE(path), game_dir, profile->language_pack) ||
+        !regular_nonempty_file(path)) {
+        _snwprintf_s(reason, reason_capacity, _TRUNCATE,
+                     L"A required game file is missing: %s",
+                     profile->language_pack);
+        return FALSE;
+    }
+    if (!scan_install_tree(game_dir, &file_count, &total_bytes) ||
+        file_count != profile->file_count ||
+        total_bytes != profile->total_bytes) {
+        _snwprintf_s(reason, reason_capacity, _TRUNCATE,
+                     L"The installed game-file inventory is incomplete or damaged.");
         return FALSE;
     }
     if (reason_capacity) reason[0] = L'\0';
@@ -320,7 +365,7 @@ static BOOL run_extractor(const wchar_t *extractor, const wchar_t *iso,
             if (GetProcessIoCounters(process.hProcess, &counters)) {
                 percent = 5u + (unsigned int)(
                     (counters.WriteTransferCount * 85ULL) /
-                    EXPECTED_RETAIL_TOTAL_BYTES);
+                    PROGRESS_ESTIMATE_TOTAL_BYTES);
                 if (percent > 90) percent = 90;
                 if (percent > last_percent) {
                     last_percent = percent;
@@ -346,19 +391,29 @@ static BOOL run_extractor(const wchar_t *extractor, const wchar_t *iso,
 
 static BOOL write_install_marker(const wchar_t *game_dir)
 {
-    static const char marker[] =
-        "Mercenaries Recompiled asset install v1\r\n"
-        "retail_xbe_sha256=AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7\r\n";
+    char marker[256];
+    int marker_length;
+    unsigned char digest[32];
+    const retail_profile *profile;
     wchar_t path[PATH_CAPACITY];
     HANDLE file;
     DWORD written;
+    if (!path_join(path, ARRAYSIZE(path), game_dir, L"default.xbe") ||
+        !hash_file_sha256(path, digest) ||
+        !(profile = find_retail_profile(digest)))
+        return FALSE;
+    marker_length = _snprintf_s(marker, sizeof(marker), _TRUNCATE,
+        "Mercenaries Recompiled asset install v1\r\n"
+        "retail_revision=%s\r\n"
+        "retail_xbe_sha256=%s\r\n", profile->name, profile->xbe_sha256_text);
+    if (marker_length <= 0) return FALSE;
     if (!path_join(path, ARRAYSIZE(path), game_dir, INSTALL_MARKER))
         return FALSE;
     file = CreateFileW(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
                        FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_NORMAL, NULL);
     if (file == INVALID_HANDLE_VALUE) return FALSE;
-    if (!WriteFile(file, marker, (DWORD)(sizeof(marker) - 1), &written, NULL) ||
-        written != sizeof(marker) - 1 || !FlushFileBuffers(file)) {
+    if (!WriteFile(file, marker, (DWORD)marker_length, &written, NULL) ||
+        written != (DWORD)marker_length || !FlushFileBuffers(file)) {
         CloseHandle(file); DeleteFileW(path); return FALSE;
     }
     CloseHandle(file);

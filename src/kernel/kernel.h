@@ -991,6 +991,19 @@ ULONG xbox_get_user_video_flags(void);
 ULONG xbox_get_av_pack(void);
 void xbox_set_widescreen_enabled(BOOL enabled);
 
+/* XC_LANGUAGE values reported by the virtual console EEPROM. */
+#define XC_LANGUAGE_ENGLISH     1
+#define XC_LANGUAGE_JAPANESE    2
+#define XC_LANGUAGE_GERMAN      3
+#define XC_LANGUAGE_FRENCH      4
+#define XC_LANGUAGE_SPANISH     5
+#define XC_LANGUAGE_ITALIAN     6
+#define XC_LANGUAGE_KOREAN      7
+#define XC_LANGUAGE_CHINESE     8
+#define XC_LANGUAGE_PORTUGUESE  9
+void xbox_set_console_language(ULONG language);
+ULONG xbox_get_console_language(void);
+
 
 /* Unknown ordinals - stub */
 VOID    __stdcall xbox_Unknown_8(void);

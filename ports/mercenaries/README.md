@@ -1,7 +1,10 @@
 # Mercenaries ISO-to-port pipeline
 
 This port supports the verified USA retail XBE with SHA-256
-`AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7`.
+`AA08EA21D952AC35F49C02C7E2ED08AA25AD7535FBBBCCC95636775F37BE99D7` and the
+EU-FR retail XBE with SHA-256
+`9DD26D6CE030F467462A4A8132AC82217ECEA69ECFEF5FAB9238392642FDC356`, which
+carries the same code at the same addresses.
 Generated C, analysis output, extracted game data, and native build output are
 disposable. Do not make correctness fixes directly in those directories.
 
@@ -14,7 +17,7 @@ marker is present, it starts `mercenaries_recomp.exe` immediately. If the
 marker is missing, it opens **Mercenaries Recompiled Setup**, asks the user to
 select their legally obtained retail `.iso`, extracts it with the bundled
 offline xdvdfs executable into a staging directory, verifies the complete
-434-file inventory and retail XBE SHA-256, and atomically activates the
+file inventory (434 files USA, 405 files EU-FR) and retail XBE SHA-256, and atomically activates the
 installation under `game_files/mercenaries-retail`. Later launches do not scan
 or hash the 2.3 GiB asset tree.
 

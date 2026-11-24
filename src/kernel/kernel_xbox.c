@@ -49,6 +49,22 @@ ULONG xbox_get_user_video_flags(void)
     return flags;
 }
 
+/* Console dashboard language (XC_LANGUAGE). Defaults to English; the host
+ * selects the language matching the retail disc's localized asset pack, since
+ * European single-language discs ship only one DATAxbox/<language>.dsk. */
+static ULONG xbox_console_language = XC_LANGUAGE_ENGLISH;
+
+void xbox_set_console_language(ULONG language)
+{
+    if (language >= XC_LANGUAGE_ENGLISH && language <= XC_LANGUAGE_PORTUGUESE)
+        xbox_console_language = language;
+}
+
+ULONG xbox_get_console_language(void)
+{
+    return xbox_console_language;
+}
+
 ULONG xbox_get_av_pack(void)
 {
     return xbox_video_option_enabled("XBOXRECOMP_VIDEO_HDTV")
@@ -150,7 +166,8 @@ NTSTATUS __stdcall xbox_XeUnloadSection(PXBE_SECTION_HEADER Section)
  * SMBus. For recompilation, we return sensible defaults:
  *   - Region: North America
  *   - Video: NTSC, widescreen+HDTV enabled
- *   - Language: English
+ *   - Language: English unless the host selects another (see
+ *     xbox_set_console_language)
  *   - Audio: Stereo, Dolby Digital
  *   - DVD Region: Region 1 (North America)
  * ============================================================================ */
@@ -183,7 +200,7 @@ static void xbox_get_user_settings(ULONG settings[24])
     settings[1] = (ULONG)xbox_current_timezone_bias();
     /* Transition dates and additional seasonal biases stay zero: the base
      * bias already includes the host's current daylight-saving adjustment. */
-    settings[12] = 1; /* language: English */
+    settings[12] = xbox_console_language;
     settings[13] = xbox_get_user_video_flags();
     settings[14] = 0x00010001; /* audio */
     settings[23] = 1; /* DVD region */
@@ -200,9 +217,8 @@ NTSTATUS __stdcall xbox_ExQueryNonVolatileSetting(
 
     switch (ValueIndex) {
     case XC_LANGUAGE:
-        /* English = 1 */
         if (ValueLength >= sizeof(ULONG)) {
-            *(PULONG)Value = 1;
+            *(PULONG)Value = xbox_console_language;
             if (Type) *Type = 4; /* REG_DWORD */
             if (ResultLength) *ResultLength = sizeof(ULONG);
         }
